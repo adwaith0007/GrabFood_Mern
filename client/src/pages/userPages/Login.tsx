@@ -14,7 +14,21 @@ import { signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useLoginMutation } from "../../redux/api/userAPI";
 
+import { useSelector } from 'react-redux';
+import { selectUser } from './../../redux/userSlice';
+import { useDispatch } from 'react-redux';
+import { setUser } from './../../redux/userSlice';
+
 const Login = () => {
+
+  const dispatch = useDispatch();
+
+  const userData = useSelector(selectUser);
+
+  
+
+  // console.log(userData);
+  
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -39,6 +53,7 @@ const Login = () => {
       loginPromise.then((res) => {
         const { token } = res.data;
         localStorage.setItem("token", token);
+        dispatch(setUser(values.username));
         navigate("/home");
       });
     },
@@ -67,7 +82,7 @@ const Login = () => {
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
       {/* <Navbar /> */}
 
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
+      {/* <Toaster position="top-center" reverseOrder={false}></Toaster> */}
 
       <div className="container custom-height flex justify-center items-center mx-auto ">
         <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">

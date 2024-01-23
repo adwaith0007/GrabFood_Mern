@@ -3,12 +3,14 @@ const Mailgen =require('mailgen');
 const { param } = require('../Routes/userRoutes');
 
 let nodeConfig = {
+   
     host:"smtp.ethereal.email",
     port:587,
     secure:false, // true for 465,false for other ports
     auth:{
         // user:process.env.EMAIL, // generated ethereal user
         // pass:process.env.PASSWORD, // generated ethereal password
+     
         user:'darron.brekke17@ethereal.email',
         pass:'yjZxHT3UVnsa8MN3sT'
     }
@@ -36,7 +38,7 @@ let MailGenerator = new Mailgen ({
 exports.registerMail = async (req, res) => {
     try {
       const { username, userEmail, text, subject } = req.body;
-  
+
       // Body of the email
       const email = {
         body: {

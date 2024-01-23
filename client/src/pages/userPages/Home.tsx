@@ -7,7 +7,7 @@ import s3 from "../../assets/s3.png";
 import s4_1 from "../../assets/s4_1.png";
 import s5bg from "../../assets/s5bg.png";
 
-import '../../App.css' 
+import '../../App.scss' 
 
 const Home = () => {
   return (

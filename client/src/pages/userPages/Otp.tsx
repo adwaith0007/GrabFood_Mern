@@ -1,12 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import  Navbar  from "../../components/Navbar";
 import otpimg from "../../assets/otp.png";
-import { Link } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastOptions }  from "react-hot-toast";
 import { useFormik } from "formik";
 
+import { useSelector } from 'react-redux';
+import { selectUser } from './../../redux/userSlice';
+
+import { generateOTP,verifyOTP} from "../../helper/helper";
 
 const Otp = () => {
+  
+  const [OTP,setOTP]=useState()
+
+  const username = useSelector(selectUser);
+
+  const navigate = useNavigate();
+
+  console.log(username);
+  
+  
+  useEffect(()=>{
+
+    generateOTP(username).then((OTP)=>{
+      console.log(OTP);
+      if(OTP) return toast.success('OTP has been send to your email! ');
+      return toast.error('Problem while generating OTP!')
+    })
+
+
+
+  },[username]);
+
+  async function onSubmit(e){
+    e.preventDefault();
+   const {status} = await verifyOTP({username,code:OTP})
+   if(status===201){
+    toast.success('Verify Successfuly! ')
+    return navigate('/')
+   }
+   return toast.error('Wrong OTP! Check email again!')
+  }
+
+  function resendOTP (){
+    let sendPromise = generateOTP(username);
+
+    toast.promise(sendPromise,{
+      loading:'Sending...',
+      success: <b>OTP has been send to your email!</b>,
+      error:<b>Could not Send it!</b>
+    })
+
+    sendPromise.then(OTP=>console.log(OTP));
+    
+
+  }
+
+
+
   return (                                                        
     <div className="bg-[#e5d9ca] h-screen w-full ">
      
@@ -32,17 +84,15 @@ const Otp = () => {
 
               <div className="h-[91px] flex flex-col justify-center items-center bg-[#d1edde] w-full rounded-[15px] mt-4" >
                 <p>
-                We’ve sent a verification code to your mobile
+                We’ve sent a verification code to your email
                                 
                 </p>
-                <p>
-                ******789
-                </p>
+                
               </div>
 
               
 
-              <form className="max-w-sm mx-auto mt-10 ">
+              <form onSubmit={onSubmit} className="max-w-sm mx-auto mt-10 ">
               <div className="mb-5">
                 <label
                   htmlFor="email"
@@ -51,9 +101,10 @@ const Otp = () => {
                   Enter OTP
                 </label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
+                  type="number"
+                  id="otp"
+                  name="otp"
+                  onChange={(e)=>setOTP(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   
                   required
@@ -86,12 +137,13 @@ const Otp = () => {
                   className="mt-2 text-sm text-gray-500 dark:text-gray-400"
                 >
                   Did’t recive OTP yet? 
-                  <Link
-                    to="/signup"
+                  <button
+                  type="button"
+                    onClick={resendOTP}
                     className="font-medium  text-blue-600 hover:underline "
                   >
                     Resend OTP
-                  </Link>
+                  </button>
                   .
                 </p>
               </div>

@@ -14,10 +14,15 @@ import { registerValidation } from '../../helper/validate'
     
 import { registerUser } from "../../helper/helper";
 
+import { useDispatch } from 'react-redux';
+import { setUser } from './../../redux/userSlice';
 
 
 
 const SignUp = () => {
+
+  
+  const dispatch = useDispatch();
 
   const navigate = useNavigate()
 
@@ -43,8 +48,8 @@ const SignUp = () => {
             success:<b>Register Successfully...!</b>,
             error:<b>Could not Register.</b>
           })
-
-          registerPromise.then(function(){navigate('/login')})
+          dispatch(setUser(values.username));
+          registerPromise.then(function(){navigate('/otp')})
           
         }
       })
@@ -55,7 +60,7 @@ const SignUp = () => {
     <div className="bg-[#e5d9ca] h-[100vh]    w-full ">
      
 
-      <Toaster position="top-center" reverseOrder={false} ></Toaster>
+      {/* <Toaster position="top-center" reverseOrder={false} ></Toaster> */}
       <div className="container custom-height flex justify-center items-center mx-auto  ">
       <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 xl:bg-gray-600 2xl:bg-black " >
           
