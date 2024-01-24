@@ -66,7 +66,7 @@ const Category = () => {
       columns,
       rows,
       "dashboard-product-box",
-      "Products",
+      "Category",
       rows.length > 6
     )();
   
