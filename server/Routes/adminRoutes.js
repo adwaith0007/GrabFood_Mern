@@ -35,6 +35,10 @@ router.get("/category", (req, res) => {
 });
 
 
+router.get("/customers", (req, res) => {
+  adminController.getCustomers(req, res);
+});
+
 
 
 // router.post("/demo", (req, res) => {

@@ -100,6 +100,41 @@ export async function verifyPassword({username, password }) {
     
 }
 
+// export async function getCustomers(){
+
+//   try {
+
+//     const {data} = await axios.get(`http://localhost:5000/api/admin/customers`);
+//       return {data};
+    
+//   } catch (error) {
+//     return Promise.reject({error:"Couldn't find the Customers "})
+//   }
+// }
+
+
+export async function getCustomers() {
+  try {
+    const response = await axios.get('http://localhost:5000/api/admin/customers');
+
+    // Check if the response status is in the success range (2xx)
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    } else {
+      // If the status is outside the success range, handle the error
+      return Promise.reject({ error: `Failed to fetch customers. Server responded with status ${response.status}` });
+    }
+  } catch (error) {
+    // Handle unexpected errors, such as network issues
+    console.error('Error fetching customers:', error);
+
+    // Return a generic error message
+    return Promise.reject({ error: 'An unexpected error occurred while fetching customers' });
+  }
+}
+
+
+
 
 /* update user profile function  */
 

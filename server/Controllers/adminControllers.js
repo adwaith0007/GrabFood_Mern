@@ -1,4 +1,5 @@
 const adminModel = require("../Models/adminModels");
+const UserModel = require("../Models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -62,5 +63,28 @@ exports.adminLogin = async (req, res) => {
     }
   } catch (error) {
     return res.status(500).send({ error });
+  }
+};
+
+
+/* GET: http://localhost:5000/api/admin/customers */
+exports.getCustomers = async (req, res) => {
+  try {
+    const customers = await UserModel.find({});
+
+    if (!customers || customers.length === 0) {
+      return res.status(404).send({ error: "No customers found" });
+    }
+
+    
+    const formattedCustomers = customers.map(customer => {
+      const { _id, username, email, phone, isBlocked } = customer.toJSON();
+      return { id: _id, username, email, phone, isBlocked };
+    });
+
+    return res.status(200).send(formattedCustomers);
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return res.status(500).send({ error: "Internal Server Error" });
   }
 };
