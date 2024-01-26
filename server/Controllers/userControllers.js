@@ -163,13 +163,15 @@ exports.localVariables = async (req,res,next)=>{
 
 exports.updateUser = async (req,res)=>{
   try {
-
-    const {userId} = req.user;
-
-    // const id = req.query.id;
-
+    
+    
+    const userId = req.query.id;
+    console.log(userId);
+   
+    
     if(userId){
       const body = req.body;
+      console.log(body);
       const result = await UserModel.updateOne({ _id: userId }, body);
 
       console.log(result);

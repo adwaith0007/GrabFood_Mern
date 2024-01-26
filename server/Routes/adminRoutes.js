@@ -30,6 +30,9 @@ router.post("/items/get", (req, res) => {
   itemControllers.getItems(req, res);
 });
 
+
+// GET Methods
+
 router.get("/category", (req, res) => {
   itemControllers.listCategory(req, res);
 });
@@ -39,6 +42,14 @@ router.get("/customers", (req, res) => {
   adminController.getCustomers(req, res);
 });
 
+
+// PUT Methods
+
+router.put("/customers", (req, res) => {
+  
+  
+  adminController.updateUserBlock(req, res);
+});
 
 
 // router.post("/demo", (req, res) => {

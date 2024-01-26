@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTable } from 'react-table';
 import { getCustomers } from '../../helper/helper';
+import axios from 'axios';
+
+
 
 const columns = [
   {
     Header: 'S.NO',
     accessor: (row, index) => index + 1,
   },
-  
   {
     Header: 'USERNAME',
     accessor: 'username',
@@ -26,11 +28,11 @@ const columns = [
     Cell: ({ row }) => (
       <button
         className={`px-2 py-1 ${
-          row.original.blocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+          row.original.isBlocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
         }`}
-        onClick={() => handleBlock(row.original.id, row.original.blocked)}
+        onClick={() => handleBlock(row.original.id, row.original.isBlocked)}
       >
-        {row.original.blocked ? 'Unblock' : 'Block'}
+        {row.original.isBlocked ? 'Unblock' : 'Block'}
       </button>
     ),
   },
@@ -39,37 +41,48 @@ const columns = [
 const Customers = () => {
   const [customerData, setCustomerData] = useState([]);
 
-  useEffect(() => {
-    // Fetch customer data when the component mounts
-    async function fetchCustomerData() {
-      try {
-        const data = await getCustomers();
-        setCustomerData(data);
-      } catch (error) {
-        console.error('Error fetching customer data:', error);
-      }
-    }
-
-    fetchCustomerData();
-  }, []); // Ensure useEffect runs only once on mount
-
-  // Handle block/unblock action
-  const handleBlock = async (id, isBlocked) => {
+  const fetchCustomerData = useCallback(async () => {
     try {
-      // Perform the actual block/unblock logic here
-      // For demo purposes, let's assume you have an API endpoint for this
-      const response = await apiCallToUpdateBlockStatus(id, !isBlocked);
-      console.log(response); // Log the API response
-
-      // Update the local state with the new data after block/unblock
-      const updatedCustomerData = customerData.map((customer) =>
-        customer.id === id ? { ...customer, blocked: !isBlocked } : customer
-      );
-      setCustomerData(updatedCustomerData);
+      const data = await getCustomers();
+      // Check if the fetched data is different from the current state
+      if (JSON.stringify(data) !== JSON.stringify(customerData)) {
+        setCustomerData(data);
+      }
     } catch (error) {
-      console.error('Error updating block status:', error);
+      console.error('Error fetching customer data:', error);
     }
-  };
+  }, [customerData]);
+
+  useEffect(() => {
+    fetchCustomerData();
+  }, [fetchCustomerData]);
+
+  const handleBlock = useCallback(
+    async (id, isBlocked) => {
+      try {
+        console.log('hi');
+
+        // Perform the actual block/unblock logic here
+        // For demo purposes, let's assume you have an API endpoint for this
+        const response = await axios.put(
+          `http://localhost:5000/api/admin/customers/${id}`,
+          { blocked: !isBlocked }
+        );
+        console.log(response); // Log the API response
+
+        // Update the local state with the new data after block/unblock
+        const updatedCustomerData = customerData.map((customer) =>
+          customer.id === id ? { ...customer, blocked: !isBlocked } : customer
+        );
+        setCustomerData(updatedCustomerData);
+      } catch (error) {
+        console.error('Error updating block status:', error);
+      }
+    },
+    [customerData]
+  );
+
+ 
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
     columns,
@@ -111,14 +124,6 @@ const Customers = () => {
       </table>
     </div>
   );
-};
-
-// Placeholder function for API call to update block status
-const apiCallToUpdateBlockStatus = async (customerId, newBlockStatus) => {
-  // Replace this with your actual API call to update block status
-  console.log(`Updating block status for customer with ID ${customerId} to ${newBlockStatus}`);
-  // Simulating a successful response
-  return { success: true, message: 'Block status updated successfully' };
 };
 
 export default Customers;

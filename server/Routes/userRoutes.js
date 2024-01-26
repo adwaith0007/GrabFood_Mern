@@ -57,8 +57,14 @@ router.get('/verifyOTP',userController.verifyUser,userController.verifyOTP)
 
 /* PUT Methods */
 
-router.put('/updateuser' , userController.auth , userController.updateUser); // is use to update the user profile
-
+// router.put('/updateuser' , userController.auth , userController.updateUser); // is use to update the user profile
+router.put('/updateuser' ,  userController.updateUser); // is use to update the user profile
+// router.put('/updateuser', (req,res)=>{  
+     
+     
+// userController.updateUser(req, res);
+   
+// })
 router.put('/resetPassword'  , userController.resetPassword); 
 
 

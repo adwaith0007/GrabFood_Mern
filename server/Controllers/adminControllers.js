@@ -88,3 +88,32 @@ exports.getCustomers = async (req, res) => {
     return res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+/* put: http://localhost:5000/api/admin/customers/:id*/
+exports.updateUserBlock = async (req, res) => {
+  const customerId = req.query.id;
+  console.log(customerId);
+  
+  const { isBlocked } = req.body;
+
+  console.log(isBlocked);
+  
+
+  try {
+    
+    const updatedCustomer = await UserModel.findByIdAndUpdate(
+      customerId,
+      { isBlocked },
+      { new: true }
+    );
+
+    if (!updatedCustomer) {
+      return res.status(404).send({ success: false, message: 'Customer not found' });
+    }
+
+    return res.status(200).send({ success: true, message: 'Block status updated successfully' });
+  } catch (error) {
+    console.error('Error updating block status:', error);
+    return res.status(500).send({ success: false, message: 'Internal Server Error' });
+  }
+}
