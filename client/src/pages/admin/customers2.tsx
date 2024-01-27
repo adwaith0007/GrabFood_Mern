@@ -6,70 +6,37 @@ import TableHOC from "../../components/admin/TableHOC";
 
 interface DataType {
   avatar: ReactElement;
-  username: string;
+  name: string;
   email: string;
   gender: string;
   role: string;
   action: ReactElement;
 }
 
-// const columns: Column<DataType>[] = [
-//   {
-//     Header: "Avatar",
-//     accessor: "avatar",
-//   },
-//   {
-//     Header: "Name",
-//     accessor: "name",
-//   },
-//   {
-//     Header: "Gender",
-//     accessor: "gender",
-//   },
-//   {
-//     Header: "Email",
-//     accessor: "email",
-//   },
-//   {
-//     Header: "Role",
-//     accessor: "role",
-//   },
-//   {
-//     Header: "Action",
-//     accessor: "action",
-//   },
-// ];
-
-const columns = [
+const columns: Column<DataType>[] = [
   {
-    Header: 'S.NO',
-    accessor: (row, index) => index + 1,
+    Header: "Avatar",
+    accessor: "avatar",
   },
   {
-    Header: 'USERNAME',
-    accessor: 'username',
+    Header: "Name",
+    accessor: "name",
   },
   {
-    Header: 'EMAIL',
-    accessor: 'email',
+    Header: "Gender",
+    accessor: "gender",
   },
   {
-    Header: 'PHONE',
-    accessor: 'phone',
+    Header: "Email",
+    accessor: "email",
   },
   {
-    Header: 'BLOCK',
-    accessor: 'block',
-    Cell: ({ row }) => (
-      <button
-        className={`px-2 py-1 ${
-          row.original.isBlocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-        }`}
-        onClick={() => handleBlock(row.original.id, row.original.isBlocked)}
-      >
-        {row.original.isBlocked ? 'Unblock' : 'Block'}
-      </button>
-    ),
+    Header: "Role",
+    accessor: "role",
+  },
+  {
+    Header: "Action",
+    accessor: "action",
   },
 ];
 
@@ -90,7 +57,7 @@ const arr: Array<DataType> = [
         alt="Shoes"
       />
     ),
-    username: "Emily Palmer",
+    name: "Emily Palmer",
     email: "emily.palmer@example.com",
     gender: "female",
     role: "user",
@@ -111,7 +78,7 @@ const arr: Array<DataType> = [
         alt="Shoes"
       />
     ),
-    username: "May Scoot",
+    name: "May Scoot",
     email: "aunt.may@example.com",
     gender: "female",
     role: "user",
