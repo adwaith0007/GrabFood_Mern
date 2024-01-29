@@ -1,24 +1,27 @@
 import React, { useState } from "react";
 
-import {AiOutlineClose, AiOutlineMenu} from 'react-icons/ai'
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
-import { FaWallet } from "react-icons/fa";
+import { FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
 // import logo from '../../public/assets/logo-grabfood 1.png'
 
 import logo from "../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
 
+const user= { _id:"ad", role:"admin"}
+
 const Navbar = () => {
-  const [nav,setNav]=useState(false)
+  const [nav, setNav] = useState<boolean>(false);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div className="h-[80px] w-full ">
       <nav className="bg-white dark:bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <div onClick={()=>setNav(!nav)} >
-
-          <AiOutlineMenu size={30} className="text-white cursor-pointer " />
+          <div onClick={() => setNav(!nav)}>
+            <AiOutlineMenu size={30} className="text-white cursor-pointer " />
           </div>
           <Link
             to="/home"
@@ -27,44 +30,76 @@ const Navbar = () => {
             <img src={logo} alt=""></img>
           </Link>
           <div className="flex md:order-2 space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
+            <div className="relative hidden md:block">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <span className="sr-only">Search icon</span>
+              </div>
+              <input
+                type="text"
+                id="search-navbar"
+                className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search..."
+              />
+            </div>
+            <div className="flex justify-center">
+              <button>
+                <BsCart3 size={20} className="text-white" />
+              </button>
+            </div>
 
-          <div className="relative hidden md:block">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        
-        <span className="sr-only">Search icon</span>
-      </div>
-      <input type="text" id="search-navbar" className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search..."/>
-    </div>
-    <div className="flex justify-center" >
-      <button>
-        <BsCart3 size={20} className="text-white" />
-      </button>
-    </div>
+
+            {
+              user?._id? (
+                <>
+                <button onClick={()=>setIsOpen(prev=> !prev)} >
+                  <FaUser/>
+                </button>
+                <dialog open={isOpen} >
+                  <div>
+                    {  user.role === "admin" && (
+                      <Link to="/admin/dashboard" >Admin</Link>
+                    )}
+
+                     {
+                      user.role === "user" && (
+                        <Link to="/orders">
+                        Orders
+                      </Link>
+                      )
 
 
-    <Link
-                  to="/">
+                     } 
+                     
 
-            <button
-              type="button"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      <button>
+                        <FaSignOutAlt/>
+                      </button>
+
+                  </div>
+
+                </dialog>
+
+                </>
+              ) : <Link to="/">
+              <button
+                type="button"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-              Login     
-            </button>
-              </Link>
+                Login
+              </button>
+            </Link>
+            }
 
-              <Link
-                  to="/signup">
+            
 
-
-            <button
-              type="button"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            <Link to="/signup">
+              <button
+                type="button"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-              Sign Up   
-            </button>
-              </Link>
-           
+                Sign Up
+              </button>
+            </Link>
           </div>
           <div
             className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
@@ -110,52 +145,61 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {/* Overlay */}
-        {nav ? <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0" ></div> : ''  }
-        
+        {nav ? (
+          <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+        ) : (
+          ""
+        )}
 
-          {/* Side drawer menu */}
+        {/* Side drawer menu */}
 
-          <div className={nav ? "fixed top-0 left-0 w-[300px] h-screen bg-white z-10 duration-300":"fixed top-0 left-[-100%] w-[300px] h-screen bg-white z-10 duration-300"} >
-            <AiOutlineClose onClick={()=>setNav(!nav)} size={30} className="absolute right-4 top-6 cursor-pointer"/>
-            <img className="p-4" src={logo} alt=""></img>
+        <div
+          className={
+            nav
+              ? "fixed top-0 left-0 w-[300px] h-screen bg-white z-10 duration-300"
+              : "fixed top-0 left-[-100%] w-[300px] h-screen bg-white z-10 duration-300"
+          }
+        >
+          <AiOutlineClose
+            onClick={() => setNav(!nav)}
+            size={30}
+            className="absolute right-4 top-6 cursor-pointer"
+          />
+          <img className="p-4" src={logo} alt=""></img>
 
-            <nav>
-              <ul className="flex flex-col p-4 text-gray-800" >
-                <li className="text-xl py-4 flex" >
-                  <TbTruckDelivery size={25} className="mr-4" />Orders
-                </li>
-                <li className="text-xl py-4 flex" >
-                  <MdFavorite size={25} className="mr-4" />Favorites
-                </li><li className="text-xl py-4 flex" >
-                  <FaWallet size={25} className="mr-4" />Wallet
-                </li><li className="text-xl py-4 flex" >
-                  <MdHelp size={25} className="mr-4" />Help
-                </li><li className="text-xl py-4 flex" >
-                  <TbTruckDelivery size={25} className="mr-4" />
-                </li><li className="text-xl py-4 flex" >
-                  <TbTruckDelivery size={25} className="mr-4" />Orders
-                </li><li className="text-xl py-4 flex" >
-                  <TbTruckDelivery size={25} className="mr-4" />Orders
-                </li>
-              </ul>
-            </nav>
-          </div>
-
-        
-
-
-
-
+          <nav>
+            <ul className="flex flex-col p-4 text-gray-800">
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+              <li className="text-xl py-4 flex">
+                <MdFavorite size={25} className="mr-4" />
+                Favorites
+              </li>
+              <li className="text-xl py-4 flex">
+                <FaWallet size={25} className="mr-4" />
+                Wallet
+              </li>
+              <li className="text-xl py-4 flex">
+                <MdHelp size={25} className="mr-4" />
+                Help
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+            </ul>
+          </nav>
+        </div>
       </nav>
-
-
-
-      
-
-
-
-
-
     </div>
   );
 };

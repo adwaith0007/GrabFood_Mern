@@ -8,12 +8,12 @@ import { User } from '../../types/types';
 export const userAPI = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_SERVER}/api/`,
+        baseUrl: `${import.meta.env.VITE_SERVER}/api/user/`,
       }),
     endpoints:(builder) => ({
         login: builder.mutation<MessageResponse, User>({
             query:(user)=>({
-                url:"login",
+                url:"new",
                 method:"POST",
                 body:user,
             }),

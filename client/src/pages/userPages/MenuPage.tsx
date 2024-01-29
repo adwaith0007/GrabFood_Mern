@@ -10,6 +10,9 @@ import { selectUser } from './../../redux/userSlice';
 
 import s2_1 from "../../assets/s2_1.png";
 
+
+
+
 const MenuPage = () => {
 
  

@@ -447,7 +447,92 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 
-//auth midddleware
+/* POST: http://localhost:5000/api/user/new */
+exports.newUser = async (req, res) => {
+  const { name, email, photo, gender, _id, dob } = req.body;
+
+  console.log(email);
+  
+
+  try {
+   const user = await UserModel.findOne({ email });
+
+   console.log(user.email);
+   console.log(user.username);
+
+     //check user
+  if (!user){
+    res.json({ success: false, message: "user not found" });
+    
+  } 
+
+  //check whether blocked
+  if (user.isBlocked)
+    return res.json({ success: false, message: "user is blocked" });
+
+    if (await bcrypt.compare(password, user.password)) { 
+
+       // create jwt token
+       const token = jwt.sign(
+        {
+          userId: user._id,
+          email: user.email,
+          username: user.username,
+        },
+        "secretkey",
+        { expiresIn: "24h" }
+      );
+
+      return res.status(200).send({
+        msg: "Login Successful...!",
+        username: user.username,
+        token,
+      });
+
+
+    } else{
+
+      return res.status(400).send({ error: "Password does not Match" });
+    }
+    
+  } catch (error) {
+    return res.status(500).send({ error });
+  }
+};
 
 
 
+// export const newUser = TryCatch(
+//   async (
+//     req: Request<{}, {}, NewUserRequestBody>,
+//     res: Response,
+//     next: NextFunction
+//   ) => {
+//     const { name, email, photo, gender, _id, dob } = req.body;
+
+//     let user = await User.findById(_id);
+
+//     if (user)
+//       return res.status(200).json({
+//         success: true,
+//         message: `Welcome, ${user.name}`,
+//       });
+
+//     if (!_id || !name || !email || !photo || !gender || !dob)
+//       return next(new ErrorHandler("Please add all fields", 400));
+
+//     user = await User.create({
+//       name,
+//       email,
+//       photo,
+//       gender,
+//       _id,
+//       dob: new Date(dob),
+//     });
+
+//     return res.status(201).json({
+//       success: true,
+//       message: `Welcome, ${user.name}`,
+//     });
+//   }
+// );

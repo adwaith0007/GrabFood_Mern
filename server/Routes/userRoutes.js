@@ -18,6 +18,11 @@ router.post('/register', (req,res)=>{    /* register user ok */
    
 })
 
+router.post('/user/new', (req,res)=>{    /* register user ok */
+    userController.newUser(req, res);
+   
+})
+
 // router.post('/register', userController.register)
 
 router.post('/registerMail', registerMail) //send the email

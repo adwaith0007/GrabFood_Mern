@@ -46,9 +46,7 @@ const AddCategory = () => {
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
-      <Navbar />
-
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
+     
 
       <div className="container custom-height flex justify-center items-center mx-auto ">
         <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">

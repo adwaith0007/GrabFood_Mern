@@ -1,6 +1,6 @@
 const categoryModel = require ("../Models/foodCategory");
-const upload = require("../middlewares/multer");
-
+const {upload} = require("../middlewares/multer");
+const {uploadSingle,uploadMultiple} =require("../middlewares/multer")
 
 /* POST: http://localhost:5000/api/admin/category/add */
 
@@ -30,6 +30,78 @@ const upload = require("../middlewares/multer");
           .json({ success: true, message: "Category added successfully" });
       });
     } catch (error) {
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+
+
+  /* POST: http://localhost:5000/api/admin/category/add */
+
+  exports.addCategory3 = async (req, res) => {
+    try {
+      upload.array("file")(req, res, async (err) => {
+        
+        if (err) {
+          return res.json({ success: false, message: err.message });
+        }
+        const imagePath = req.files.path;
+        console.log(imagePath);
+        
+        
+        const {  category } = req.body;
+        if (  !category) {
+          return res.json({ success: false, message: "Enter the category name" });
+        }
+  
+        const categoryDoc = new categoryModel({
+          category,
+          
+          categoryImage: imagePath,
+        });
+        await categoryDoc.save();
+  
+        res
+          .status(201)
+          .json({ success: true, message: "Category added successfully" });
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+
+
+  /* POST: http://localhost:5000/api/admin/category/add */
+
+  exports.addCategory2 = async (req, res) => {
+    try {
+      uploadSingle(req, res, async (err) => {
+        if (err) {
+          return res.json({ success: false, message: err.message });
+        }
+  
+        try {
+          const imagePath = req.file.path; 
+  
+          const { category } = req.body;
+          if (!category) {
+            return res.json({ success: false, message: "Enter the category name" });
+          }
+  
+          const categoryDoc = new categoryModel({
+            category,
+            categoryImage: imagePath,
+          });
+  
+          await categoryDoc.save();
+  
+          res.status(201).json({ success: true, message: "Category added successfully" });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ success: false, message: "Internal server error" });
+        }
+      });
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   };

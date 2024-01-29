@@ -17,8 +17,12 @@ router.post("/login", (req, res) => {
 });
 
 router.post("/category/add", (req, res) => {
-  categoryControllers.addCategory(req, res);
+  categoryControllers.addCategory2(req, res);
 });
+
+// router.post("/category/add", (req, res) => {
+//   categoryControllers.addCategory(req, res);
+// });
 
 
 

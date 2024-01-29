@@ -18,12 +18,19 @@ import { useSelector } from 'react-redux';
 import { selectUser } from './../../redux/userSlice';
 import { useDispatch } from 'react-redux';
 import { setUser } from './../../redux/userSlice';
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { MessageResponse } from "../../types/api-types";
 
 const Login = () => {
 
-  const dispatch = useDispatch();
+  const [gender,setGender]= useState("");
+  const [date, setDate] =useState("");
 
-  const userData = useSelector(selectUser);
+  const [login] =useLoginMutation()
+
+  // const dispatch = useDispatch();
+
+  // const userData = useSelector(selectUser);
 
   
 
@@ -53,7 +60,7 @@ const Login = () => {
       loginPromise.then((res) => {
         const { token } = res.data;
         localStorage.setItem("token", token);
-        dispatch(setUser(values.username));
+        // dispatch(setUser(values.username));
         navigate("/home");
       });
     },
@@ -67,6 +74,27 @@ const Login = () => {
       
 
       const { user } = await signInWithPopup(auth, provider)
+
+     const res = await login({
+        name:"Abhi",
+        email:"adwaith33@gmail.com",
+        photo:"fdf",
+        gender:"sdfg",
+        role:"user",
+        dob :date,
+        _id :"asd",
+      })
+
+      if ("data" in res)
+      {
+
+        toast.success(res.data.message)
+
+      }else{
+        const error =res.error as FetchBaseQueryError;
+        const message = (error.data as MessageResponse).message;
+        toast.error(message)
+      }
 
       console.log(user)
     } catch (error) {
