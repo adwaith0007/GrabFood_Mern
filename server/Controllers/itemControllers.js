@@ -3,7 +3,10 @@ const categoryModel = require("../Models/foodCategory");
 const upload = require("../middlewares/multer");
 
 exports.addItems = async (req, res) => {
+
   try {
+    
+    
     upload.array("files")(req, res, async (err) => {
         console.log(req.body);
         
@@ -49,7 +52,7 @@ exports.getItems = async (req, res) => {
 
 exports.listCategory = async (req, res) => {
   try {
-    const data = await categoryModel.find({}, { category: 1, _id: 0 });
+    const data = await categoryModel.find({}, { category: 1, categoryImage: 1, _id: 0 });
     res.status(200).json({ success: true, data: data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

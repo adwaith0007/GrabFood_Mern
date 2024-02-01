@@ -2,7 +2,11 @@ const express = require('express');
 const mongoose = require ("mongoose");
 const cors = require("cors");
 const userRouter = require("./Routes/userRoutes.js")
-const adminRouter = require("./Routes/adminRoutes.js")
+const adminRouter = require("./Routes/adminRoutes.js");
+const productRouter = require("./Routes/productRoutes.js");
+const categoryRoutes = require("./Routes/categoryRoutes.js");
+const couponRouter = require("./Routes/couponRouter.js");
+const orderRouter = require("./Routes/orderRouter.js");
 require("dotenv").config();
 
 
@@ -12,7 +16,7 @@ const cookieParser = require("cookie-parser");
 // const { check ,validationResult } = require('express-validator')
 // const { body, validationResult } = require('express-validator');
 
-
+// export const myCache = new NodeCache();
 
 const app = express();
 const PORT = process.env.PORT
@@ -49,6 +53,8 @@ app.use(express.static("./uploads"));
 // api routes
 app.use("/api",userRouter)
 app.use("/api/admin",adminRouter)
+app.use("/api/product",productRouter)
+app.use("/api/coupon",couponRouter)
 
 // HTTP GET Request
 app.get('/',(req,res)=>{

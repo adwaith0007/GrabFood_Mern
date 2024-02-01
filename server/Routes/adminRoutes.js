@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../Controllers/adminControllers");
 const categoryControllers = require("../Controllers/categoryControllers");
 const itemControllers = require("../Controllers/itemControllers");
+const productControllers = require("../Controllers/product");
 const upload = require("../middlewares/multer");
 
 
@@ -16,15 +17,22 @@ router.post("/login", (req, res) => {
   adminController.adminLogin(req, res);
 });
 
-router.post("/category/add", (req, res) => {
-  categoryControllers.addCategory2(req, res);
-});
-
 // router.post("/category/add", (req, res) => {
-//   categoryControllers.addCategory(req, res);
+//   categoryControllers.addCategory2(req, res);
 // });
 
+router.post("/category/add", (req, res) => {
+  categoryControllers.addCategory(req, res);
+});
 
+
+router.post("/product/add", (req, res) => {
+  productControllers.addProduct(req, res);
+});
+
+// router.post("/product/add", (req, res) => {
+//   categoryControllers.addCategory(req, res);
+// });
 
 router.post("/items/add", (req, res) => {
   itemControllers.addItems(req, res);

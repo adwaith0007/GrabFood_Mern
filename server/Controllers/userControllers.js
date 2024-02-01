@@ -466,34 +466,35 @@ exports.newUser = async (req, res) => {
     
   } 
 
+  
+  if (user)
+  return res.status(200).json({
+    success: true,
+    message: `Welcome, ${user.username}`,
+  });
+
+if (!_id || !name || !email || !photo || !gender || !dob)
+  return next(new ErrorHandler("Please add all fields", 400));
+
+user = await UserModel.create({
+  name,
+  email,
+  photo,
+  gender,
+  _id,
+  dob: new Date(dob),
+});
+
+return res.status(201).json({
+  success: true,
+  message: `Welcome, ${user.username}`,
+});
+
   //check whether blocked
   if (user.isBlocked)
     return res.json({ success: false, message: "user is blocked" });
 
-    if (await bcrypt.compare(password, user.password)) { 
-
-       // create jwt token
-       const token = jwt.sign(
-        {
-          userId: user._id,
-          email: user.email,
-          username: user.username,
-        },
-        "secretkey",
-        { expiresIn: "24h" }
-      );
-
-      return res.status(200).send({
-        msg: "Login Successful...!",
-        username: user.username,
-        token,
-      });
-
-
-    } else{
-
-      return res.status(400).send({ error: "Password does not Match" });
-    }
+    
     
   } catch (error) {
     return res.status(500).send({ error });
