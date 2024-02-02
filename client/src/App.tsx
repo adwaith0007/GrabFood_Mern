@@ -12,6 +12,14 @@ import Loader from './components/loader';
 import Navbar from './components/Navbar';
 import Category from './pages/admin/Category';
 import Profile from './pages/userPages/(logged-in)/Profile';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
+import { useDispatch, useSelector } from 'react-redux';
+import { userExist } from './redux/reducer/useReducer';
+import { getUser } from './redux/api/userAPI';
+
+
+const ProductDetailsPage = lazy(()=> import ('./components/ProductDetailsPage') ) ;
 
 const Login = lazy(()=> import ('./pages/userPages/Login') ) ;
 const Home = lazy(()=> import ('./pages/userPages/Home') ) ; 
@@ -25,7 +33,7 @@ const LoginPage = lazy(()=> import ('./pages/adminPages/LoginPage') ) ;
 const Customers2 = lazy(() => import("./pages/adminPages/Customers"));
 const SignupPage = lazy(()=> import ('./pages/adminPages/SignupPage') ) ; 
 const AddCategory = lazy(()=> import ('./pages/adminPages/AddCategory') ) ; 
-const AddItem = lazy(()=> import ('./pages/adminPages/AddItems') ) ; 
+const AddProduct = lazy(()=> import ('./pages/adminPages/AddProduct') ) ; 
 const Demo = lazy(()=> import ('./pages/Demo') ) ; 
 
 /* Admin */
@@ -50,6 +58,22 @@ const TransactionManagement = lazy(
 
 
 function App() {
+
+  const {} = useSelector
+
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+    onAuthStateChanged(auth,async (user)=>{
+      if(user){
+        const data = await getUser(user.uid)
+        console.log("Logged In");
+        dispatch(userExist(data.user))
+      }else{
+        console.log(" Not Logged In");
+      }
+    })
+  },[])
   
 
   return (
@@ -72,15 +96,16 @@ function App() {
   <Route  path='/signup' element={<SignUp/>} ></Route>
   <Route  path='/otp' element={<Otp/>} ></Route>
 
+  <Route path="/product/:productId"   element={<ProductDetailsPage/>} />
                                                   
   {/* Admin */}
   <Route  path='/admin' element={<LoginPage/>} ></Route>
   <Route  path='/admin/signup' element={<SignupPage/>} ></Route>
   <Route  path='/admin/customers2' element={<Customers2/>} ></Route>
   <Route  path='/admin/category/add' element={<AddCategory/>} ></Route>
-  <Route  path='/admin/item/add' element={<AddItem/>} ></Route>
+  <Route  path='/admin/product/add2' element={<AddProduct/>} ></Route>
  
-  <Route  path='/admin/demo' element={<Demo/>} ></Route>
+  <Route  path='/demo' element={<Demo/>} ></Route>
   
   {/* Admin Routes */}
 

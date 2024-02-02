@@ -2,6 +2,50 @@ import React, { useEffect, useState } from 'react';
 import { useTable } from 'react-table';
 import { getCustomers } from '../../helper/helper';
 import axios from 'axios';
+import { server } from '../../server';
+import toast from "react-hot-toast";
+
+
+
+
+const columns = [
+  {
+    Header: 'S.NO',
+    accessor: (row, index) => index + 1,
+  },
+  
+  {
+    Header: 'USERNAME',
+    accessor: 'username',
+  },
+  {
+    Header: 'EMAIL',
+    accessor: 'email',
+  },
+  {
+    Header: 'PHONE',
+    accessor: 'phone',
+  },
+  {
+    Header: 'BLOCK',
+    accessor: 'block',
+    Cell: ({ row }) => (
+      <button
+        className={`px-2 py-1 ${
+          row.original.isBlocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+        }`}
+        onClick={() => handleBlock(row.original.id, row.original.isBlocked        )}
+      >
+        {row.original.isBlocked ? 'Unblock' : 'Block'}
+      </button>
+    ),
+  },
+];
+
+
+
+
+
 
 
 
@@ -15,23 +59,27 @@ const Customers = () => {
 
   const [customerData, setCustomerData] = useState([]);
 
+
+
   useEffect(() => {
-    // Fetch customer data when the component mounts
-    async function fetchCustomerData() {
-      try {
-        const data = await getCustomers();
-  
-        // Check if the fetched data is different from the current state
-        if (JSON.stringify(data) !== JSON.stringify(customerData)) {
-          setCustomerData(data);
+    axios.get(`http://localhost:5000/api/admin/customers`)
+      .then((res) => {
+        if (res.data.success) {
+          setCustomerData(res.data.data);
+        } else {
+          toast.error("Error while loading categories");
         }
-      } catch (error) {
-        console.error('Error fetching customer data:', error);
-      }
-    }
+      })
+      .catch((error) => {
+        toast.error("Error while loading categories");
+        console.log(error);
+      });
+  }, []);
+
+  console.log(customerData);
   
-    fetchCustomerData();
-  }, []); 
+
+  
 
   const handleBlock = async (id, isBlocked) => {
     try {
@@ -56,39 +104,7 @@ const Customers = () => {
   };
 
 
-  const columns = [
-    {
-      Header: 'S.NO',
-      accessor: (row, index) => index + 1,
-    },
-    
-    {
-      Header: 'USERNAME',
-      accessor: 'username',
-    },
-    {
-      Header: 'EMAIL',
-      accessor: 'email',
-    },
-    {
-      Header: 'PHONE',
-      accessor: 'phone',
-    },
-    {
-      Header: 'BLOCK',
-      accessor: 'block',
-      Cell: ({ row }) => (
-        <button
-          className={`px-2 py-1 ${
-            row.original.isBlocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-          }`}
-          onClick={() => handleBlock(row.original.id, row.original.isBlocked        )}
-        >
-          {row.original.isBlocked ? 'Unblock' : 'Block'}
-        </button>
-      ),
-    },
-  ];
+  
   
   
   

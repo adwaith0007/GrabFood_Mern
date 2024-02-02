@@ -76,13 +76,17 @@ exports.getCustomers = async (req, res) => {
       return res.status(404).send({ error: "No customers found" });
     }
 
-    
-    const formattedCustomers = customers.map(customer => {
-      const { _id, username, email, phone, isBlocked } = customer.toJSON();
-      return { id: _id, username, email, phone, isBlocked };
-    });
+    res.status(200).json({ success: true, data: customers });
 
-    return res.status(200).send(formattedCustomers);
+    
+    // const formattedCustomers = customers.map(customer => {
+    //   const { _id, username, email, phone, isBlocked } = customer.toJSON();
+    //   return { id: _id, username, email, phone, isBlocked };
+    // });
+
+    // return res.status(200).send(formattedCustomers);
+
+    
   } catch (error) {
     console.error("Error fetching customers:", error);
     return res.status(500).send({ error: "Internal Server Error" });
