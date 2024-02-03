@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
@@ -34,7 +35,18 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
 
 const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, onProceedToPayment }) => {
   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const [cartItems2, setCartItems2] = useState([]);
 
+  useEffect(() => {
+    // Fetch cart items when the component mounts
+    axios.get(`http://localhost:3000/api/cart/yourUserId`) // Replace with actual userId
+      .then((response) => {
+        setCartItems2(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
       <AiOutlineClose

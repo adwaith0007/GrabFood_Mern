@@ -14,77 +14,7 @@ import { useLatestProductsQuery } from "../../redux/api/productAPI";
 
 import CartSidebar from "../../components/CartSidebar";
 
-// const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
-//   return (
-//     <div className="flex items-center justify-between p-4 border-b">
-//       <div className="flex items-center space-x-4">
-//         <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
-//         <div>
-//           <p className="text-lg font-semibold">{item.name}</p>
-//           <p className="text-gray-500">Quantity: {item.quantity}</p>
-//         </div>
-//       </div>
 
-//       <div className="flex items-center space-x-4">
-//         <div className="flex items-center space-x-2">
-//           <button onClick={() => onDecrease(item.id)}>
-//             <AiOutlineMinus size={18} className="text-gray-700 cursor-pointer" />
-//           </button>
-//           <span className="text-lg">{item.quantity}</span>
-//           <button onClick={() => onIncrease(item.id)}>
-//             <AiOutlinePlus size={18} className="text-gray-700 cursor-pointer" />
-//           </button>
-//         </div>
-
-//         <p className="text-lg font-semibold">${item.price * item.quantity}</p>
-//         <button onClick={() => onRemove(item.id)}>
-//           <AiOutlineClose size={20} className="text-red-500 cursor-pointer" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, onProceedToPayment }) => {
-//   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-//   return (
-//     <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
-//       <AiOutlineClose
-//         onClick={closeCart}
-//         size={30}
-//         className="absolute right-4 top-6 cursor-pointer"
-//       />
-
-//       <div className="p-4">
-//         <h2 className="text-2xl font-semibold mb-4">Shopping Cart</h2>
-//         {cartItems.map((item) => (
-//           <CartItem
-//             key={item.id}
-//             item={item}
-//             onRemove={onRemove}
-//             onIncrease={onIncrease}
-//             onDecrease={onDecrease}
-//           />
-//         ))}
-//       </div>
-
-//       <div className="flex justify-between items-center p-4 border-t">
-//         <p className="text-lg font-semibold">Total:</p>
-//         <p className="text-lg font-semibold">${totalAmount}</p>
-//       </div>
-
-//       <div className="p-4">
-//         <button
-//           onClick={onProceedToPayment}
-//           className="w-full bg-blue-700 text-white py-2 rounded-md font-semibold hover:bg-blue-800"
-//         >
-//           Proceed to Payment
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
 
 
 
@@ -132,30 +62,11 @@ const MenuPage = () => {
   }, []);
 
 
-//   const ProductCard = ({ productId, price, description, name, imageUrl, onAddToCart }) => {
-//   return (
-//     <div className="border p-4 mb-4">
-//       <img src={imageUrl} alt={name} className="w-full h-48 object-cover mb-2" />
-//       <p className="text-lg font-semibold">{name}</p>
-//       <p className="text-gray-500">${price}</p>
-//       <button
-//         onClick={onAddToCart} // Use the onAddToCart callback when the button is clicked
-//         className="w-full bg-blue-700 text-white py-2 rounded-md font-semibold hover:bg-blue-800"
-//       >
-//         Add to Cart
-//       </button>
-//     </div>
-//   );
-// };
-
 
 
   // const addToCart = (product) => {
-  //   // Check if the product is already in the cart
   //   const existingItem = cartItems.find((item) => item.productId === product._id);
-
-    
-
+  
   //   if (existingItem) {
   //     // If the product is already in the cart, increase its quantity
   //     const updatedCart = cartItems.map((item) =>
@@ -163,37 +74,54 @@ const MenuPage = () => {
   //     );
   //     setCartItems(updatedCart);
   //   } else {
-  //     // If the product is not in the cart, add it with quantity 1
-  //     setCartItems([...cartItems, { productId: product._id, quantity: 1 }]);
+  //     // If the product is not in the cart, add it with quantity 1 and other details
+  //     setCartItems([
+  //       ...cartItems,
+  //       {
+  //         productId: product._id,
+  //         quantity: 1,
+  //         name: product.productName,
+  //         price: product.price,
+  //         imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
+  //       },
+  //     ]);
   //   }
-
+  
   //   toast.success(`${product.productName} added to cart!`);
   // };
+
 
   const addToCart = (product) => {
     const existingItem = cartItems.find((item) => item.productId === product._id);
   
     if (existingItem) {
-      // If the product is already in the cart, increase its quantity
+      // If item already in cart, update quantity
       const updatedCart = cartItems.map((item) =>
         item.productId === product._id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCartItems(updatedCart);
+
+      
+      
     } else {
-      // If the product is not in the cart, add it with quantity 1 and other details
-      setCartItems([
-        ...cartItems,
-        {
-          productId: product._id,
-          quantity: 1,
-          name: product.productName,
-          price: product.price,
-          imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
-        },
-      ]);
+      // If item not in cart, add new item
+      axios.post('http://localhost:5000/api/cart', {
+        userId: 'yourUserId', // Replace with actual userId (e.g., from user authentication)
+        productId: product._id,
+        name: product.productName,
+        price: product.price,
+        imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
+        quantity: 1,
+      })
+      .then((response) => {
+        setCartItems([...cartItems, response.data]);
+        toast.success(`${product.productName} added to cart!`);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error('Error adding to cart');
+      });
     }
-  
-    toast.success(`${product.productName} added to cart!`);
   };
 
  
