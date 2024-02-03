@@ -1,21 +1,114 @@
 import React, { useState } from "react";
 
-import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
 import { FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
+
+import AddToCart from "../pages/userPages/AddToCart";
 // import logo from '../../public/assets/logo-grabfood 1.png'
 
 import logo from "../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
+import CartSidebar from "./CartSidebar";
 
-const user= { _id:"ad", role:"admin"}
+const user = { _id: "ad", role: "admin" };
+
+
+
+
+
+// const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
+//   return (
+//     <div className="flex items-center justify-between p-4 border-b">
+//       <div className="flex items-center space-x-4">
+//         <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
+//         <div>
+//           <p className="text-lg font-semibold">{item.name}</p>
+//           <p className="text-gray-500">Quantity: {item.quantity}</p>
+//         </div>
+//       </div>
+
+//       <div className="flex items-center space-x-4">
+//         <div className="flex items-center space-x-2">
+//           <button onClick={() => onDecrease(item.id)}>
+//             <AiOutlineMinus size={18} className="text-gray-700 cursor-pointer" />
+//           </button>
+//           <span className="text-lg">{item.quantity}</span>
+//           <button onClick={() => onIncrease(item.id)}>
+//             <AiOutlinePlus size={18} className="text-gray-700 cursor-pointer" />
+//           </button>
+//         </div>
+
+//         <p className="text-lg font-semibold">${item.price * item.quantity}</p>
+//         <button onClick={() => onRemove(item.id)}>
+//           <AiOutlineClose size={20} className="text-red-500 cursor-pointer" />
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, onProceedToPayment }) => {
+//   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+//   return (
+//     <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
+//       <AiOutlineClose
+//         onClick={closeCart}
+//         size={30}
+//         className="absolute right-4 top-6 cursor-pointer"
+//       />
+
+//       <div className="p-4">
+//         <h2 className="text-2xl font-semibold mb-4">Shopping Cart</h2>
+//         {cartItems.map((item) => (
+//           <CartItem
+//             key={item.id}
+//             item={item}
+//             onRemove={onRemove}
+//             onIncrease={onIncrease}
+//             onDecrease={onDecrease}
+//           />
+//         ))}
+//       </div>
+
+//       <div className="flex justify-between items-center p-4 border-t">
+//         <p className="text-lg font-semibold">Total:</p>
+//         <p className="text-lg font-semibold">${totalAmount}</p>
+//       </div>
+
+//       <div className="p-4">
+//         <button
+//           onClick={onProceedToPayment}
+//           className="w-full bg-blue-700 text-white py-2 rounded-md font-semibold hover:bg-blue-800"
+//         >
+//           Proceed to Payment
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
 
 const Navbar = () => {
   const [nav, setNav] = useState<boolean>(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([
+    { id: 1, name: "Product 1", quantity: 2, price: 20 },
+    { id: 2, name: "Product 2", quantity: 1, price: 15 },
+  ]); // Assume you have a state for cart items
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const openCart = () => {
+    setIsCartOpen(true);
+  };
+
+  const closeCart = () => {
+    setIsCartOpen(false);
+  };
+
   return (
     <div className="h-[80px] w-full ">
       <nav className="bg-white dark:bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
@@ -42,55 +135,40 @@ const Navbar = () => {
               />
             </div>
             <div className="flex justify-center">
-              <button>
+              <button onClick={openCart}>
                 <BsCart3 size={20} className="text-white" />
               </button>
             </div>
 
-
-            {
-              user?._id? (
-                <>
-                <button onClick={()=>setIsOpen(prev=> !prev)} >
-                  <FaUser/>
+            {user?._id ? (
+              <>
+                <button onClick={() => setIsOpen((prev) => !prev)}>
+                  <FaUser />
                 </button>
-                <dialog open={isOpen} >
+                <dialog open={isOpen}>
                   <div>
-                    {  user.role === "admin" && (
-                      <Link to="/admin/dashboard" >Admin</Link>
+                    {user.role === "admin" && (
+                      <Link to="/admin/dashboard">Admin</Link>
                     )}
 
-                     {
-                      user.role === "user" && (
-                        <Link to="/orders">
-                        Orders
-                      </Link>
-                      )
+                    {user.role === "user" && <Link to="/orders">Orders</Link>}
 
-
-                     } 
-                     
-
-                      <button>
-                        <FaSignOutAlt/>
-                      </button>
-
+                    <button>
+                      <FaSignOutAlt />
+                    </button>
                   </div>
-
                 </dialog>
-
-                </>
-              ) : <Link to="/">
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Login
-              </button>
-            </Link>
-            }
-
-            
+              </>
+            ) : (
+              <Link to="/">
+                <button
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Login
+                </button>
+              </Link>
+            )}
 
             <Link to="/signup">
               <button
@@ -142,6 +220,116 @@ const Navbar = () => {
             </ul>
           </div>
         </div>
+
+        {/* Cart Sidebar */}
+        {/* {isCartOpen && (
+          <AddToCart cartItems={cartItems} closeCart={closeCart} />
+        )} */}
+
+        {isCartOpen ? (
+          // <AddToCart cartItems={cartItems} closeCart={closeCart} />
+          <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+        ) : ("") }
+
+
+
+{isCartOpen && (
+        <CartSidebar
+          cartItems={cartItems}
+          closeCart={closeCart}
+          onRemove={(itemId) => {
+            const updatedCart = cartItems.filter((item) => item.id !== itemId);
+            setCartItems(updatedCart);
+          }}
+          onIncrease={(itemId) => {
+            const updatedCart = cartItems.map((item) =>
+              item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+            );
+            setCartItems(updatedCart);
+          }}
+          onDecrease={(itemId) => {
+            const updatedCart = cartItems.map((item) =>
+              item.id === itemId && item.quantity > 1
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            );
+            setCartItems(updatedCart);
+          }}
+          onProceedToPayment={() => {
+            // Implement your logic for proceeding to payment
+            // This can include routing to a payment page or any other relevant action
+            console.log("Proceeding to payment...");
+          }}
+        />
+      )}
+{/* 
+{isCartOpen && (
+        <CartSidebar
+          cartItems={cartItems}
+          closeCart={closeCart}
+          onRemove={(itemId) => {
+            const updatedCart = cartItems.filter((item) => item.id !== itemId);
+            setCartItems(updatedCart);
+          }}
+          onProceedToPayment={() => {
+            // Implement your logic for proceeding to payment
+            // This can include routing to a payment page or any other relevant action
+            console.log("Proceeding to payment...");
+          }}
+        />
+      )} this is good */}
+
+
+          {/* Side drawer menu */}
+
+        {/* <div
+          className={
+            isCartOpen
+              ? "fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300"
+              : "fixed top-0 right-[-100%] w-[300px] h-screen bg-white z-10 duration-300"
+          }
+        >
+          <AiOutlineClose
+            onClick={() => setIsCartOpen(!isCartOpen)}
+            size={30}
+            className="absolute right-4 top-6 cursor-pointer"
+          />
+          
+
+          <nav>
+            <ul className="flex flex-col p-4 text-gray-800">
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+              <li className="text-xl py-4 flex">
+                <MdFavorite size={25} className="mr-4" />
+                Favorites
+              </li>
+              <li className="text-xl py-4 flex">
+                <FaWallet size={25} className="mr-4" />
+                Wallet
+              </li>
+              <li className="text-xl py-4 flex">
+                <MdHelp size={25} className="mr-4" />
+                Help
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+              <li className="text-xl py-4 flex">
+                <TbTruckDelivery size={25} className="mr-4" />
+                Orders
+              </li>
+            </ul>
+          </nav>
+        </div> */}
+
+
 
         {/* Mobile Menu */}
         {/* Overlay */}

@@ -8,7 +8,7 @@ type ProductCardProps = {
   
 description:string;
   price: number;
-  handler: () => void;
+  onAddToCart: () => void;
 };
 
 const ProductCard = ({
@@ -18,8 +18,11 @@ const ProductCard = ({
   
 description,
   imageUrl,
-  handler,
+  onAddToCart,
 }: ProductCardProps) => {
+
+ 
+
   return (
     <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <Link
@@ -102,9 +105,10 @@ description,
   </p>
 </div>
 
-        <a
-          href="#"
-          className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        <button
+        onClick={onAddToCart}
+          
+          className="flex w-full items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -121,8 +125,13 @@ description,
             />
           </svg>
           Add to cart
-        </a>
+        </button>
+
+        
       </div>
+
+
+
 
       {/* <img className="object-cover" src={`${serverUrl}/${imageUrl}`} alt="product image"/> */}
     </div>
