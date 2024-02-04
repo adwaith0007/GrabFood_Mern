@@ -13,24 +13,34 @@ import { useLatestProductsQuery } from "../../redux/api/productAPI";
 
 
 import CartSidebar from "../../components/CartSidebar";
+import AddressInput from "../../components/AddressInput";
+
+import { useHistory } from "react-router-dom";
 
 
+// import AddressModal from "../../components/AddressInput";
 
 
 
 const MenuPage = () => {
+
   // const {data} =useLatestProductsQuery("")
 
   // const userData = useSelector(selectUser);
 
   // console.log(userData);
-
+  
   const [categoryList, setCategoryList] = useState([]);
-
+  
   const [productList, setProductList] = useState([]);
 
   const [cartItems, setCartItems] = useState([]);
-
+  
+  const [userAddress, setUserAddress] = useState({});
+  
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  
+  // console.log("showAddressModal:", showAddressModal);
   useEffect(() => {
     try {
       axios.get(`http://localhost:5000/api/admin/category`).then((res) => {
@@ -141,25 +151,60 @@ const MenuPage = () => {
     setCartItems(updatedCart);
   };
   
+  // const handleIncreaseQuantity = (productId) => {
+  //   const updatedCart = cartItems.map((item) =>
+  //     item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item
+  //   );
+  //   setCartItems(updatedCart);
+  // };
+  
+  // const handleDecreaseQuantity = (productId) => {
+  //   const updatedCart = cartItems.map((item) =>
+  //     item.productId === productId && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+  //   );
+  //   setCartItems(updatedCart);
+  // };
+
+
   const handleIncreaseQuantity = (productId) => {
     const updatedCart = cartItems.map((item) =>
       item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item
     );
     setCartItems(updatedCart);
   };
-  
+
   const handleDecreaseQuantity = (productId) => {
     const updatedCart = cartItems.map((item) =>
-      item.productId === productId && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+      item.productId === productId ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
     );
     setCartItems(updatedCart);
   };
   
   const handleProceedToPayment = () => {
-    // Implement logic to handle the payment process
-    // For example, you can navigate to a payment page or show a modal
+
+    console.log("Handling Proceed to Payment...");
+
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty. Add items before proceeding to payment.");
+      return;
+    }
+
+    if (!userAddress || !userAddress.street || !userAddress.city || !userAddress.state || !userAddress.zipCode) {
+      // Open the address input modal if the address is not complete
+      
+      setShowAddressModal(true);
+      
+      return;
+    }
+
     console.log("Proceeding to payment!");
+    console.log("Cart Items:", cartItems);
+    console.log("User Address:", userAddress);
+
+    // Add logic to handle the actual payment process here
   };
+
+ 
 
   return (
     <div className="bg-[#e5d9ca] h-full ">
@@ -243,15 +288,28 @@ const MenuPage = () => {
 
 
 {cartItems.length > 0 && (
-  <CartSidebar
-    cartItems={cartItems}
-    closeCart={() => setCartItems([])} // Clear the cartItems to close the cart
-    onRemove={(productId) => handleRemoveFromCart(productId)}
-    onIncrease={(productId) => handleIncreaseQuantity(productId)}
-    onDecrease={(productId) => handleDecreaseQuantity(productId)}
-    onProceedToPayment={() => handleProceedToPayment()}
-  />
-)}
+          <CartSidebar
+            cartItems={cartItems}
+            closeCart={() => setCartItems([])}
+            onRemove={(productId) => handleRemoveFromCart(productId)}
+            onIncrease={(productId) => handleIncreaseQuantity(productId)}
+            onDecrease={(productId) => handleDecreaseQuantity(productId)}
+            // onProceedToPayment={() => handleProceedToPayment()}
+            handleProceedToPayment={() => handleProceedToPayment()}
+          />
+        )}
+
+        {/* AddressModal component */}
+        {showAddressModal && (
+          
+          
+          <AddressInput
+          
+            setAddress={setUserAddress}
+            onClose={() => setShowAddressModal(false)}
+            
+          />
+        )}
 
 
         {/* {cartItems.length > 0 && (

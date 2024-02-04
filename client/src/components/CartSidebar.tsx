@@ -33,20 +33,20 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
   );
 };
 
-const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, onProceedToPayment }) => {
+const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, handleProceedToPayment }) => {
   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const [cartItems2, setCartItems2] = useState([]);
 
   useEffect(() => {
     // Fetch cart items when the component mounts
-    axios.get(`http://localhost:3000/api/cart/yourUserId`) // Replace with actual userId
+    axios.get(`http://localhost:5000/api/cart/yourUserId`) // Replace with actual userId
       .then((response) => {
-        setCartItems2(response.data);
+        setCartItems(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, []);  // This useEffect seems to be unused. You may remove it if unnecessary.
+
   return (
     <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
       <AiOutlineClose
@@ -75,7 +75,7 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, o
 
       <div className="p-4">
         <button
-          onClick={onProceedToPayment}
+          onClick={handleProceedToPayment}
           className="w-full bg-blue-700 text-white py-2 rounded-md font-semibold hover:bg-blue-800"
         >
           Proceed to Payment
