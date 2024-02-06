@@ -2,18 +2,30 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
+// import ProceedToPaymentPopup from "../components/ProceedToPaymentPopup";
+
+import PaymentAddressInputPopup from "../components/PaymentAddressInputPopup";
+
 const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
   return (
-    <div className="flex items-center justify-between p-4 border-b">
+    
+
+    <div className="flex  justify-between p-4 border-b border rounded-[10px] ">
+
+      
       <div className="flex items-center space-x-4">
-        <img src={item.imageUrl} alt={item.name} className="w-12 h-12 object-cover rounded" />
+        <div>
+        <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded" />
+
+        </div>
+        
+      </div>
+      <div className="flex flex-col items-center space-x-4">
+
         <div>
           <p className="text-lg font-semibold">{item.name}</p>
-          <p className="text-gray-500">Quantity: {item.quantity}</p>
         </div>
-      </div>
 
-      <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <button onClick={() => onDecrease(item.productId)}>
             <AiOutlineMinus size={18} className="text-gray-700 cursor-pointer" />
@@ -23,32 +35,47 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
             <AiOutlinePlus size={18} className="text-gray-700 cursor-pointer" />
           </button>
         </div>
+        <div className="flex gap-10" >
+          <p className="text-gray-500">Quantity: {item.quantity}</p>
 
-        <p className="text-lg font-semibold">${item.price * item.quantity}</p>
+        <p className="text-lg font-semibold">₹{item.price * item.quantity}</p>
+        </div>
+
+      </div>
         <button onClick={() => onRemove(item.productId)}>
           <AiOutlineClose size={20} className="text-red-500 cursor-pointer" />
         </button>
-      </div>
     </div>
   );
 };
 
-const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, handleProceedToPayment }) => {
+const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease,  }) => {
   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+
   useEffect(() => {
+    console.log('effect');
+    
     // Fetch cart items when the component mounts
-    axios.get(`http://localhost:5000/api/cart/yourUserId`) // Replace with actual userId
+    axios.get(`http://localhost:5000/api/cart/65913f07581f920ea7c196cf`) // Replace with actual userId
       .then((response) => {
         setCartItems(response.data);
+        console.log(`data: ${response.data}`);
+        
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);  // This useEffect seems to be unused. You may remove it if unnecessary.
 
+
+  const handleProceedToPayment = () => {
+    setShowPaymentPopup(true);
+  };
+
   return (
-    <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
+    <div className="fixed top-0 right-0 w-[400px] h-screen bg-white z-10 duration-300 shadow-lg">
       <AiOutlineClose
         onClick={closeCart}
         size={30}
@@ -70,7 +97,7 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, h
 
       <div className="flex justify-between items-center p-4 border-t">
         <p className="text-lg font-semibold">Total:</p>
-        <p className="text-lg font-semibold">${totalAmount}</p>
+        <p className="text-lg font-semibold">₹{totalAmount}</p>
       </div>
 
       <div className="p-4">
@@ -81,6 +108,15 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, h
           Proceed to Payment
         </button>
       </div>
+
+      {showPaymentPopup && (
+        // <ProceedToPaymentPopup
+        <PaymentAddressInputPopup
+          cartItems={cartItems}
+          userId="65913f07581f920ea7c196cf" // Replace with actual userId
+          onClose={() => setShowPaymentPopup(false)}
+        />
+      )}
     </div>
   );
 };

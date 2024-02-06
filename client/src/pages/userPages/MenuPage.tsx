@@ -15,7 +15,7 @@ import { useLatestProductsQuery } from "../../redux/api/productAPI";
 import CartSidebar from "../../components/CartSidebar";
 import AddressInput from "../../components/AddressInput";
 
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 
 // import AddressModal from "../../components/AddressInput";
@@ -24,6 +24,8 @@ import { useHistory } from "react-router-dom";
 
 const MenuPage = () => {
 
+  const navigate = useNavigate();
+  
   // const {data} =useLatestProductsQuery("")
 
   // const userData = useSelector(selectUser);
@@ -74,65 +76,67 @@ const MenuPage = () => {
 
 
 
-  // const addToCart = (product) => {
-  //   const existingItem = cartItems.find((item) => item.productId === product._id);
-  
-  //   if (existingItem) {
-  //     // If the product is already in the cart, increase its quantity
-  //     const updatedCart = cartItems.map((item) =>
-  //       item.productId === product._id ? { ...item, quantity: item.quantity + 1 } : item
-  //     );
-  //     setCartItems(updatedCart);
-  //   } else {
-  //     // If the product is not in the cart, add it with quantity 1 and other details
-  //     setCartItems([
-  //       ...cartItems,
-  //       {
-  //         productId: product._id,
-  //         quantity: 1,
-  //         name: product.productName,
-  //         price: product.price,
-  //         imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
-  //       },
-  //     ]);
-  //   }
-  
-  //   toast.success(`${product.productName} added to cart!`);
-  // };
-
-
   const addToCart = (product) => {
     const existingItem = cartItems.find((item) => item.productId === product._id);
   
     if (existingItem) {
-      // If item already in cart, update quantity
+      // If the product is already in the cart, increase its quantity
       const updatedCart = cartItems.map((item) =>
         item.productId === product._id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCartItems(updatedCart);
+    } else {
+      // If the product is not in the cart, add it with quantity 1 and other details
+      setCartItems([
+        ...cartItems,
+        {
+          productId: product._id,
+          quantity: 1,
+          name: product.productName,
+          price: product.price,
+          imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
+        },
+      ]);
+    }
+  
+    toast.success(`${product.productName} added to cart!`);
+  };
+
+
+  // const addToCart = (product) => {
+  //   const existingItem = cartItems.find((item) => item.productId === product._id);
+  
+  //   if (existingItem) {
+  //     // If item already in cart, update quantity
+  //     const updatedCart = cartItems.map((item) =>
+  //       item.productId === product._id ? { ...item, quantity: item.quantity + 1 } : item
+  //     );
+  //     setCartItems(updatedCart);
 
       
       
-    } else {
-      // If item not in cart, add new item
-      axios.post('http://localhost:5000/api/cart', {
-        userId: 'yourUserId', // Replace with actual userId (e.g., from user authentication)
-        productId: product._id,
-        name: product.productName,
-        price: product.price,
-        imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
-        quantity: 1,
-      })
-      .then((response) => {
-        setCartItems([...cartItems, response.data]);
-        toast.success(`${product.productName} added to cart!`);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error('Error adding to cart');
-      });
-    }
-  };
+  //   } else {
+
+      
+  //     // If item not in cart, add new item
+  //     axios.post('http://localhost:5000/api/cart', {
+  //       userId: '65913f07581f920ea7c196cf', // Replace with actual userId (e.g., from user authentication)
+  //       productId: product._id,
+  //       name: product.productName,
+  //       price: product.price,
+  //       imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(/ /g, "%20")}`,
+  //       quantity: 1,
+  //     })
+  //     .then((response) => {
+  //       setCartItems([...cartItems, response.data]);
+  //       toast.success(`${product.productName} added to cart!`);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       toast.error('Error adding to cart');
+  //     });
+  //   }
+  // };
 
  
 
@@ -202,6 +206,13 @@ const MenuPage = () => {
     console.log("User Address:", userAddress);
 
     // Add logic to handle the actual payment process here
+
+    const userId = "65913f07581f920ea7c196cf"; // Replace with actual userId (e.g., from user authentication)
+    
+    // Pass the userId to the AddressInput component
+    setShowAddressModal(true);
+    setUserAddress({}); // Clear the userAddress state
+    navigate(`/address/${userId}`);
   };
 
  
@@ -304,6 +315,8 @@ const MenuPage = () => {
           
           
           <AddressInput
+
+          userId="65913f07581f920ea7c196cf" 
           
             setAddress={setUserAddress}
             onClose={() => setShowAddressModal(false)}

@@ -3,7 +3,9 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../Controllers/userControllers");
 
-const {registerMail} = require ("../middlewares/mailer")
+const {registerMail} = require ("../middlewares/mailer");
+
+const UserModel = require("../Models/userModels");
 
 // const { check, validationResult } = require('express-validator');
 
@@ -71,6 +73,29 @@ router.put('/updateuser' ,  userController.updateUser); // is use to update the 
    
 // })
 router.put('/resetPassword'  , userController.resetPassword); 
+
+
+// Update user addresses
+router.put('/updateAddresses/:userId', async (req, res) => {
+    console.log('in');
+    
+    const { address1, address2 } = req.body;
+    const userId = req.params.userId;
+  
+    try {
+      const updatedUser = await UserModel.findByIdAndUpdate(userId, {
+        $set: {
+          'addresses.address1': address1,
+          'addresses.address2': address2,
+        },
+      }, { new: true });
+  
+      res.json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 
 
