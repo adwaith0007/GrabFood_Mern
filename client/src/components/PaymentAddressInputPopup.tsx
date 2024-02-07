@@ -8,6 +8,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [showAddressInput, setShowAddressInput] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("online"); // Default to online payment
 
   useEffect(() => {
     // Fetch user addresses when the component mounts
@@ -27,7 +28,10 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   };
 
   const handleProceedToPayment = () => {
-    setShowAddressInput(false);
+    // Implement the logic to proceed to payment with the selected address and payment method
+    console.log("Proceeding to payment with address:", selectedAddress);
+    console.log("Selected Payment Method:", selectedPaymentMethod);
+    onClose(); // Close the popup after proceeding to payment
   };
 
   const handleAddAddress = () => {
@@ -48,6 +52,10 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
     }
   };
 
+  const handlePaymentMethodChange = (method) => {
+    setSelectedPaymentMethod(method);
+  };
+
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center">
       <div className="bg-white p-8 z-50 rounded-md shadow-md w-[400px]">
@@ -65,8 +73,19 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
           />
         ) : (
           <>
-            <h2 className="text-xl font-semibold mb-4">Proceed to Payment</h2>
-
+            <h2 className="text-xl font-semibold mb-4">Enter Your Address</h2>
+            <div className="mt-4">
+              {cartItems.map((item) => (
+                <CartItem
+                  key={item.productId}
+                  item={item}
+                  onRemove={() => {}}
+                  onIncrease={() => {}}
+                  onDecrease={() => {}}
+                />
+              ))}
+              <p className="text-lg font-semibold mt-2">Total Amount: ₹{getTotalAmount()}</p>
+            </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-600">Select Address:</label>
               <select
@@ -86,6 +105,32 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
               </select>
             </div>
 
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-600">Select Payment Method:</p>
+              <div className="flex">
+                <label className="mr-4">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="online"
+                    checked={selectedPaymentMethod === "online"}
+                    onChange={() => handlePaymentMethodChange("online")}
+                  />
+                  Online Payment
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={selectedPaymentMethod === "cod"}
+                    onChange={() => handlePaymentMethodChange("cod")}
+                  />
+                  Cash on Delivery
+                </label>
+              </div>
+            </div>
+
             <button
               onClick={handleAddAddress}
               className="mt-2 p-2 bg-blue-500 text-white rounded-md mr-2 hover:bg-blue-600"
@@ -93,26 +138,13 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
               Add Address
             </button>
 
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-2">Product Details</h3>
-              {cartItems.map((item) => (
-                <CartItem
-                  key={item.productId}
-                  item={item}
-                  onRemove={() => {}}
-                  onIncrease={() => {}}
-                  onDecrease={() => {}}
-                />
-              ))}
-              <p className="text-lg font-semibold mt-2">Total Amount: ₹{getTotalAmount()}</p>
-            </div>
-
             <button
               onClick={handleProceedToPayment}
               className="mt-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
             >
               Proceed to Payment
             </button>
+
           </>
         )}
       </div>
