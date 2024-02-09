@@ -7,6 +7,8 @@ const {registerMail} = require ("../middlewares/mailer");
 
 const UserModel = require("../Models/userModels");
 
+const NewUser = require("../Models/user");
+
 // const { check, validationResult } = require('express-validator');
 
 
@@ -96,6 +98,69 @@ router.put('/updateAddresses/:userId', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+
+
+
+  router.post('/user/v1/new', async (req, res) => {
+    
+    const { name, email, photo, gender, _id, dob } = req.body;
+    
+    
+    
+
+      let user = await NewUser.findById(_id);
+    
+
+    if (user)
+      return res.status(200).json({
+        success: true,
+        message: `Welcome, ${user.name}`,
+      });
+
+    if (!_id || !name || !email || !photo || !gender || !dob)
+      return next(new ErrorHandler("Please add all fields", 400));
+
+    user = await NewUser.create({
+      name,
+      email,
+      photo,
+      gender,
+      _id,
+      dob: new Date(dob),
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: `Welcome, ${user.name}`,
+    });
+  }
+);
+   
+
+
+router.get('/user/v1/:id', async (req, res,next) => {
+
+  
+    const id = req.params.id;
+    const user = await NewUser.findById(id);
+  
+    if (!user) return next(new ErrorHandler("Invalid Id", 400));
+  
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  });
+  
+
+
+
+
+
+
+      
+
 
 
 

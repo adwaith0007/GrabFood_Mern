@@ -75,13 +75,22 @@ const Login = () => {
 
       const { user } = await signInWithPopup(auth, provider)
 
-     const res = await login({
-        name:user.displayName!,
+      console.log({lname:user.displayName!,
         email:user.email!,
         photo:user.photoURL!,
         gender:"sdfg",
         role:"user",
         dob :date,
+        _id :user.uid,});
+      
+
+     const res = await login({
+        name:user.displayName!,
+        email:user.email!,
+        photo:user.photoURL!,
+        gender:"male",
+        role:"user",
+        dob :"5647",
         _id :user.uid,
       })
 
@@ -96,7 +105,7 @@ const Login = () => {
         toast.error(message)
       }
 
-      console.log(user)
+      // console.log(user)
     } catch (error) {
       toast.error("Sign In Failed");
     }

@@ -447,59 +447,59 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 
-/* POST: http://localhost:5000/api/user/new */
-exports.newUser = async (req, res) => {
-  const { name, email, photo, gender, _id, dob } = req.body;
+// /* POST: http://localhost:5000/api/user/new */
+// exports.newUser = async (req, res) => {
+//   const { name, email, photo, gender, _id, dob } = req.body;
 
-  console.log(email);
+//   console.log(email);
   
 
-  try {
-   const user = await UserModel.findOne({ email });
+//   try {
+//    const user = await UserModel.findOne({ email });
 
-   console.log(user.email);
-   console.log(user.username);
+//    console.log(user.email);
+//    console.log(user.username);
 
-     //check user
-  if (!user){
-    res.json({ success: false, message: "user not found" });
+//      //check user
+//   if (!user){
+//     res.json({ success: false, message: "user not found" });
     
-  } 
+//   } 
 
   
-  if (user)
-  return res.status(200).json({
-    success: true,
-    message: `Welcome, ${user.username}`,
-  });
+//   if (user)
+//   return res.status(200).json({
+//     success: true,
+//     message: `Welcome, ${user.username}`,
+//   });
 
-if (!_id || !name || !email || !photo || !gender || !dob)
-  return next(new ErrorHandler("Please add all fields", 400));
+// if (!_id || !name || !email || !photo || !gender || !dob)
+//   return next(new ErrorHandler("Please add all fields", 400));
 
-user = await UserModel.create({
-  name,
-  email,
-  photo,
-  gender,
-  _id,
-  dob: new Date(dob),
-});
+// user = await UserModel.create({
+//   name,
+//   email,
+//   photo,
+//   gender,
+//   _id,
+//   dob: new Date(dob),
+// });
 
-return res.status(201).json({
-  success: true,
-  message: `Welcome, ${user.username}`,
-});
+// return res.status(201).json({
+//   success: true,
+//   message: `Welcome, ${user.username}`,
+// });
 
-  //check whether blocked
-  if (user.isBlocked)
-    return res.json({ success: false, message: "user is blocked" });
+//   //check whether blocked
+//   if (user.isBlocked)
+//     return res.json({ success: false, message: "user is blocked" });
 
     
     
-  } catch (error) {
-    return res.status(500).send({ error });
-  }
-};
+//   } catch (error) {
+//     return res.status(500).send({ error });
+//   }
+// };
 
 
 
