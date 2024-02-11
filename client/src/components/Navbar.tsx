@@ -12,6 +12,7 @@ import AddToCart from "../pages/userPages/AddToCart";
 import logo from "../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
 import CartSidebar from "./CartSidebar";
+import {User} from "../types/types"
 
 const user = { _id: "ad", role: "admin" };
 
@@ -91,7 +92,11 @@ const user = { _id: "ad", role: "admin" };
 //   );
 // };
 
-const Navbar = () => {
+interface PropsType{
+  user: User | null
+}
+
+const Navbar = ({user}:PropsType) => {
   const [nav, setNav] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
