@@ -18,7 +18,7 @@ import { Link, Location, useLocation } from "react-router-dom";
 import { IconType } from "react-icons";
 import logo from "../../assets/logo-grabfood 1.png";
 
-const AdminSidebar = () => {
+const UserSidebar = () => {
   const location = useLocation();
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const AdminSidebar = () => {
         }
       >
         {/* <h2>Logo.</h2> */}
-        <img src={logo} alt=""></img>
+        {/* <img src={logo} alt=""></img> */}
         <DivOne location={location} />
         <DivTwo location={location} />
         <DivThree location={location} />
@@ -78,35 +78,35 @@ const AdminSidebar = () => {
 
 const DivOne = ({ location }: { location: Location }) => (
   <div>
-    <h5>Dashboard</h5>
+    <h5>User Dashboard</h5>
     <ul>
       <Li
         url="/admin/dashboard"
-        text="Dashboard"
+        text="User Profile"
         Icon={RiDashboardFill}
         location={location}
       />
       <Li
         url="/admin/category"
-        text="Category"
+        text="My Orders"
         Icon={RiShoppingBag3Fill}
         location={location}
       />
       <Li
         url="/admin/product"
-        text="Product"
+        text="Manage Address"
         Icon={RiShoppingBag3Fill}
         location={location}
       />
       <Li
         url="/admin/customer"
-        text="Customer"
+        text="Favourites"
         Icon={IoIosPeople}
         location={location}
       />
       <Li
         url="/admin/transaction"
-        text="Transaction"
+        text="My Wallet"
         Icon={AiFillFileText}
         location={location}
       />
@@ -192,4 +192,4 @@ const Li = ({ url, text, location, Icon }: LiProps) => (
   </li>
 );
 
-export default AdminSidebar;
+export default UserSidebar;

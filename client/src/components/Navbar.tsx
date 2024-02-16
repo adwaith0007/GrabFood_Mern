@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-import { AiOutlineClose, AiOutlineMenu, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import {
+  AiOutlineClose,
+  AiOutlineMenu,
+  AiOutlineMinus,
+  AiOutlinePlus,
+} from "react-icons/ai";
 import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
@@ -12,13 +17,12 @@ import AddToCart from "../pages/userPages/AddToCart";
 import logo from "../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
 import CartSidebar from "./CartSidebar";
-import {User} from "../types/types"
+import { User } from "../types/types";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
+import toast from "react-hot-toast";
 
 const user = { _id: "ad", role: "admin" };
-
-
-
-
 
 // const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
 //   return (
@@ -92,17 +96,26 @@ const user = { _id: "ad", role: "admin" };
 //   );
 // };
 
-interface PropsType{
-  user: User | null
+interface PropsType {
+  user: User | null;
 }
 
-const Navbar = ({user}:PropsType) => {
+const Navbar = ({ user }: PropsType) => {
   const [nav, setNav] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Product 1", quantity: 2, price: 20 },
     { id: 2, name: "Product 2", quantity: 1, price: 15 },
   ]); // Assume you have a state for cart items
+
+
+  const [isOpenUser, setIsOpenUser] = useState(false);
+  const isLoggedIn = true; // Replace with your authentication logic
+  const userImage = 'https://example.com/user-image.jpg'; // Replace with the actual user image URL
+
+  const toggleDropdown = () => {
+    setIsOpenUser(!isOpenUser);
+  };
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -112,6 +125,18 @@ const Navbar = ({user}:PropsType) => {
 
   const closeCart = () => {
     setIsCartOpen(false);
+  };
+
+  const logoutHandler = async () => {
+    try {
+      await signOut(auth);
+
+      toast.success("Sign Out Successfully");
+
+      setIsOpen(false);
+    } catch (error) {
+      toast.error("Sign Out Fail");
+    }
   };
 
   return (
@@ -150,6 +175,72 @@ const Navbar = ({user}:PropsType) => {
                 <button onClick={() => setIsOpen((prev) => !prev)}>
                   <FaUser />
                 </button>
+
+
+
+
+                <div className="relative inline-block text-left">
+      <div>
+        <button
+          onClick={toggleDropdown}
+          type="button"
+          className="inline-flex justify-center items-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+        >
+          {isLoggedIn ? (
+            <>
+              <img
+                className="w-6 h-6 rounded-full mr-2"
+                src={userImage}
+                alt="User Profile"
+              />
+              User Name
+            </>
+          ) : (
+            <>
+              User Logo
+            </>
+          )}
+          <svg
+            className={`w-5 h-5 ml-2 -mr-1 ${isOpenUser ? 'transform rotate-180' : ''}`}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+      </div>
+
+      {isOpenUser && (
+        <div className="absolute right-0 mt-2 space-y-2 bg-white border border-gray-300 rounded-md shadow-lg">
+          {isLoggedIn ? (
+            <>
+              <Link to="user/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Profile
+              </Link>
+              <button onClick={logoutHandler}  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Login
+              </a>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Register
+              </a>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+
+
+
+               
+
                 <dialog open={isOpen}>
                   <div>
                     {user.role === "admin" && (
@@ -158,31 +249,37 @@ const Navbar = ({user}:PropsType) => {
 
                     {user.role === "user" && <Link to="/orders">Orders</Link>}
 
-                    <button>
+                    <button onClick={logoutHandler}>
                       <FaSignOutAlt />
                     </button>
                   </div>
                 </dialog>
               </>
             ) : (
-              <Link to="/">
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  Login
-                </button>
-              </Link>
-            )}
+              <div className="gap-10 flex ">
+                <div>
+                  <Link to="/login">
+                    <button
+                      type="button"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                      Login
+                    </button>
+                  </Link>
+                </div>
 
-            <Link to="/signup">
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Sign Up
-              </button>
-            </Link>
+                <div>
+                  <Link to="/signup">
+                    <button
+                      type="button"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                      Sign Up
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
           <div
             className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
@@ -234,40 +331,44 @@ const Navbar = ({user}:PropsType) => {
         {isCartOpen ? (
           // <AddToCart cartItems={cartItems} closeCart={closeCart} />
           <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
-        ) : ("") }
+        ) : (
+          ""
+        )}
 
-
-
-{isCartOpen && (
-        <CartSidebar
-          cartItems={cartItems}
-          closeCart={closeCart}
-          onRemove={(itemId) => {
-            const updatedCart = cartItems.filter((item) => item.id !== itemId);
-            setCartItems(updatedCart);
-          }}
-          onIncrease={(itemId) => {
-            const updatedCart = cartItems.map((item) =>
-              item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
-            );
-            setCartItems(updatedCart);
-          }}
-          onDecrease={(itemId) => {
-            const updatedCart = cartItems.map((item) =>
-              item.id === itemId && item.quantity > 1
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
-            );
-            setCartItems(updatedCart);
-          }}
-          onProceedToPayment={() => {
-            // Implement your logic for proceeding to payment
-            // This can include routing to a payment page or any other relevant action
-            console.log("Proceeding to payment...");
-          }}
-        />
-      )}
-{/* 
+        {isCartOpen && (
+          <CartSidebar
+            cartItems={cartItems}
+            closeCart={closeCart}
+            onRemove={(itemId) => {
+              const updatedCart = cartItems.filter(
+                (item) => item.id !== itemId
+              );
+              setCartItems(updatedCart);
+            }}
+            onIncrease={(itemId) => {
+              const updatedCart = cartItems.map((item) =>
+                item.id === itemId
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item
+              );
+              setCartItems(updatedCart);
+            }}
+            onDecrease={(itemId) => {
+              const updatedCart = cartItems.map((item) =>
+                item.id === itemId && item.quantity > 1
+                  ? { ...item, quantity: item.quantity - 1 }
+                  : item
+              );
+              setCartItems(updatedCart);
+            }}
+            onProceedToPayment={() => {
+              // Implement your logic for proceeding to payment
+              // This can include routing to a payment page or any other relevant action
+              console.log("Proceeding to payment...");
+            }}
+          />
+        )}
+        {/* 
 {isCartOpen && (
         <CartSidebar
           cartItems={cartItems}
@@ -284,8 +385,7 @@ const Navbar = ({user}:PropsType) => {
         />
       )} this is good */}
 
-
-          {/* Side drawer menu */}
+        {/* Side drawer menu */}
 
         {/* <div
           className={
@@ -333,8 +433,6 @@ const Navbar = ({user}:PropsType) => {
             </ul>
           </nav>
         </div> */}
-
-
 
         {/* Mobile Menu */}
         {/* Overlay */}

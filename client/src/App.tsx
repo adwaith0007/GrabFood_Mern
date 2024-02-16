@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import Loader from './components/loader';
 import Navbar from './components/Navbar';
 import Category from './pages/admin/Category';
-import Profile from './pages/userPages/(logged-in)/Profile';
+import ProfileUpdate from './pages/userPages/(logged-in)/ProfileUpdate';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import { userExist, userNotExist } from './redux/reducer/useReducer';
 import { getUser } from './redux/api/userAPI';
 import { UserReducerInitialState } from './types/reducer-types';
 import ProtectedRoute from './components/protected-route';
+import UserProfile from './pages/userPages/userDashbord/UserProfile';
 
 
 const ProductDetailsPage = lazy(()=> import ('./components/ProductDetailsPage') ) ;
@@ -92,9 +93,9 @@ function App() {
     
 <Routes>
   {/* user */}
-  <Route  path='/home' element={ <AuthorizeUser>  <Home  /> </AuthorizeUser> } ></Route>
-  {/* <Route  path='/menu' element={<MenuPage/>} ></Route> */}
-  <Route  path='/' element={<MenuPage/>} ></Route>
+  <Route  path='/' element={ <AuthorizeUser>  <Home  /> </AuthorizeUser> } ></Route>
+  <Route  path='/menu' element={<MenuPage/>} ></Route>
+  {/* <Route  path='/' element={<MenuPage/>} ></Route> */}
   <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login/></ProtectedRoute>} ></Route>
   <Route  path='/signup' element={<SignUp/>} ></Route>
   <Route  path='/otp' element={<Otp/>} ></Route>
@@ -102,8 +103,8 @@ function App() {
 
 <Route element={<ProtectedRoute isAuthenticated={user? true : false } />}  >
 
-
-  <Route  path='/profile' element={<Profile/>} ></Route>
+<Route  path='user/profile' element={<UserProfile/>} ></Route>
+  <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>
   <Route path="/product/:productId"   element={<ProductDetailsPage/>} />
 
 </Route>

@@ -15,7 +15,7 @@ import { registerValidation } from '../../helper/validate'
 import { registerUser } from "../../helper/helper";
 
 import { useDispatch } from 'react-redux';
-import { setUser } from './../../redux/userSlice';
+// import { setUser } from './../../redux/userSlice';
 
 
 
@@ -48,7 +48,7 @@ const SignUp = () => {
             success:<b>Register Successfully...!</b>,
             error:<b>Could not Register.</b>
           })
-          dispatch(setUser(values.username));
+          // dispatch(setUser(values.username));
           registerPromise.then(function(){navigate('/otp')})
           
         }

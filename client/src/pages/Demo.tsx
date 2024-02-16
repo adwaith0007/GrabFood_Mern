@@ -1,45 +1,82 @@
-import React from "react";
+import React, { useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 
-const Demo = ({ selectedOrder, onClose, onConfirmOrder }) => {
-  if (!selectedOrder) {
-     // Handle case where there is no selected order
-     console.error("No order details available");
-     return null;
-   }
+const Demo = () => {
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = true; // Replace with your authentication logic
+  const userImage = 'https://example.com/user-image.jpg'; // Replace with the actual user image URL
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
  
-   const { products, totalAmount } = selectedOrder;
   return (
-    <div className="fixed top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center">
-      <div className="bg-white p-8 z-50 rounded-md shadow-md w-[400px]">
-        <div className="flex justify-end">
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
-            <AiOutlineClose size={24} />
-          </button>
-        </div>
+    
+      
 
-        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Product Details</h3>
-          {products.map((product) => (
-            <div key={product.productId} className="flex items-center justify-between mb-2">
-              <p className="text-gray-800">hjk</p>
-              <p className="text-gray-600">Quantity: cv</p>
-            </div>
-          ))}
-          <p className="text-lg font-semibold mt-2">Total Amount: ₹{totalAmount}</p>
-        </div>
-
+    <div className="bg-gray-200 p-8">
+    <div className="relative inline-block text-left">
+      <div>
         <button
-          // onClick={onConfirmOrder}
-          className="mt-4 p-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+          onClick={toggleDropdown}
+          type="button"
+          className="inline-flex justify-center items-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
         >
-          Confirm Order
+          {isLoggedIn ? (
+            <>
+              <img
+                className="w-6 h-6 rounded-full mr-2"
+                src={userImage}
+                alt="User Profile"
+              />
+              User Name
+            </>
+          ) : (
+            <>
+              User Logo
+            </>
+          )}
+          <svg
+            className={`w-5 h-5 ml-2 -mr-1 ${isOpen ? 'transform rotate-180' : ''}`}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
         </button>
       </div>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 space-y-2 bg-white border border-gray-300 rounded-md shadow-lg">
+          {isLoggedIn ? (
+            <>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Profile
+              </a>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Logout
+              </a>
+            </>
+          ) : (
+            <>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Login
+              </a>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Register
+              </a>
+            </>
+          )}
+        </div>
+      )}
     </div>
-  )
+  </div>
+
+
+  )  
 }
 
 export default Demo
