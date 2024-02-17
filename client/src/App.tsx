@@ -22,6 +22,7 @@ import ProtectedRoute from './components/protected-route';
 import UserProfile from './pages/userPages/userDashbord/UserProfile';
 
 
+const ResetPassword = lazy(()=> import ('./pages/userPages/ResetPassword') ) ;
 const ProductDetailsPage = lazy(()=> import ('./components/ProductDetailsPage') ) ;
 
 const Login = lazy(()=> import ('./pages/userPages/Login') ) ;
@@ -52,15 +53,14 @@ const Coupon = lazy(() => import("./pages/admin/apps/coupon"));
 const Stopwatch = lazy(() => import("./pages/admin/apps/stopwatch"));
 const Toss = lazy(() => import("./pages/admin/apps/toss"));
 const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
-const ProductManagement = lazy(
-  () => import("./pages/admin/management/productmanagement")
-);
-const TransactionManagement = lazy(
-  () => import("./pages/admin/management/transactionmanagement")
-);
-
-
-function App() {
+const NewCategory = lazy(() => import("./pages/admin/management/newcategory"));
+const ProductManagement = lazy(() => import("./pages/admin/management/productmanagement"));
+const CategoryManagement = lazy(() => import("./pages/admin/management/categorymanagement"));
+  const TransactionManagement = lazy(() => import("./pages/admin/management/transactionmanagement"));
+    
+   
+    
+    function App() {
 
   const {user,loading} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer)
 
@@ -99,6 +99,7 @@ function App() {
   <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login/></ProtectedRoute>} ></Route>
   <Route  path='/signup' element={<SignUp/>} ></Route>
   <Route  path='/otp' element={<Otp/>} ></Route>
+  <Route  path='/forgot_password' element={<ResetPassword/>} ></Route>
 
 
 <Route element={<ProtectedRoute isAuthenticated={user? true : false } />}  >
@@ -151,7 +152,11 @@ function App() {
   {/* Management */}
   <Route path="/admin/product/new" element={<NewProduct />} />
 
+  <Route path="/admin/category/new" element={<NewCategory />} />
+
   <Route path="/admin/product/:id" element={<ProductManagement />} />
+
+  <Route path="/admin/category/:id" element={<CategoryManagement />} />
 
   <Route path="/admin/transaction/:id" element={<TransactionManagement />} />
 </Route>;

@@ -35,7 +35,9 @@ const NewProduct = () => {
 
     if (files && files.length > 0) {
       // Check if the uploaded file is an image
-      const isValidImage = Array.from(files).every((file) => file.type.startsWith("image/"));
+      const isValidImage = Array.from(files).every((file) =>
+        file.type.startsWith("image/")
+      );
 
       if (isValidImage) {
         setSelectedImages((prevImages) => [...prevImages, ...files]);
@@ -79,7 +81,10 @@ const NewProduct = () => {
     });
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/admin/product/add`, formData);
+      const response = await axios.post(
+        `http://localhost:5000/api/admin/product/add`,
+        formData
+      );
 
       if (response.data.success) {
         toast.success("Product added");
@@ -104,7 +109,11 @@ const NewProduct = () => {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
-          setProduct((prevProduct) => ({ ...prevProduct, photoPrev: reader.result, photo: file }));
+          setProduct((prevProduct) => ({
+            ...prevProduct,
+            photoPrev: reader.result,
+            photo: file,
+          }));
         }
       };
     }
@@ -114,6 +123,39 @@ const NewProduct = () => {
     <div className="admin-container">
       <AdminSidebar />
       <main className="product-management">
+        <section>
+
+        {product.category.length > 0 && <p className="" >{product.category}</p>}
+          {selectedImages.length > 0 && (
+            <div className="form-group">
+              <div className="grid grid-cols-3 gap-4 mt-1">
+                {selectedImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Preview ${index}`}
+                      className="w-full h-32 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {product.name.length > 0 && <p>{` ${product.name}`}</p>}
+
+          {product.price > 0 && <h3>₹{product.price}</h3>}
+
+          {product.desc.length > 0 && <p className="" >{product.desc}</p>}
+        </section>
+
         <article>
           <form onSubmit={handleFormSubmit}>
             <h2>New Product</h2>
@@ -123,7 +165,9 @@ const NewProduct = () => {
                 type="text"
                 placeholder="Name"
                 name="name"
-                onChange={(e) => setProduct({ ...product, name: e.target.value })}
+                onChange={(e) =>
+                  setProduct({ ...product, name: e.target.value })
+                }
               />
             </div>
             <div className="form-group">
@@ -133,7 +177,9 @@ const NewProduct = () => {
                 id="productPrice"
                 placeholder="Price"
                 name="price"
-                onChange={(e) => setProduct({ ...product, price: e.target.value })}
+                onChange={(e) =>
+                  setProduct({ ...product, price: e.target.value })
+                }
               />
             </div>
             <div className="form-group">
@@ -143,7 +189,9 @@ const NewProduct = () => {
                 id="productDesc"
                 placeholder="Description"
                 name="desc"
-                onChange={(e) => setProduct({ ...product, desc: e.target.value })}
+                onChange={(e) =>
+                  setProduct({ ...product, desc: e.target.value })
+                }
               />
             </div>
 
@@ -152,7 +200,9 @@ const NewProduct = () => {
               <select
                 name="category"
                 id="category"
-                onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                onChange={(e) =>
+                  setProduct({ ...product, category: e.target.value })
+                }
                 className="min-w-[180px] w-[20vw] border border-teal-700 rounded-xl p-2 text-sm"
               >
                 <option value="">----Choose options----</option>
@@ -164,10 +214,6 @@ const NewProduct = () => {
               </select>
             </div>
 
-            
-
-            
-
             <div className="form-group">
               <label>Photo</label>
               <div className="flex items-center">
@@ -177,11 +223,18 @@ const NewProduct = () => {
                 >
                   Upload Images
                 </label>
-                <input type="file" id="imageInput" accept="image/*" multiple className="hidden" onChange={handleImageChange} />
+                <input
+                  type="file"
+                  id="imageInput"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
               </div>
             </div>
 
-            {selectedImages.length > 0 && (
+            {/* {selectedImages.length > 0 && (
               <div className="form-group">
                 
                 <div className="grid grid-cols-3 gap-4 mt-1">
@@ -199,14 +252,15 @@ const NewProduct = () => {
                   ))}
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* {product.photoPrev && <img src={product.photoPrev} alt="New Image" className="mt-4 rounded-md" />} */}
-            <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300">
+            <button
+              type="submit"
+              className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300"
+            >
               Create
             </button>
-
-           
           </form>
         </article>
       </main>

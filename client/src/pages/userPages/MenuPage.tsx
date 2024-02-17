@@ -267,35 +267,7 @@ const MenuPage = () => {
 
 
 
-        {/* {cartItems.length > 0 && (
-        <CartSidebar
-          cartItems={cartItems}
-          closeCart={closeCart}
-          onRemove={(itemId) => {
-            const updatedCart = cartItems.filter((item) => item.id !== itemId);
-            setCartItems(updatedCart);
-          }}
-          onIncrease={(itemId) => {
-            const updatedCart = cartItems.map((item) =>
-              item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
-            );
-            setCartItems(updatedCart);
-          }}
-          onDecrease={(itemId) => {
-            const updatedCart = cartItems.map((item) =>
-              item.id === itemId && item.quantity > 1
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
-            );
-            setCartItems(updatedCart);
-          }}
-          onProceedToPayment={() => {
-            // Implement your logic for proceeding to payment
-            // This can include routing to a payment page or any other relevant action
-            console.log("Proceeding to payment...");
-          }}
-        />
-      )} */}
+       
 
 
 {cartItems.length > 0 && (
@@ -325,41 +297,7 @@ const MenuPage = () => {
         )}
 
 
-        {/* {cartItems.length > 0 && (
-          <CartSidebar
-            cartItems={cartItems}
-            closeCart={() => {}}
-            onRemove={() => {}}
-            onIncrease={() => {}}
-            onDecrease={() => {}}
-            onProceedToPayment={() => {}}
-          />
-        )} */}
-        
-
        
-
-        {/* <div className="grid grid-cols-4 gap-4">
-          {productList.map((item) => (
-            <div key={item._id}>
-
-              {item.productImage && item.productImage[0] && (
-                <>
-                  
-                  <ProductCard
-                    productId={item._id}
-                    price={item.price}
-                    description={item.Description} 
-                    
-                    name={item.productName}
-                    imageUrl={`http://localhost:5000/${item.productImage[0].originalname.replace(/ /g, "%20")}`}
-                    handler={addtoCart}
-                  />
-                </>
-              )}
-            </div>
-          ))}
-        </div> */}
 
 
       </div>

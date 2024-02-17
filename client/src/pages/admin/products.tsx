@@ -1,4 +1,6 @@
-import { ReactElement, useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { ReactElement } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
@@ -9,7 +11,7 @@ interface DataType {
   photo: ReactElement;
   name: string;
   price: number;
-  stock: number;
+  category: string;
   action: ReactElement;
 }
 
@@ -27,8 +29,8 @@ const columns: Column<DataType>[] = [
     accessor: "price",
   },
   {
-    Header: "Stock",
-    accessor: "stock",
+    Header: "Category",
+    accessor: "category",
   },
   {
     Header: "Action",
@@ -36,31 +38,44 @@ const columns: Column<DataType>[] = [
   },
 ];
 
-const img =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
-
-const img2 = "https://m.media-amazon.com/images/I/514T0SvwkHL._SL1500_.jpg";
-
-const arr: Array<DataType> = [
-  {
-    photo: <img src={img} alt="Shoes" />,
-    name: "Puma Shoes Air Jordan Cook Nigga 2023",
-    price: 690,
-    stock: 3,
-    action: <Link to="/admin/product/sajknaskd">Manage</Link>,
-  },
-
-  {
-    photo: <img src={img2} alt="Shoes" />,
-    name: "Macbook",
-    price: 232223,
-    stock: 213,
-    action: <Link to="/admin/product/sdaskdnkasjdn">Manage</Link>,
-  },
-];
-
 const Products = () => {
-  const [rows, setRows] = useState<DataType[]>(arr);
+  const [productList, setProductList] = useState([]);
+  const [rows, setRows] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/product/");
+        if (response.data.success) {
+          setProductList(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error while loading products", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    // Update rows with the data from productList
+    const newRows: DataType[] = productList.map((item) => ({
+
+      
+      photo: (
+        <img
+          src={`http://localhost:5000/${item.productImage[0]?.originalname.replace(/ /g, "%20")}`}
+          alt={item.name}
+        />
+      ),
+      name: item.productName,
+      price: item.price,
+      category: item.category,
+      action: <Link to={`/admin/product/${item._id}`}>Manage</Link>,
+    }));
+
+    setRows(newRows);
+  }, [productList]);
 
   const Table = TableHOC<DataType>(
     columns,

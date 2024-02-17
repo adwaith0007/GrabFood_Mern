@@ -46,6 +46,8 @@ router.post("/items/get", (req, res) => {
 // GET Methods
 
 router.get("/category", (req, res) => {
+  
+  
   itemControllers.listCategory(req, res);
 });
 

@@ -117,6 +117,8 @@ exports.addCategory2 = async (req, res) => {
 exports.listCategory = async (req, res) => {
   try {
     const data = await categoryModel.find({});
+    console.log('hiiiii');
+    
     res.status(200).json({ success: true, data: data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

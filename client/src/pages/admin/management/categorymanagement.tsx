@@ -7,41 +7,41 @@ import AdminSidebar from "../../../components/admin/AdminSidebar";
 const defaultImg =
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
-const ProductManagement = () => {
+const CategoryManagement = () => {
   const { id } = useParams<{ id: string }>();
-  const [productDetails, setProductDetails] = useState<any>({});
+  const [CategoryDetails, setCategoryDetails] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
+    const fetchCategoryDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/product/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/Category/${id}`);
         if (response.data.success) {
-          setProductDetails(response.data.data);
+          setCategoryDetails(response.data.data);
         } else {
-          setError(response.data.message || "Failed to fetch product details");
+          setError(response.data.message || "Failed to fetch Category details");
         }
       } catch (error) {
-        setError("Error fetching product details");
+        setError("Error fetching Category details");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProductDetails();
+    fetchCategoryDetails();
   }, [id]);
 
   const {
-    _id: productId,
-    productName: name,
+    _id: categoryId,
+    CategoryName: name,
     price,
     
     category,
-    productImage,
-  } = productDetails;
+    CategoryImage,
+  } = CategoryDetails;
 
-  const image = `http://localhost:5000/${productDetails.productImage?.[0]?.originalname.replace(/ /g, "%20")}`
+  const image = `http://localhost:5000/${CategoryDetails.CategoryImage?.[0]?.originalname.replace(/ /g, "%20")}`
 
   const [priceUpdate, setPriceUpdate] = useState<number>(price );
  
@@ -51,13 +51,13 @@ const ProductManagement = () => {
 
   // const [photoUpdate, setPhotoUpdate] = useState( image );
 
-  const [photoUpdate, setPhotoUpdate] = useState<string>(productImage?.[0]?.url || defaultImg);
+  const [photoUpdate, setPhotoUpdate] = useState<string>(CategoryImage?.[0]?.url || defaultImg);
 
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [updating, setUpdating] = useState<boolean>(false);
  
 
-  // console.log(`http://localhost:5000/${productDetails.productImage?.[0]?.originalname.replace(/ /g, "%20")}` );
+  // console.log(`http://localhost:5000/${CategoryDetails.CategoryImage?.[0]?.originalname.replace(/ /g, "%20")}` );
   // console.log(photoUpdate);
 
   console.log(image);
@@ -86,7 +86,7 @@ const ProductManagement = () => {
     try {
       setUpdating(true);
 
-      // Update the product on the server
+      // Update the Category on the server
       const formData = new FormData();
       formData.append("name", nameUpdate);
       formData.append("price", String(priceUpdate));
@@ -96,7 +96,7 @@ const ProductManagement = () => {
         formData.append("photo", photoFile);
       }
 
-      await axios.put(`http://localhost:5000/api/product/${productId}`, formData);
+      await axios.put(`http://localhost:5000/api/Category/${CategoryId}`, formData);
 
       // Update local state with the new values
       setPrice(priceUpdate);
@@ -104,8 +104,8 @@ const ProductManagement = () => {
       setCategory(categoryUpdate);
       setPhoto(photoUpdate);
     } catch (error) {
-      console.error("Error updating product", error);
-      setError("Failed to update product");
+      console.error("Error updating Category", error);
+      setError("Failed to update Category");
     } finally {
       setUpdating(false);
     }
@@ -113,13 +113,13 @@ const ProductManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     try {
-      // Delete the product on the server
-      await axios.delete(`http://localhost:5000/api/product/${productId}`);
+      // Delete the Category on the server
+      await axios.delete(`http://localhost:5000/api/category/${categoryId}`);
 
       // Handle local state or redirect as needed
     } catch (error) {
-      console.error("Error deleting product", error);
-      setError("Failed to delete product");
+      console.error("Error deleting Category", error);
+      setError("Failed to delete Category");
     }
   };
 
@@ -136,9 +136,9 @@ const ProductManagement = () => {
       <AdminSidebar />
       <main className="product-management">
         <section>
-          <strong>ID - {productId}</strong>
-          {/* <img src={photoUpdate} alt="Product" /> */}
-          <img src={image} alt="Product" />
+          <strong>ID - {categoryId}</strong>
+          {/* <img src={photoUpdate} alt="Category" /> */}
+          <img src={image} alt="Category" />
           <p>{name}</p>
           
           <h3>₹{price}</h3>
@@ -230,4 +230,4 @@ const ProductManagement = () => {
   );
 };
 
-export default ProductManagement;
+export default CategoryManagement;

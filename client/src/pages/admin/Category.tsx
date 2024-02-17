@@ -1,15 +1,18 @@
-import { ReactElement, useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { ReactElement} from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
+import toast, { Toaster } from "react-hot-toast";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
 
 interface DataType {
   photo: ReactElement;
   name: string;
-  price: number;
-  stock: number;
+  // price: number;
+  // stock: number;
   action: ReactElement;
 }
 
@@ -22,14 +25,14 @@ const columns: Column<DataType>[] = [
     Header: "Name",
     accessor: "name",
   },
-  {
-    Header: "Price",
-    accessor: "price",
-  },
-  {
-    Header: "Stock",
-    accessor: "stock",
-  },
+  // {
+  //   Header: "Price",
+  //   accessor: "price",
+  // },
+  // {
+  //   Header: "Stock",
+  //   accessor: "stock",
+  // },
   {
     Header: "Action",
     accessor: "action",
@@ -60,7 +63,49 @@ const arr: Array<DataType> = [
 ];
 
 const Category = () => {
-    const [rows, setRows] = useState<DataType[]>(arr);
+
+
+  const [categoryList, setCategoryList] = useState([]);
+  const [rows, setRows] = useState<DataType[]>(arr);
+
+
+  useEffect(() => {
+    try {
+      axios.get(`http://localhost:5000/api/admin/category`).then((res) => {
+        if (res.data.success) {
+          setCategoryList(res.data.data);
+        }
+      });
+    } catch (error) {
+      toast.error("Error white while loading categories");
+      console.log(error);
+    }
+
+
+  }, []);
+
+
+
+  useEffect(() => {
+    // Update rows with the data from productList
+    const newRows: DataType[] = categoryList.map((item) => ({
+
+      
+      photo: (
+        <img
+          src={`http://localhost:5000/${item.categoryImage[0]?.originalname.replace(/ /g, "%20")}`}
+          alt={item.category}
+        />
+      ),
+      name: item.category,
+      
+      // category: item.category,
+      action: <Link to={`/admin/category/${item._id}`}>Manage</Link>,
+    }));
+
+    setRows(newRows);
+  }, [categoryList]);
+
 
     const Table = TableHOC<DataType>(
       columns,
@@ -74,7 +119,7 @@ const Category = () => {
       <div className="admin-container">
         <AdminSidebar />
         <main>{Table}</main>
-        <Link to="/admin/product/new" className="create-product-btn">
+        <Link to="/admin/category/new" className="create-product-btn">
           <FaPlus />
         </Link>
       </div>

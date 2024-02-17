@@ -120,9 +120,7 @@ const Login = () => {
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
-      {/* <Navbar /> */}
-
-      {/* <Toaster position="top-center" reverseOrder={false}></Toaster> */}
+     
 
       <div className="container custom-height flex justify-center items-center mx-auto ">
         <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">
@@ -197,7 +195,7 @@ const Login = () => {
                     </label>
                   </div>
 
-                  <Link to="#" className="text-gray-900 hover:underline">
+                  <Link to="/forgot_password" className="text-gray-900 hover:underline">
                     Forgot password?
                   </Link>
                 </div>
