@@ -34,7 +34,7 @@ const MenuPage = lazy(()=> import ('./pages/userPages/MenuPage') ) ;
 
 
 const LoginPage = lazy(()=> import ('./pages/adminPages/LoginPage') ) ; 
-const Customers2 = lazy(() => import("./pages/adminPages/Customers"));
+const Customers = lazy(() => import("./pages/adminPages/Customers"));
 const SignupPage = lazy(()=> import ('./pages/adminPages/SignupPage') ) ; 
 const AddCategory = lazy(()=> import ('./pages/adminPages/AddCategory') ) ; 
 const AddProduct = lazy(()=> import ('./pages/adminPages/AddProduct') ) ; 
@@ -44,7 +44,7 @@ const Demo = lazy(()=> import ('./pages/Demo') ) ;
 
 const Dashboard = lazy(() => import("./pages/admin/dashboard"));
 const Products = lazy(() => import("./pages/admin/products"));
-const Customers = lazy(() => import("./pages/admin/customers"));
+// const Customers = lazy(() => import("./pages/admin/customers"));
 const Transaction = lazy(() => import("./pages/admin/transaction"));
 const Barcharts = lazy(() => import("./pages/admin/charts/barcharts"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));
@@ -63,6 +63,9 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
     function App() {
 
   const {user,loading} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer)
+
+
+  
 
   const dispatch = useDispatch()
 
@@ -93,7 +96,9 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
     
 <Routes>
   {/* user */}
-  <Route  path='/' element={ <AuthorizeUser>  <Home  /> </AuthorizeUser> } ></Route>
+  {/* <Route  path='/' element={ <AuthorizeUser>  <Home  /> </AuthorizeUser> } ></Route> */}
+
+  <Route  path='/' element={  <Home  />  } ></Route>
   <Route  path='/menu' element={<MenuPage/>} ></Route>
   {/* <Route  path='/' element={<MenuPage/>} ></Route> */}
   <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login/></ProtectedRoute>} ></Route>
@@ -121,7 +126,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   {/* Admin */}
   <Route  path='/admin' element={<LoginPage/>} ></Route>
   <Route  path='/admin/signup' element={<SignupPage/>} ></Route>
-  <Route  path='/admin/customers2' element={<Customers2/>} ></Route>
+  
   <Route  path='/admin/category/add' element={<AddCategory/>} ></Route>
   <Route  path='/admin/product/add2' element={<AddProduct/>} ></Route>
  
@@ -138,7 +143,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   <Route path="/admin/dashboard" element={<Dashboard />} />
   <Route path="/admin/product" element={<Products />} />
   <Route path="/admin/category" element={<Category/>} />
-  <Route path="/admin/customer" element={<Customers />} />
+  <Route path="/admin/customer" element={<Customers/>} />
   <Route path="/admin/transaction" element={<Transaction />} />
   {/* Charts */}
   <Route path="/admin/chart/bar" element={<Barcharts />} />

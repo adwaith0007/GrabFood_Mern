@@ -4,14 +4,30 @@ import { getCustomers } from '../../helper/helper';
 import axios from 'axios';
 import { server } from '../../server';
 import toast from "react-hot-toast";
+import TableHOC from '../../components/admin/TableHOC';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+
+
+// interface DataType {
+//   photo: ReactElement;
+//   name: string;
+//   price: number;
+//   category: string;
+//   action: ReactElement;
+// }
 
 
 
 
 const columns = [
+  // {
+  //   Header: 'S.NO',
+  //   accessor: (row, index) => index + 1,
+  // },
+
   {
     Header: 'S.NO',
-    accessor: (row, index) => index + 1,
+    accessor: 'no'
   },
   
   {
@@ -29,16 +45,7 @@ const columns = [
   {
     Header: 'BLOCK',
     accessor: 'block',
-    Cell: ({ row }) => (
-      <button
-        className={`px-2 py-1 ${
-          row.original.isBlocked ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-        }`}
-        onClick={() => handleBlock(row.original.id, row.original.isBlocked        )}
-      >
-        {row.original.isBlocked ? 'Unblock' : 'Block'}
-      </button>
-    ),
+    
   },
 ];
 
@@ -59,6 +66,8 @@ const Customers = () => {
 
   const [customerData, setCustomerData] = useState([]);
 
+  const [rows, setRows] = useState([]);
+
 
 
   useEffect(() => {
@@ -77,81 +86,78 @@ const Customers = () => {
   }, []);
 
   console.log(customerData);
+
+
   
+  
+
+  useEffect(() => {
+    const newRows = customerData.map((item, index) => ({
+      no: index + 1,
+      username: item.username,
+      email: item.email,
+      phone: item.phone,
+      
+
+      block: <button
+          className={`px-2 py-1  ${
+            item.isBlocked ? 'bg-red-500 text-white  ' : 'bg-green-500 text-white'
+          }`}
+          onClick={() => handleBlock(item._id, item.isBlocked   )}
+        >
+          {item.isBlocked ?   'Unblock' : 'Block'}
+        </button>
+
+
+    }));
+    setRows(newRows);
+  }, [customerData]);
 
   
 
   const handleBlock = async (id, isBlocked) => {
     try {
-      console.log("hi");
       
+      console.log(id);
       
-      const response = await axios.put(
-      `http://localhost:5000/api/admin/customers/${id}`,
-      { blocked: !isBlocked }
-    );
-      // const response = await apiCallToUpdateBlockStatus(id, !isBlocked);
-      console.log(response); // Log the API response
+      const response = await axios.put(`http://localhost:5000/api/admin/customers?id=${id}`,
+        { isBlocked: !isBlocked }
+        );
+     
+      console.log(response); 
   
       // Update the local state with the new data after block/unblock
       const updatedCustomerData = customerData.map((customer) =>
-        customer.id === id ? { ...customer, blocked: !isBlocked } : customer
+        customer._id === id ? { ...customer, isBlocked: !isBlocked } : customer
       );
       setCustomerData(updatedCustomerData);
+
+      toast.success(`Customer ${isBlocked ? 'Unblocked' : 'Blocked'} successfully`);
     } catch (error) {
       console.error('Error updating block status:', error);
+
+      toast.error('Error updating block status');
     }
   };
 
 
   
-  
-  
-  
-  
- 
-
-  // Handle block/unblock action
-  
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+  const Table = TableHOC(
     columns,
-    data: customerData, // Use the fetched customer data
-  });
+    rows,
+    "dashboard-product-box",
+    "Products",
+    rows.length > 6
+  )();
+
 
   return (
-    <div className='container mx-auto mt-8'>
-      <table {...getTableProps()} className='min-w-full bg-white border border-gray-300'>
-        <thead>
-          {headerGroups.map((hg) => (
-            <tr {...hg.getHeaderGroupProps()} className='bg-gray-100'>
-              {hg.headers.map((header) => (
-                <th
-                  {...header.getHeaderProps()}
-                  className='p-2 font-semibold text-left border border-gray-300'
-                >
-                  {header.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
+   
 
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()} className='hover:bg-gray-50'>
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()} className='p-2 border border-gray-300'>
-                    {cell.render('Cell')}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+<div className="admin-container">
+      <AdminSidebar />
+
+<main>{Table}</main>
     </div>
   );
 };

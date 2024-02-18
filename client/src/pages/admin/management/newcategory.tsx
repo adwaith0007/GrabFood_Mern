@@ -13,7 +13,7 @@ const NewCategory = () => {
         images: [],
       });
     
-      const [categoryList, setCategoryList] = useState([]);
+     
     
       const [selectedImages, setSelectedImages] = useState([]);
 
@@ -65,9 +65,9 @@ const NewCategory = () => {
         formdata.append("category", category );
         formdata.append('file',categoryImage)
     
-        product.images.forEach((file) => {
-          formData.append("images", file);
-        });
+        // product.images.forEach((file) => {
+        //   formData.append("images", file);
+        // });
     
         try {
           const response = await axios.post(
@@ -89,24 +89,7 @@ const NewCategory = () => {
         }
       };
     
-      const changeImageHandler = (e) => {
-        const file = e.target.files?.[0];
     
-        const reader = new FileReader();
-    
-        if (file) {
-          reader.readAsDataURL(file);
-          reader.onloadend = () => {
-            if (typeof reader.result === "string") {
-              setProduct((prevProduct) => ({
-                ...prevProduct,
-                photoPrev: reader.result,
-                photo: file,
-              }));
-            }
-          };
-        }
-      };
   return (
     <div className="admin-container">
       <AdminSidebar />

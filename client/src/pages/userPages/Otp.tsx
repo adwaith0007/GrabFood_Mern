@@ -6,7 +6,9 @@ import { toast, ToastOptions }  from "react-hot-toast";
 import { useFormik } from "formik";
 
 import { useSelector } from 'react-redux';
-import { selectUser } from './../../redux/userSlice';
+
+import { UserReducerInitialState } from '../../types/reducer-types';
+// import { selectUser } from './../../redux/userSlice';
 
 import { generateOTP,verifyOTP} from "../../helper/helper";
 
@@ -14,7 +16,13 @@ const Otp = () => {
   
   const [OTP,setOTP]=useState()
 
-  const username = useSelector(selectUser);
+  const {registeredUsername } = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
+
+  const username = registeredUsername
+
+  
+
+  // const username = useSelector(selectUser);
 
   const navigate = useNavigate();
 

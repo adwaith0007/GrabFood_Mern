@@ -17,6 +17,7 @@ import { useLoginMutation } from "../../redux/api/userAPI";
 import { useSelector } from 'react-redux';
 import { selectUser } from './../../redux/userSlice';
 import { useDispatch } from 'react-redux';
+import { userExist, userNotExist } from '../../redux/reducer/useReducer';
 import { setUser } from './../../redux/userSlice';
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { MessageResponse } from "../../types/api-types";
@@ -61,10 +62,14 @@ const Login = () => {
       });
 
       loginPromise.then((res) => {
-        const { token } = res.data;
+        const { token, username } = res.data;
+
+        dispatch(userExist(username))
+        console.log(username);
+        
         localStorage.setItem("token", token);
         // dispatch(setUser(values.username));
-        navigate("/home");
+        navigate("/");
       });
     },
   });

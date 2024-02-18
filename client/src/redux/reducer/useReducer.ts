@@ -7,6 +7,7 @@ import { User } from "../../types/types";
 const initialState: UserReducerInitialState = {
     user: null,
     loading:true,
+    registeredUsername: null,
 };
 
 export const userReducer = createSlice({
@@ -21,8 +22,13 @@ export const userReducer = createSlice({
             state.loading = false;
             state.user=null;
         },
+
+        registerUserStore: (state, action: PayloadAction<User>) => {
+            state.loading = false;
+            state.registeredUsername = action.payload;
+        },
     },
 
 });
 
-export const {userExist, userNotExist} = userReducer.actions
+export const {userExist, userNotExist, registerUserStore } = userReducer.actions
