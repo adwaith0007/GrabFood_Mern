@@ -81,31 +81,31 @@ const DivOne = ({ location }: { location: Location }) => (
     <h5>User Dashboard</h5>
     <ul>
       <Li
-        url="/admin/dashboard"
+        url="/user/profile"
         text="User Profile"
         Icon={RiDashboardFill}
         location={location}
       />
       <Li
-        url="/admin/category"
+        url="/user/orders"
         text="My Orders"
         Icon={RiShoppingBag3Fill}
         location={location}
       />
       <Li
-        url="/admin/product"
+        url="/user/address"
         text="Manage Address"
         Icon={RiShoppingBag3Fill}
         location={location}
       />
       <Li
-        url="/admin/customer"
+        url="/user/favourites"
         text="Favourites"
         Icon={IoIosPeople}
         location={location}
       />
       <Li
-        url="/admin/transaction"
+        url="/user/wallet"
         text="My Wallet"
         Icon={AiFillFileText}
         location={location}

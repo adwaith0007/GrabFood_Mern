@@ -22,6 +22,8 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import toast from "react-hot-toast";
 
+import Cookie from "js-cookie";
+
 const user = { _id: "ad", role: "admin" };
 
 // const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
@@ -129,7 +131,9 @@ const Navbar = ({ user }: PropsType) => {
 
   const logoutHandler = async () => {
     try {
-      await signOut(auth);
+      // await signOut(auth);
+
+      Cookie.remove("token");
 
       toast.success("Sign Out Successfully");
 

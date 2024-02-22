@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import glogo from "../../assets/googlelogo.png";
 import { ChangeEvent, useState } from "react";
 import { useFormik } from "formik";
-import { verifyPassword } from "../../helper/helper";
+import { resetPassword } from "../../helper/helper";
 import toast, { Toaster } from "react-hot-toast";
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
@@ -23,18 +23,7 @@ import { MessageResponse } from "../../types/api-types";
 
 const ResetPassword = () => {
  
-    const [gender,setGender]= useState("");
-  const [date, setDate] =useState("");
-
-  const [login] =useLoginMutation()
-
-  const dispatch = useDispatch();
-
-  // const userData = useSelector(selectUser);
-
-  
-
-  // console.log(userData);
+    
   
   const navigate = useNavigate();
 
@@ -42,76 +31,35 @@ const ResetPassword = () => {
     initialValues: {
       username: "",
       password: "",
+      
     },
     // validate:,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      const loginPromise = verifyPassword({
+      const loginPromise = resetPassword({
         username: values.username,
         password: values.password,
+        
       });
       toast.promise(loginPromise, {
         loading: "Checking...",
-        success: <b>Login Successfully...</b>,
-        error: <b>Password Not Match!</b>,
+        success: <b>Password Updated Successfully...</b>,
+        error: <b>Password not changed!</b>,
       });
 
       loginPromise.then((res) => {
-        const { token } = res.data;
-        localStorage.setItem("token", token);
+        // const { token } = res.data;
+        // localStorage.setItem("token", token);
         // dispatch(setUser(values.username));
-        navigate("/home");
+        navigate("/login");
       });
     },
   });
 
   
 
-  const loginHandler = async () => {
-    try {
-      const provider = new GoogleAuthProvider()
-      
-
-      const { user } = await signInWithPopup(auth, provider)
-
-      console.log({lname:user.displayName!,
-        email:user.email!,
-        photo:user.photoURL!,
-        gender:"sdfg",
-        role:"user",
-        dob :date,
-        _id :user.uid,});
-      
-
-     const res = await login({
-        name:user.displayName!,
-        email:user.email!,
-        photo:user.photoURL!,
-        gender:"male",
-        role:"user",
-        dob :"5647",
-        _id :user.uid,
-      })
-
-      if ("data" in res)
-      {
-
-        toast.success(res.data.message)
-
-      }else{
-        const error =res.error as FetchBaseQueryError;
-        const message = (error.data as MessageResponse).message;
-        toast.error(message)
-      }
-
-      // console.log(user)
-    } catch (error) {
-      toast.error("Sign In Failed");
-    }
-
-    
-  };
+  
 
 
   return (
@@ -157,6 +105,9 @@ const ResetPassword = () => {
               </div>
 
 
+              
+
+
               <div className="mb-5">
                 <label
                   htmlFor="newpassword"
@@ -166,31 +117,16 @@ const ResetPassword = () => {
                 </label>
                 <input
                   type="text"
-                  id="newpassword"
-                  name="newpassword"
+                  id="password"
+                  name="password"
                   onChange={formik.handleChange}
                   value={formik.values.password}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                 
+                  placeholder="New Password"
                 />
               </div>
 
-              <div className="mb-5">
-                <label
-                  htmlFor="conformpassword"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Conform New Password
-                </label>
-                <input
-                  type="conformpassword"
-                  id="conformpassword"
-                  name="conformpassword"
-                  onChange={formik.handleChange}
-                  value={formik.values.cpassword}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                />
-              </div>
+              
 
              
 

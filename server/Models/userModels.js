@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
-const AddressSchema = new mongoose.Schema({
-  street: String,
-  city: String,
-  state: String,
-  zipCode: String
-});
+
 
 const UserSchema = new mongoose.Schema({
   fname: {
@@ -28,10 +23,23 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  addresses: {
-    address1: AddressSchema,
-    address2: AddressSchema
-  },
+
+  addresses: [
+    {
+      street: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      state: {
+        type: String,
+      },
+      zipCode: {
+        type: String,
+      },
+    },
+  ],
   password: {
     type: String,
     required: true,
@@ -40,6 +48,46 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+
+  cart: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+      },
+      productName: {
+        type: String,
+      },
+      quantity: {
+        type: Number,
+        defaultValue: 1,
+      },
+      price: {
+        type: Number,
+      },
+      image: {
+        type: String,
+      },
+      discountPrice: {
+        type: Number,
+      },
+    },
+  ],
+  wallet: {
+    balance: {
+      type: Number,
+      default: 0,
+    },
+  },
+
+
+
+
+
 });
 
 const UserModel = mongoose.model("users", UserSchema);

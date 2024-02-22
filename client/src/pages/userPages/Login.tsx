@@ -22,7 +22,10 @@ import { setUser } from './../../redux/userSlice';
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { MessageResponse } from "../../types/api-types";
 
-const Login = () => {
+import Cookie from "js-cookie";
+
+
+const Login = ({ setToken }) => {
 
 
   
@@ -66,10 +69,12 @@ const Login = () => {
 
         dispatch(userExist(username))
         console.log(username);
-        
-        localStorage.setItem("token", token);
-        // dispatch(setUser(values.username));
+        Cookie.set("token", token, { sameSite: true });
+
+        setToken(token);
         navigate("/");
+        // localStorage.setItem("token", token);
+        // dispatch(setUser(values.username));
       });
     },
   });

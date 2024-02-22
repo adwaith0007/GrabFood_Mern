@@ -2,41 +2,19 @@ const UserModel = require("../Models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const otpGenerator= require('otp-generator');
-const cookieParser = require("cookie-parser");
 
 
 
 
-
-/* POST: http://localhost:5000/api/register */
-exports.register = async (req, res) => {
-  const {  username, email, password, phone } = req.body;
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new UserModel({
-     
-      username,
-      email,
-      password: hashedPassword,
-      phone,
-    });
-
-    await newUser.save();
-
-    console.log("New user registered:", newUser);
-
-    res.json({ message: "Registration successful", user: newUser });
-  } catch (error) {
-    console.error("Error while Registration:", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-};
 
 /* POST: http://localhost:5000/api/login */
 exports.login = async (req, res) => {
   const { username , password } = req.body;
+
+
+  if (!username || !password) {
+    return res.json({ success: false, message: "enter username and password" });
+  }
 
   try {
    const user = await UserModel.findOne({ username });
@@ -50,9 +28,14 @@ exports.login = async (req, res) => {
     
   } 
 
+  if (user.isDeleted)
+    return res.json({ success: false, message: "User deleted" });
+
+
   //check whether blocked
   if (user.isBlocked)
     return res.json({ success: false, message: "user is blocked" });
+
 
     if (await bcrypt.compare(password, user.password)) { 
 
@@ -84,6 +67,110 @@ exports.login = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* POST: http://localhost:5000/api/register */
+exports.register = async (req, res) => {
+  const {  username, email, password, phone } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new UserModel({
+     
+      username,
+      email,
+      password: hashedPassword,
+      phone,
+    });
+
+    await newUser.save();
+
+    console.log("New user registered:", newUser);
+
+    res.json({ message: "Registration successful", user: newUser });
+  } catch (error) {
+    console.error("Error while Registration:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+exports.verify = async (req, res) => {
+  const { token } = req.cookies;
+
+  if (!token) return res.json({ success: false, message: "no token found" });
+
+  try {
+    const JwtUser = jwt.verify(token, "jwt_secret_key");
+    const user = await UserModel.findOne({ _id: JwtUser.id });
+    if (!user)
+      return res.json({ success: false, message: "user not Authorized" });
+    return res.json({ success: true, message: "user authorized" });
+  } catch (error) {
+    if (error.name === "TokenExpiredError")
+      return res.json({
+        expired: true,
+        success: false,
+        message: "token expired, login again",
+      });
+  }
+};
+
+
+exports.getOneUser = async (req, res) => {
+  const user = req?.user;
+
+  console.log(user);
+
+  try {
+    const userDetails = await UserModel.find({ _id: user.id });
+    res.json({ success: true, message: "got user details", user: userDetails });
+  } catch (error) {
+    if (error.name === "TokenExpiredError")
+      return res.json({
+        expired: true,
+        success: false,
+        message: "token expired, login again",
+      });
+    else {
+      console.log(error);
+    }
+  }
+};
+
+
+
+
+
+
+
+
+
 /* Middleware */
 exports.verifyUser = async (req, res, next) => {
   try {
@@ -91,12 +178,14 @@ exports.verifyUser = async (req, res, next) => {
     let exist = await UserModel.findOne({ username });
     if (!exist) return res.status(404).send({ error: "Can't find User!" });
     next();
-    console.log('verifyUser ok');
+    console.log('User verifed');
     
   } catch (error) {
     return res.status(404).send({ error: "Authentication Error" });
   }
 };
+
+
 
 /* GET: http://localhost:5000/api/user/example123 */
 
@@ -160,6 +249,8 @@ exports.localVariables = async (req,res,next)=>{
   }
   next()
  }
+
+
 
 exports.updateUser = async (req,res)=>{
   try {
@@ -262,155 +353,12 @@ exports.resetPassword= async (req, res) => {
 
 
 
-exports.login2 = async (req, res) => {
-  const { email, password } = req.body;
-
-  //check if the input field is empty
-  if (!email || !password) {
-    return res.json({ message: "enter username and password" });
-  }
-
-  //get user
-  const user = await UserModel.findOne(
-    { email: email },
-    { _id: 1, hashedPassword: 1, isBlocked: 1 }
-  );
-
-  //check user
-  if (!user) res.json({ success: false, message: "user not found" });
-
-  //check whether blocked
-  if (user.isBlocked)
-    return res.json({ success: false, message: "user is blocked" });
-
-  console.log(user);
-
-  try {
-    if (await bcrypt.compare(password, user.hashedPassword)) {
-      //generate token
-      const token = CreateToken(user._id.toString());
-      res
-        .status(200)
-        .cookie("token", token, {
-          expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-          httpOnly: true,
-        })
-        .json({ success: true, message: "login successful", token: token });
-    } else return res.json({ success: false, message: "login failed" });
-  } catch (error) {
-    console.log("error with bcrypt compare");
-  }
-};
 
 
-exports.signUp = async (req, res) => {
-  /* not working */
-  try {
-    const { fname, lname, email, password, phone } = req.body;
 
-    console.log("start");
 
-    /* check the existing email */
-    const existEmail = new Promise((resolve, reject) => {
-      UserModel.findOne({ email }, function (err, existingEmail) {
-        console.log("1");
-        if (err) {
-          reject(new Error(err));
-        } else if (existingEmail) {
-          reject({ error: "Email id already exists" });
-        } else {
-          console.log("ok");
-          resolve();
-        }
-      });
-    });
 
-    /* check the existing phone */
-    const existPhone = new Promise((resolve, reject) => {
-      UserModel.findOne({ phone }, function (err, existingPhone) {
-        if (err) {
-          reject(new Error(err));
-        } else if (existingPhone) {
-          reject({ error: "Phone number already exists" });
-        } else {
-          console.log("2ok");
-          resolve();
-        }
-      });
-    });
 
-    return Promise.all([existEmail, existPhone])
-      .then(() => {
-        if (password) {
-          console.log("password");
-          bcrypt
-            .hash(password, 10)
-            .then((hashedPassword) => {
-              console.log("hash done");
-
-              const user = new UserModel({
-                email,
-                password: hashedPassword,
-                fname,
-                lname,
-                phone,
-              });
-
-              /* return save result as a response */
-              user
-                .save()
-                .then((result) =>
-                  res.status(201).send({ msg: "User Register Successfully" })
-                )
-                .catch((error) => res.status(500).send({ error }));
-            })
-            .catch((error) => {
-              return res.status(500).send({
-                error: "Unable to hash password",
-              });
-            });
-        }
-      })
-      .catch((error) => {
-        return res.status(500).send({ error });
-      });
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
-
-// exports.verifyLogin_post = async (req, res) => {
-//   const { email, password } = req.body;
-
-// try{
-
-//   const userData = await UserModel.findOne({email:email});
-
-//   if(userData){
-
-//     const passwordMatch = await bcrypt.compare(password,userData.hashedPassword);
-
-//     if(passwordMatch){
-//       const token = createToken(userData._id);
-//         res.cookie('jwt', token,{ httpOnly: true, maxAge: maxAge * 1000 });
-//            res.json({ success: true, message: 'Login successful' });
-//         console.log('good');
-//     }else{
-//         console.log('sorry');
-//         res.status(401).json({ success: false, message: 'Invalid credentials' });
-//     }
-
-//   }else{
-//     res.status(404).json({ success: false, message: 'User not found' });
-//     console.log('somthing went wrong');
-//   }
-
-// } catch (error) {
-//         console.error("Error during login:", error.message);
-//         res.status(500).json({ success: false, message: "Internal Server Error" });
-//     }
-
-// };
 
 exports.verifyLogin_post = async (req, res) => {
   const { email, password } = req.body;
@@ -447,93 +395,82 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 
-// /* POST: http://localhost:5000/api/user/new */
-// exports.newUser = async (req, res) => {
-//   const { name, email, photo, gender, _id, dob } = req.body;
 
-//   console.log(email);
+exports.addAddress = async (req, res) => {
   
-
-//   try {
-//    const user = await UserModel.findOne({ email });
-
-//    console.log(user.email);
-//    console.log(user.username);
-
-//      //check user
-//   if (!user){
-//     res.json({ success: false, message: "user not found" });
-    
-//   } 
-
   
-//   if (user)
-//   return res.status(200).json({
-//     success: true,
-//     message: `Welcome, ${user.username}`,
-//   });
+  const {userId ,address} = req.body;
+  console.log(req.body);
 
-// if (!_id || !name || !email || !photo || !gender || !dob)
-//   return next(new ErrorHandler("Please add all fields", 400));
+  try {
+    const result = await UserModel.updateOne(
+      { _id: userId },
+      { $push: { addresses: [address] } }
+    );
 
-// user = await UserModel.create({
-//   name,
-//   email,
-//   photo,
-//   gender,
-//   _id,
-//   dob: new Date(dob),
-// });
+    console.log(result);
 
-// return res.status(201).json({
-//   success: true,
-//   message: `Welcome, ${user.username}`,
-// });
-
-//   //check whether blocked
-//   if (user.isBlocked)
-//     return res.json({ success: false, message: "user is blocked" });
-
-    
-    
-//   } catch (error) {
-//     return res.status(500).send({ error });
-//   }
-// };
+    if (result.modifiedCount > 0) {
+      return res.json({ success: true, message: "Address Updated" });
+    } else {
+      return res.status(404).json({ success: false, message: "User not found or no changes" });
+    }
+  } catch (error) {
+    console.error("Error while adding address", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
 
 
 
-// export const newUser = TryCatch(
-//   async (
-//     req: Request<{}, {}, NewUserRequestBody>,
-//     res: Response,
-//     next: NextFunction
-//   ) => {
-//     const { name, email, photo, gender, _id, dob } = req.body;
+exports.deleteAddress = async (req, res) => {
+  const { address, userId } = req.body;
 
-//     let user = await User.findById(_id);
+  try {
+    UserModel.updateOne(
+      { _id: userId },
+      { $pull: { addresses: { _id: address._id } } }
+    )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-//     if (user)
-//       return res.status(200).json({
-//         success: true,
-//         message: `Welcome, ${user.name}`,
-//       });
+    return res.json({ success: true, message: "Address Deleted" });
+  } catch (error) {
+    console.log("error while deleting one address: " + error);
+    return res.json({ success: false, message: error.message });
+  }
+};
 
-//     if (!_id || !name || !email || !photo || !gender || !dob)
-//       return next(new ErrorHandler("Please add all fields", 400));
 
-//     user = await User.create({
-//       name,
-//       email,
-//       photo,
-//       gender,
-//       _id,
-//       dob: new Date(dob),
-//     });
 
-//     return res.status(201).json({
-//       success: true,
-//       message: `Welcome, ${user.name}`,
-//     });
-//   }
-// );
+exports.getAllAddress = async (req, res) => {
+  const token = req.cookies.token;
+  const user = jwt.verify(token, process.env.MY_SECRET_KEY);
+
+  try {
+    const data = await UserModel.find(
+      { _id: user.id },
+      { addresses: 1, _id: 0 }
+    );
+    const addresses = data[0].addresses;
+    return res.json({ success: true, data: addresses });
+  } catch (error) {
+    console.log("error while getting all addresses", error);
+    return res.json({
+      success: false,
+      message: "error while getting all addresses",
+    });
+  }
+};
+
+
+
+exports.logout = async (req, res) => {
+  return res
+    .cookie("token", "", { expires: new Date(0) })
+    .json({ success: true, message: "Logged out" });
+};

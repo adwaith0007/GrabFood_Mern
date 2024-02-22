@@ -10,6 +10,8 @@ import { useFormik } from "formik";
 import { adminVerifyPassword } from "../../helper/helper";
 import toast, { Toaster } from "react-hot-toast";
 
+import Cookie from "js-cookie";
+
 const LoginPage = () => {
 
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ const LoginPage = () => {
     loginPromise.then(res =>{
       const {adminToken} = res.data;
       localStorage.setItem('adminToken',adminToken);
+      Cookie.set("adminToken", adminToken, { sameSite: true });
       navigate('/home')
     })
 

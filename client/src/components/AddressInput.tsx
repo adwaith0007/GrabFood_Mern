@@ -9,13 +9,17 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
   const [zipCode, setZipCode] = useState("");
 
   // Handle changes in input fields and update the address
-  const handleAddressChange = async () => {
-    const address = {
+  const handleAddressChange = async (e) => {
+    e.preventDefault()
+    const newAddress = {
       street,
       city,
       state,
       zipCode,
     };
+
+    userId='65d2ea3e3d1028ec1938450b'
+    
 
     try {
       if (!userId) {
@@ -24,12 +28,13 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
       }
 
       await axios.put(`http://localhost:5000/api/updateAddresses/${userId}`, {
-        address1: address,
-        address2: null, // Assuming you have only two addresses, you can modify this accordingly
+        userId: userId,
+      address: newAddress,
+        
       });
 
-      setAddress(address);
-      onClose();
+      setAddress(newAddress);
+      // onClose();
     } catch (error) {
       console.error(error);
       // Handle error accordingly
@@ -104,7 +109,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
           </div>
 
           <button
-            type="button"
+            type="submit"
             onClick={handleAddressChange}
             className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >

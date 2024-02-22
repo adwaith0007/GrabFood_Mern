@@ -1,16 +1,31 @@
 
 const express = require("express");
 const router = express.Router();
+const UserModel = require("../Models/userModels");
+const NewUser = require("../Models/user");
+
 const userController = require("../Controllers/userControllers");
 
 const {registerMail} = require ("../middlewares/mailer");
+const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 
-const UserModel = require("../Models/userModels");
 
-const NewUser = require("../Models/user");
 
-// const { check, validationResult } = require('express-validator');
 
+
+
+router.post("/login",userController.verifyUser ,  userController.login);
+
+
+
+router.post("/user/edit", isUserLoggedIn, (req, res) => {
+  userController.edit(req, res);
+});
+
+
+router.get("/users/delete/:id", isAdminLoggedIn, (req, res) => {
+  userController.delete(req, res);
+});
 
 
 
@@ -27,7 +42,7 @@ router.post('/user/new', (req,res)=>{    /* register user ok */
    
 })
 
-// router.post('/register', userController.register)
+
 
 router.post('/registerMail', registerMail) //send the email
 
@@ -35,12 +50,8 @@ router.post('/authenticate',userController.verifyUser,(req,res)=>{
     res.end()
 })
 
-router.post('/signup', (req,res)=>{    /* register user demo */
-    userController.signUp(req, res);
-   
-})
 
-router.post("/login",userController.verifyUser ,  userController.login);/* user login ok */
+
 
 
 
@@ -77,27 +88,19 @@ router.put('/updateuser' ,  userController.updateUser); // is use to update the 
 router.put('/resetPassword'  , userController.resetPassword); 
 
 
-// Update user addresses
-router.put('/updateAddresses/:userId', async (req, res) => {
-    console.log('in');
-    
-    const { address1, address2 } = req.body;
-    const userId = req.params.userId;
-  
-    try {
-      const updatedUser = await UserModel.findByIdAndUpdate(userId, {
-        $set: {
-          'addresses.address1': address1,
-          'addresses.address2': address2,
-        },
-      }, { new: true });
-  
-      res.json(updatedUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+
+
+router.post("/user/getAddress", isUserLoggedIn, (req, res) => {
+  userController.getAddress(req, res);
+});
+
+
+router.put('/updateAddresses/:userId'  , userController.addAddress); 
+
+
+
+
+
 
 
 

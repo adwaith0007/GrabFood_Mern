@@ -22,6 +22,7 @@ import ProtectedRoute from './components/protected-route';
 import UserProfile from './pages/userPages/userDashbord/UserProfile';
 
 
+const ResetPasswordOtp = lazy(()=> import ('./pages/userPages/ResetPasswordOtp') ) ;
 const ResetPassword = lazy(()=> import ('./pages/userPages/ResetPassword') ) ;
 const ProductDetailsPage = lazy(()=> import ('./components/ProductDetailsPage') ) ;
 
@@ -58,11 +59,13 @@ const ProductManagement = lazy(() => import("./pages/admin/management/productman
 const CategoryManagement = lazy(() => import("./pages/admin/management/categorymanagement"));
   const TransactionManagement = lazy(() => import("./pages/admin/management/transactionmanagement"));
     
-   
+  
     
     function App() {
 
   const {user,loading} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer)
+
+  const [token, setToken] = useState(Cookies.get('token') || '');
 
 
   
@@ -101,15 +104,16 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   <Route  path='/' element={  <Home  />  } ></Route>
   <Route  path='/menu' element={<MenuPage/>} ></Route>
   {/* <Route  path='/' element={<MenuPage/>} ></Route> */}
-  <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login/></ProtectedRoute>} ></Route>
+  <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login setToken={setToken} /></ProtectedRoute>} ></Route>
   <Route  path='/signup' element={<SignUp/>} ></Route>
   <Route  path='/otp' element={<Otp/>} ></Route>
+  <Route  path='/resetpasswordotp' element={<ResetPasswordOtp/>} ></Route>
   <Route  path='/forgot_password' element={<ResetPassword/>} ></Route>
 
 
-<Route element={<ProtectedRoute isAuthenticated={user? true : false } />}  >
+<Route element={<ProtectedRoute isAuthenticated={user? true : false }  />}  >
 
-<Route  path='user/profile' element={<UserProfile/>} ></Route>
+<Route  path='user/profile' element={<UserProfile />} ></Route>
   <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>
   <Route path="/product/:productId"   element={<ProductDetailsPage/>} />
 
@@ -120,11 +124,11 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
 
 
 </Route>
+  <Route  path='/admin' element={<LoginPage/>} ></Route>
 
 
                                                   
   {/* Admin */}
-  <Route  path='/admin' element={<LoginPage/>} ></Route>
   <Route  path='/admin/signup' element={<SignupPage/>} ></Route>
   
   <Route  path='/admin/category/add' element={<AddCategory/>} ></Route>

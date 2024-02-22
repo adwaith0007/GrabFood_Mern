@@ -1,221 +1,173 @@
-import React from "react";
+// import React from "react";
 
-import { BiMaleFemale } from "react-icons/bi";
-import { BsSearch } from "react-icons/bs";
-import { FaRegBell } from "react-icons/fa";
-import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
-// import AdminSidebar from "../../components/admin/AdminSidebar";
-import { BarChart, DoughnutChart } from "../../../components/admin/Charts";
-import Table from "../../../components/admin/DashboardTable";
-import data from "../../../assets/data.json";
+// import { BiMaleFemale } from "react-icons/bi";
+// import { BsSearch } from "react-icons/bs";
+// import { FaRegBell } from "react-icons/fa";
+// import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
+// // import AdminSidebar from "../../components/admin/AdminSidebar";
+// import { BarChart, DoughnutChart } from "../../../components/admin/Charts";
+// import Table from "../../../components/admin/DashboardTable";
+// import data from "../../../assets/data.json";
 
-const userImg =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
+// const userImg =
+//   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
 
 import UserSidebar from "../../../components/user/UserSidebar";
+
+import React, { useState } from "react";
+import { FaUserEdit } from "react-icons/fa";
+import { MdEdit, MdSave } from "react-icons/md";
+
+import { UserReducerInitialState } from '../../../types/reducer-types';
+import { useSelector } from 'react-redux';
+
+
+
 const UserProfile = () => {
+
+  const { user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [userData, setUserData] = useState({
+    username: "JohnDoe",
+    gender: "Male",
+    email: "john.doe@example.com",
+    phoneNumber: "+1234567890",
+    // Add more fields as needed
+  });
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = () => {
+    setIsEditing(false);
+    // Perform save operation to update user data on the server
+    // You can add API calls or use state management libraries (e.g., Redux) for this purpose
+  };
+
+  const handleInputChange = (field, value) => {
+    setUserData({ ...userData, [field]: value });
+  };
   return (
     <div className="admin-container">
       <UserSidebar />
 
       <div className="w-full ">
-        <div className="flex justify-between">
-          <div className="bg-orange-400 p-12">
-            <img></img>
-          </div>
+        
+      <div className="container mx-auto mt-10 p-6 bg-white rounded-md shadow-md">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold">User Profile</h2>
+        {!isEditing ? (
+          <button
+            onClick={handleEditClick}
+            className="text-blue-500 hover:underline cursor-pointer"
+          >
+            <MdEdit size={20} className="inline-block mb-1" />
+            Edit Profile
+          </button>
+        ) : (
+          <button
+            onClick={handleSaveClick}
+            className="text-green-500 hover:underline cursor-pointer"
+          >
+            <MdSave size={20} className="inline-block mb-1" />
+            Save
+          </button>
+        )}
+      </div>
 
-          <div className="flex gap-5">
-            <div>
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Edit Profile
-              </button>
-            </div>
-
-            <div>
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Change Password
-              </button>
-            </div>
-          </div>
+      <div className="flex items-center space-x-6">
+        <div className="relative w-20 h-20">
+          <img
+            src={user.photo}
+            alt="user"
+            className="w-full h-full object-cover rounded-full"
+          />
+          {isEditing && (
+            <label htmlFor="profileImage" className="absolute bottom-0 right-0 cursor-pointer">
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleInputChange('profileImage', e.target.files[0])}
+              />
+              <span className="p-1 bg-blue-500 text-white rounded-full">
+                Change Image
+              </span>
+            </label>
+          )}
         </div>
-
         <div>
-          <h3>Personal Information</h3>
-
-          <div>
-            <p></p>
-          </div>
+          <div className="font-semibold text-lg">{user.name}</div>
+          <div className="text-gray-600">{user.gender}</div>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center mb-4">
+          <span className="w-6 h-6 mr-2">
+            <svg
+              className="w-full h-full text-gray-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Email icon SVG */}
+            </svg>
+          </span>
+          {isEditing ? (
+            <input
+              type="email"
+              value={user.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+              placeholder="Email"
+            />
+          ) : (
+            <span>{user.email}</span>
+          )}
+        </div>
+
+        <div className="flex items-center mb-4">
+          <span className="w-6 h-6 mr-2">
+            <svg
+              className="w-full h-full text-gray-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Phone icon SVG */}
+            </svg>
+          </span>
+          {isEditing ? (
+            <input
+              type="tel"
+              value={userData.phoneNumber}
+              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+              placeholder="Phone Number"
+            />
+          ) : (
+            <span>{userData.phoneNumber}</span>
+          )}
+        </div>
+
+        {/* Add more user details here */}
+      </div>
+    </div>
 
         
       </div>
 
       
 
-      {/* <main className="dashboard">
-      <div className="bar">
-        <BsSearch />
-        <input type="text" placeholder="Search for data, users, docs" />
-        <FaRegBell />
-        <img src={userImg} alt="User" />
-      </div>
-
-      <section className="widget-container">
-        <WidgetItem
-          percent={40}
-          amount={true}
-          value={340000}
-          heading="Revenue"
-          color="rgb(0, 115, 255)"
-        />
-        <WidgetItem
-          percent={-14}
-          value={400}
-          color="rgb(0 198 202)"
-          heading="Users"
-        />
-        <WidgetItem
-          percent={80}
-          value={23000}
-          color="rgb(255 196 0)"
-          heading="Transactions"
-        />
-
-        <WidgetItem
-          percent={30}
-          value={1000}
-          color="rgb(76 0 255)"
-          heading="Products"
-        />
-      </section>
-
-      <section className="graph-container">
-        <div className="revenue-chart">
-          <h2>Revenue & Transaction</h2>
-          <BarChart
-            data_2={[300, 144, 433, 655, 237, 755, 190]}
-            data_1={[200, 444, 343, 556, 778, 455, 990]}
-            title_1="Revenue"
-            title_2="Transaction"
-            bgColor_1="rgb(0, 115, 255)"
-            bgColor_2="rgba(53, 162, 235, 0.8)"
-          />
-        </div>
-
-        <div className="dashboard-categories">
-          <h2>Inventory</h2>
-
-          <div>
-            {data.categories.map((i) => (
-              <CategoryItem
-                key={i.heading}
-                value={i.value}
-                heading={i.heading}
-                color={`hsl(${i.value * 4}, ${i.value}%, 50%)`}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="transaction-container">
-        <div className="gender-chart">
-          <h2>Gender Ratio</h2>
-          <DoughnutChart
-            labels={["Female", "Male"]}
-            data={[12, 19]}
-            backgroundColor={[
-              "hsl(340, 82%, 56%)",
-              "rgba(53, 162, 235, 0.8)",
-            ]}
-            cutout={90}
-          />
-          <p>
-            <BiMaleFemale />
-          </p>
-        </div>
-        <Table data={data.transaction} />
-      </section>
-    </main> */}
+      
     </div>
   );
 };
 
-interface WidgetItemProps {
-  heading: string;
-  value: number;
-  percent: number;
-  color: string;
-  amount?: boolean;
-}
 
-const WidgetItem = ({
-  heading,
-  value,
-  percent,
-  color,
-  amount = false,
-}: WidgetItemProps) => (
-  <article className="widget">
-    <div className="widget-info">
-      <p>{heading}</p>
-      <h4>{amount ? `₹${value}` : value}</h4>
-      {percent > 0 ? (
-        <span className="green">
-          <HiTrendingUp /> +{percent}%{" "}
-        </span>
-      ) : (
-        <span className="red">
-          <HiTrendingDown /> {percent}%{" "}
-        </span>
-      )}
-    </div>
-
-    <div
-      className="widget-circle"
-      style={{
-        background: `conic-gradient(
-      ${color} ${(Math.abs(percent) / 100) * 360}deg,
-      rgb(255, 255, 255) 0
-    )`,
-      }}
-    >
-      <span
-        style={{
-          color,
-        }}
-      >
-        {percent}%
-      </span>
-    </div>
-  </article>
-);
-
-interface CategoryItemProps {
-  color: string;
-  value: number;
-  heading: string;
-}
-
-const CategoryItem = ({ color, value, heading }: CategoryItemProps) => (
-  <div className="category-item">
-    <h5>{heading}</h5>
-    <div>
-      <div
-        style={{
-          backgroundColor: color,
-          width: `${value}%`,
-        }}
-      ></div>
-    </div>
-    <span>{value}%</span>
-  </div>
-);
 
 export default UserProfile;
