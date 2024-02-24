@@ -24,6 +24,8 @@ import { MessageResponse } from "../../types/api-types";
 
 import Cookie from "js-cookie";
 
+import {jwtDecode} from 'jwt-decode';
+
 
 const Login = ({ setToken }) => {
 
@@ -37,11 +39,8 @@ const Login = ({ setToken }) => {
 
   const dispatch = useDispatch();
 
-  // const userData = useSelector(selectUser);
-
   
 
-  // console.log(userData);
   
   const navigate = useNavigate();
 
@@ -65,16 +64,20 @@ const Login = ({ setToken }) => {
       });
 
       loginPromise.then((res) => {
-        const { token, username } = res.data;
+        const { token } = res.data;
 
-        dispatch(userExist(username))
-        console.log(username);
+        const user = jwtDecode(token);
+
+        
+        
+
+        dispatch(userExist(user))
+        
         Cookie.set("token", token, { sameSite: true });
 
         setToken(token);
         navigate("/");
-        // localStorage.setItem("token", token);
-        // dispatch(setUser(values.username));
+        
       });
     },
   });

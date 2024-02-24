@@ -5,8 +5,17 @@ import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 // import ProceedToPaymentPopup from "../components/ProceedToPaymentPopup";
 
 import PaymentAddressInputPopup from "../components/PaymentAddressInputPopup";
+import { useSelector } from "react-redux";
+import { UserReducerInitialState } from "../types/reducer-types";
+
+
 
 const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
+
+  
+  
+  
+  
   return (
     
 
@@ -54,11 +63,17 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease,  
 
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
+  const {user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer)
+
+  const user_id = user._id
+
+  
+
   useEffect(() => {
     console.log('effect');
     
     // Fetch cart items when the component mounts
-    axios.get(`http://localhost:5000/api/cart/65913f07581f920ea7c196cf`) // Replace with actual userId
+    axios.get(`http://localhost:5000/api/cart/${user_id}`) // Replace with actual userId
       .then((response) => {
         setCartItems(response.data);
         console.log(`data: ${response.data}`);
@@ -113,7 +128,7 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease,  
         // <ProceedToPaymentPopup
         <PaymentAddressInputPopup
           cartItems={cartItems}
-          userId="65913f07581f920ea7c196cf" // Replace with actual userId
+          userId={user_id} // Replace with actual userId
           onClose={() => setShowPaymentPopup(false)}
         />
       )}

@@ -3,10 +3,23 @@ import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
 
 const AddressInput = ({ userId, setAddress, onClose }) => {
+
+
+
+
+
+
+
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zipCode, setZipCode] = useState("");
+
+
+
+
+
+
 
   // Handle changes in input fields and update the address
   const handleAddressChange = async (e) => {
@@ -18,7 +31,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
       zipCode,
     };
 
-    userId='65d2ea3e3d1028ec1938450b'
+    
     
 
     try {
@@ -50,7 +63,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
           </button>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Enter Your Address</h2>
+        <h2 className="text-xl font-semibold mb-4">Enter Your Address  </h2>
         <form>
           <div className="mb-2">
             <label htmlFor="street" className="block text-sm font-medium text-gray-600">

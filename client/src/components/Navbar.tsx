@@ -131,7 +131,7 @@ const Navbar = ({ user }: PropsType) => {
 
   const logoutHandler = async () => {
     try {
-      // await signOut(auth);
+      await signOut(auth);
 
       Cookie.remove("token");
 

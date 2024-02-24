@@ -42,9 +42,13 @@ exports.login = async (req, res) => {
        // create jwt token
        const token = jwt.sign(
         {
-          userId: user._id,
+          _id: user._id,
+          name: user.username,
           email: user.email,
-          username: user.username,
+          photo:"ineedtofix",
+          role:"user",
+          gender:"male",
+
         },
         "secretkey",
         { expiresIn: "24h" }
@@ -446,10 +450,27 @@ exports.deleteAddress = async (req, res) => {
 };
 
 
+exports.getAddress = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    let address = await UserModel.find({ _id: userId }, { addresses: 1 });
+    address = address[0].addresses;
+    return res.json({
+      success: true,
+      message: "successfully found address",
+      address: address,
+    });
+  } catch (error) {
+    console.log("error while getting address", error);
+    return res.json({ success: false, message: "error while getting address" });
+  }
+};
+
+
 
 exports.getAllAddress = async (req, res) => {
   const token = req.cookies.token;
-  const user = jwt.verify(token, process.env.MY_SECRET_KEY);
+  const user = jwt.verify(token, process.env.SECRET_KEY);
 
   try {
     const data = await UserModel.find(
@@ -466,6 +487,40 @@ exports.getAllAddress = async (req, res) => {
     });
   }
 };
+
+
+exports.getUserAddresses = async (req, res) => {
+
+  
+  
+  const userId = req.params.userId;
+
+  console.log(userId);
+  
+
+  try {
+    const user = await UserModel.findById(userId);
+
+   
+    
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Assuming that user addresses are stored in a property called addresses
+    const addresses = user.addresses;
+
+    console.log(addresses);
+
+    res.json(addresses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
 
 
 

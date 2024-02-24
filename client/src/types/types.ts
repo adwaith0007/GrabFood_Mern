@@ -127,3 +127,12 @@ export type Line = {
   discount: number[];
   revenue: number[];
 };
+
+
+export interface JwtPayload {
+  email: string;
+  exp: number;
+  iat: number;
+  userId: string;
+  username: string;
+}

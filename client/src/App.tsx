@@ -2,8 +2,8 @@
 
 import './App.scss'
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { lazy,Suspense } from 'react'; 
+import { BrowserRouter as Router, Routes, Route, redirect } from 'react-router-dom';
+import { lazy,Suspense, useState } from 'react'; 
 import { useEffect } from 'react';
 import { AuthorizeUser } from './middleware/auth';
 import { Toaster } from 'react-hot-toast';
@@ -59,7 +59,11 @@ const ProductManagement = lazy(() => import("./pages/admin/management/productman
 const CategoryManagement = lazy(() => import("./pages/admin/management/categorymanagement"));
   const TransactionManagement = lazy(() => import("./pages/admin/management/transactionmanagement"));
     
-  
+  import Cookies from 'js-cookie'
+
+  import {jwtDecode} from 'jwt-decode';
+
+  import JwtPayload from './types/types';
     
     function App() {
 
@@ -73,16 +77,43 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   const dispatch = useDispatch()
 
   useEffect(()=>{
-    onAuthStateChanged(auth,async (user)=>{
-      if(user){
-        const data = await getUser(user.uid)
-        console.log("Logged In");
-        dispatch(userExist(data.user))
-      }else{
-        dispatch(userNotExist())
-        console.log(" Not Logged In");
-      }
-    })
+
+    const token =Cookies.get("token")
+   
+    
+
+    if(token){
+
+      const user = jwtDecode(token);
+
+      console.log(user);
+
+      
+      console.log("Logged In");
+      dispatch(userExist(user))
+
+      // i have to fix this 
+      
+
+
+    }else{
+
+      onAuthStateChanged(auth,async (user)=>{
+        if(user){
+          console.log(user);
+          const data = await getUser(user.uid)
+          console.log("Logged In");
+          dispatch(userExist(data.user))
+        }else{
+          dispatch(userNotExist())
+          console.log(" Not Logged In");
+        }
+      })
+
+    }
+
+
+   
   },[])
   
 
@@ -91,7 +122,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
 
 <Router>
 
-  <Navbar user={user} />
+  <Navbar user={user}   />
 
   <Suspense fallback={<Loader/>} >
 
@@ -102,9 +133,9 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   {/* <Route  path='/' element={ <AuthorizeUser>  <Home  /> </AuthorizeUser> } ></Route> */}
 
   <Route  path='/' element={  <Home  />  } ></Route>
-  <Route  path='/menu' element={<MenuPage/>} ></Route>
   {/* <Route  path='/' element={<MenuPage/>} ></Route> */}
-  <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true } ><Login setToken={setToken} /></ProtectedRoute>} ></Route>
+  <Route  path='/login' element={ <ProtectedRoute isAuthenticated={user? false : true  } redirect="/" ><Login setToken={setToken} /></ProtectedRoute>} ></Route>
+  {/* <Route  path='/login' element={ <Login setToken={setToken} />} ></Route> */}
   <Route  path='/signup' element={<SignUp/>} ></Route>
   <Route  path='/otp' element={<Otp/>} ></Route>
   <Route  path='/resetpasswordotp' element={<ResetPasswordOtp/>} ></Route>
@@ -112,6 +143,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
 
 
 <Route element={<ProtectedRoute isAuthenticated={user? true : false }  />}  >
+  <Route  path='/menu' element={<MenuPage/>} ></Route>
 
 <Route  path='user/profile' element={<UserProfile />} ></Route>
   <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>

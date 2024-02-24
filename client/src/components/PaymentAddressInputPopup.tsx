@@ -4,16 +4,28 @@ import AddressInput from "./AddressInput";
 import CartItem from "./CartItem";
 import { AiOutlineClose } from "react-icons/ai";
 
+import Cookies from 'js-cookie'
+
 const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [showAddressInput, setShowAddressInput] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("online"); // Default to online payment
 
+
+  console.log(userId);
+
+  
+
+
+  // const userToken =Cookies.get("token")
+
   useEffect(() => {
     // Fetch user addresses when the component mounts
     if (userId) {
       axios.get(`http://localhost:5000/api/user/${userId}/addresses`)
+
+
         .then((response) => {
           setAddresses(response.data);
         })
@@ -22,6 +34,22 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
         });
     }
   }, [userId]);
+
+
+  console.log(addresses);
+
+  console.log("sdhj");
+
+  console.log(selectedAddress);
+
+  console.log(selectedPaymentMethod);
+  
+  
+  
+  
+
+  
+  
 
   const handleAddressChange = (address) => {
     setSelectedAddress(address);
@@ -73,7 +101,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
           />
         ) : (
           <>
-            <h2 className="text-xl font-semibold mb-4">Enter Your Address</h2>
+            <h2 className="text-xl font-semibold mb-4">Enter Your Address </h2>
             <div className="mt-4">
               {cartItems.map((item) => (
                 <CartItem
@@ -96,7 +124,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
                 }}
                 className="mt-1 p-2 border rounded-md w-full"
               >
-                <option value="" disabled>Select an address</option>
+                <option value={addresses} disabled>Select an address</option>
                 {addresses.map((address) => (
                   <option key={address._id} value={address._id}>
                     {`${address.street}, ${address.city}, ${address.state}, ${address.zipCode}`}

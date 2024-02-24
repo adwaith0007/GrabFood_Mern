@@ -27,6 +27,9 @@ const UserProfile = () => {
 
   const { user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
 
+  console.log(user);
+  
+
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     username: "JohnDoe",
