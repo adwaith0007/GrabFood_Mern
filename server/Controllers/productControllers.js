@@ -78,41 +78,92 @@ exports.getProductDetails = async (req, res) => {
 
 
 
+// exports.updateProduct = async (req, res) => {
+//   try {
+//     const productId = req.params.id;
+//     const { name, price, category } = req.body;
+
+//     console.log(productId);
+
+//     console.log(name);
+    
+    
+
+//     // Update other fields as needed
+//     // ...
+
+//     // Update the product image if a new one is provided
+//     if (req.file) {
+//       const photoPath = req.file.path; // Assuming 'path' is a field added by multer
+//       // Update the product image path in the database
+//       // ...
+//     }
+
+//     // Update the product in the database
+//     const updatedProduct = await productModel.findByIdAndUpdate(
+//       productId,
+//       { name, price, category, productImage: photoPath },
+//       { new: true }
+//     );
+
+//     // Send a success response
+//     res.status(200).json({ success: true, message: 'Product updated successfully', data: updatedProduct });
+//   } catch (error) {
+//     console.error('Error updating product', error);
+//     res.status(500).json({ success: false, message: 'Failed to update product' });
+//   }
+// };
+
+
+
+
 exports.updateProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
-    const { name, price, category } = req.body;
+    upload.single("photo")(req, res, async (err) => {
+      if (err) {
+        return res.json({ success: false, message: err.message });
+      }
 
-    console.log(productId);
+      const productId = req.params.productId;
 
-    console.log(name);
-    
-    
+      console.log(req.body);
 
-    // Update other fields as needed
-    // ...
+      console.log(productId);
+      
+      
 
-    // Update the product image if a new one is provided
-    if (req.file) {
-      const photoPath = req.file.path; // Assuming 'path' is a field added by multer
-      // Update the product image path in the database
-      // ...
-    }
+      const {  desc,  price, category,  name } =
+        req.body;
+      const image = req.file?.filename;
 
-    // Update the product in the database
-    const updatedProduct = await productModel.findByIdAndUpdate(
-      productId,
-      { name, price, category, productImage: photoPath },
-      { new: true }
-    );
+      await productModel.findOneAndUpdate(
+        { _id: productId },
+        {
+          $set: {
+           
+            
+Description: desc,
+            
+            price: price,
+            category: category,
+            productName: name,
+            
+          },
+        }
+      );
 
-    // Send a success response
-    res.status(200).json({ success: true, message: 'Product updated successfully', data: updatedProduct });
+      await productModel.updateOne({ _id: productId }, { $push: { images: image } });
+
+      res.status(201).json({ success: true, message: "Product updated" });
+    });
   } catch (error) {
-    console.error('Error updating product', error);
-    res.status(500).json({ success: false, message: 'Failed to update product' });
+    console.log("error while editing form", error);
   }
 };
+
+
+
+
 
 
 exports.deleteProduct= async (req,res)=>{
