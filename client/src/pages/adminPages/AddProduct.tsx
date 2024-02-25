@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Layout/Navbar";
 import foodimg from "../../assets/login_food.png";
 import convertToBase64 from "../../helper/convert";
 

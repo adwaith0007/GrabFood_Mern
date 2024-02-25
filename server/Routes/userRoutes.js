@@ -112,11 +112,7 @@ router.put("/updateAddresses/:userId", userController.addAddress);
 
 
 
-router.get('/user/:userId/addresses', (req, res) => {
-
-  console.log('hi user');
-  
-  
+router.get('/user/:userId/addresses', (req, res) => { 
   userController.getUserAddresses(req, res);
 });
 

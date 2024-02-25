@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../../components/Navbar.tsx";
+import Navbar from "../../components/Layout/Navbar.tsx";
 import food_s1 from "../../assets/food_s1.png";
 import s2_1 from "../../assets/s2_1.png";
 import s2_2 from "../../assets/s2_2.png";

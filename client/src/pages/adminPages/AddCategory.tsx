@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Layout/Navbar";
 import convertToBase64 from "../../helper/convert";
 import foodimg from "../../assets/login_food.png";
 

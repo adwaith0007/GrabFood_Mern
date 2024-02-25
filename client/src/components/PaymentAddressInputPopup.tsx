@@ -4,6 +4,8 @@ import AddressInput from "./AddressInput";
 import CartItem from "./CartItem";
 import { AiOutlineClose } from "react-icons/ai";
 
+
+
 import Cookies from 'js-cookie'
 
 const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
@@ -12,6 +14,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   const [showAddressInput, setShowAddressInput] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("online"); // Default to online payment
 
+  
 
   console.log(userId);
 

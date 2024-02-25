@@ -9,7 +9,7 @@ import { AuthorizeUser } from './middleware/auth';
 import { Toaster } from 'react-hot-toast';
 
 import Loader from './components/loader';
-import Navbar from './components/Navbar';
+import Navbar from './components/Layout/Navbar';
 import Category from './pages/admin/Category';
 import ProfileUpdate from './pages/userPages/(logged-in)/ProfileUpdate';
 import { onAuthStateChanged } from 'firebase/auth';

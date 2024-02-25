@@ -76,6 +76,53 @@ exports.getProductDetails = async (req, res) => {
 
 
 
+
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const { name, price, category } = req.body;
+
+    console.log(productId);
+
+    console.log(name);
+    
+    
+
+    // Update other fields as needed
+    // ...
+
+    // Update the product image if a new one is provided
+    if (req.file) {
+      const photoPath = req.file.path; // Assuming 'path' is a field added by multer
+      // Update the product image path in the database
+      // ...
+    }
+
+    // Update the product in the database
+    const updatedProduct = await productModel.findByIdAndUpdate(
+      productId,
+      { name, price, category, productImage: photoPath },
+      { new: true }
+    );
+
+    // Send a success response
+    res.status(200).json({ success: true, message: 'Product updated successfully', data: updatedProduct });
+  } catch (error) {
+    console.error('Error updating product', error);
+    res.status(500).json({ success: false, message: 'Failed to update product' });
+  }
+};
+
+
+exports.deleteProduct= async (req,res)=>{
+
+  console.log('hiiiii');
+  
+  
+}
+
+
 // export const newProduct = TryCatch(
 //   async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
 //     const { name, price, stock, category } = req.body;

@@ -11,92 +11,26 @@ import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
 import { FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
 
-import AddToCart from "../pages/userPages/AddToCart";
+import AddToCart from "../../pages/userPages/AddToCart";
 // import logo from '../../public/assets/logo-grabfood 1.png'
 
-import logo from "../assets/logo-grabfood 1.png";
+import logo from "../../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
-import CartSidebar from "./CartSidebar";
-import { User } from "../types/types";
+import CartSidebar from "../CartSidebar";
+import { User } from "../../types/types";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 import toast from "react-hot-toast";
 
 import Cookie from "js-cookie";
 
-const user = { _id: "ad", role: "admin" };
+import Search from "../Search";
 
-// const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
-//   return (
-//     <div className="flex items-center justify-between p-4 border-b">
-//       <div className="flex items-center space-x-4">
-//         <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
-//         <div>
-//           <p className="text-lg font-semibold">{item.name}</p>
-//           <p className="text-gray-500">Quantity: {item.quantity}</p>
-//         </div>
-//       </div>
 
-//       <div className="flex items-center space-x-4">
-//         <div className="flex items-center space-x-2">
-//           <button onClick={() => onDecrease(item.id)}>
-//             <AiOutlineMinus size={18} className="text-gray-700 cursor-pointer" />
-//           </button>
-//           <span className="text-lg">{item.quantity}</span>
-//           <button onClick={() => onIncrease(item.id)}>
-//             <AiOutlinePlus size={18} className="text-gray-700 cursor-pointer" />
-//           </button>
-//         </div>
 
-//         <p className="text-lg font-semibold">${item.price * item.quantity}</p>
-//         <button onClick={() => onRemove(item.id)}>
-//           <AiOutlineClose size={20} className="text-red-500 cursor-pointer" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
 
-// const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease, onProceedToPayment }) => {
-//   const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-//   return (
-//     <div className="fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300 shadow-lg">
-//       <AiOutlineClose
-//         onClick={closeCart}
-//         size={30}
-//         className="absolute right-4 top-6 cursor-pointer"
-//       />
 
-//       <div className="p-4">
-//         <h2 className="text-2xl font-semibold mb-4">Shopping Cart</h2>
-//         {cartItems.map((item) => (
-//           <CartItem
-//             key={item.id}
-//             item={item}
-//             onRemove={onRemove}
-//             onIncrease={onIncrease}
-//             onDecrease={onDecrease}
-//           />
-//         ))}
-//       </div>
-
-//       <div className="flex justify-between items-center p-4 border-t">
-//         <p className="text-lg font-semibold">Total:</p>
-//         <p className="text-lg font-semibold">${totalAmount}</p>
-//       </div>
-
-//       <div className="p-4">
-//         <button
-//           onClick={onProceedToPayment}
-//           className="w-full bg-blue-700 text-white py-2 rounded-md font-semibold hover:bg-blue-800"
-//         >
-//           Proceed to Payment
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
 
 interface PropsType {
   user: User | null;
@@ -111,6 +45,11 @@ const Navbar = ({ user }: PropsType) => {
     { id: 1, name: "Product 1", quantity: 2, price: 20 },
     { id: 2, name: "Product 2", quantity: 1, price: 15 },
   ]); // Assume you have a state for cart items
+
+
+  const [showSearch, setShowSearch]=useState(false)
+
+  const [cartSidebarOpen, setcartSidebarOpen] = useState(false);
 
   const [isOpenUser, setIsOpenUser] = useState(false);
   const isLoggedIn = true; // Replace with your authentication logic
@@ -158,9 +97,10 @@ const Navbar = ({ user }: PropsType) => {
           </Link>
           <div className="flex md:order-2 space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
             <div className="relative hidden md:block">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <button className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none" onClick={()=>setShowSearch(false)} >
                 <span className="sr-only">Search icon</span>
-              </div>
+
+              </button>
               <input
                 type="text"
                 id="search-navbar"
@@ -383,71 +323,7 @@ const Navbar = ({ user }: PropsType) => {
             }}
           />
         )}
-        {/* 
-{isCartOpen && (
-        <CartSidebar
-          cartItems={cartItems}
-          closeCart={closeCart}
-          onRemove={(itemId) => {
-            const updatedCart = cartItems.filter((item) => item.id !== itemId);
-            setCartItems(updatedCart);
-          }}
-          onProceedToPayment={() => {
-            // Implement your logic for proceeding to payment
-            // This can include routing to a payment page or any other relevant action
-            console.log("Proceeding to payment...");
-          }}
-        />
-      )} this is good */}
 
-        {/* Side drawer menu */}
-
-        {/* <div
-          className={
-            isCartOpen
-              ? "fixed top-0 right-0 w-[300px] h-screen bg-white z-10 duration-300"
-              : "fixed top-0 right-[-100%] w-[300px] h-screen bg-white z-10 duration-300"
-          }
-        >
-          <AiOutlineClose
-            onClick={() => setIsCartOpen(!isCartOpen)}
-            size={30}
-            className="absolute right-4 top-6 cursor-pointer"
-          />
-          
-
-          <nav>
-            <ul className="flex flex-col p-4 text-gray-800">
-              <li className="text-xl py-4 flex">
-                <TbTruckDelivery size={25} className="mr-4" />
-                Orders
-              </li>
-              <li className="text-xl py-4 flex">
-                <MdFavorite size={25} className="mr-4" />
-                Favorites
-              </li>
-              <li className="text-xl py-4 flex">
-                <FaWallet size={25} className="mr-4" />
-                Wallet
-              </li>
-              <li className="text-xl py-4 flex">
-                <MdHelp size={25} className="mr-4" />
-                Help
-              </li>
-              <li className="text-xl py-4 flex">
-                <TbTruckDelivery size={25} className="mr-4" />
-              </li>
-              <li className="text-xl py-4 flex">
-                <TbTruckDelivery size={25} className="mr-4" />
-                Orders
-              </li>
-              <li className="text-xl py-4 flex">
-                <TbTruckDelivery size={25} className="mr-4" />
-                Orders
-              </li>
-            </ul>
-          </nav>
-        </div> */}
 
         {/* Mobile Menu */}
         {/* Overlay */}
@@ -506,6 +382,10 @@ const Navbar = ({ user }: PropsType) => {
           </nav>
         </div>
       </nav>
+
+      {showSearch && <Search setShowSearch={setShowSearch} />}
+
+      {cartSidebarOpen&&<CartSidebar/>}
     </div>
   );
 };

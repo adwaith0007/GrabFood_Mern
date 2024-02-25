@@ -3,7 +3,7 @@ const router = express.Router();
 const adminController = require("../Controllers/adminControllers");
 const categoryControllers = require("../Controllers/categoryControllers");
 const itemControllers = require("../Controllers/itemControllers");
-const productControllers = require("../Controllers/product");
+const productControllers = require("../Controllers/productControllers");
 const upload = require("../middlewares/multer");
 
 
@@ -30,9 +30,7 @@ router.post("/product/add", (req, res) => {
   productControllers.addProduct(req, res);
 });
 
-// router.post("/product/add", (req, res) => {
-//   categoryControllers.addCategory(req, res);
-// });
+
 
 router.post("/items/add", (req, res) => {
   itemControllers.addItems(req, res);

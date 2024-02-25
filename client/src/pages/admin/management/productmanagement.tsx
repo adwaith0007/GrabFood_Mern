@@ -96,7 +96,7 @@ const ProductManagement = () => {
         formData.append("photo", photoFile);
       }
 
-      await axios.put(`http://localhost:5000/api/product/${productId}`, formData);
+      await axios.put(`http://localhost:5000/api/product/update/${productId}`, formData);
 
       // Update local state with the new values
       setPrice(priceUpdate);
@@ -114,7 +114,7 @@ const ProductManagement = () => {
   const deleteHandler = async (): Promise<void> => {
     try {
       // Delete the product on the server
-      await axios.delete(`http://localhost:5000/api/product/${productId}`);
+      await axios.delete(`http://localhost:5000/api/product/delete/${productId}`);
 
       // Handle local state or redirect as needed
     } catch (error) {

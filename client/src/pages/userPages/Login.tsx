@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Layout/Navbar";
 import "../../index.css";
 import axios from "axios";
 import foodimg from "../../assets/login_food.png";
