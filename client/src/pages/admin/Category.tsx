@@ -71,7 +71,7 @@ const Category = () => {
 
   useEffect(() => {
     try {
-      axios.get(`http://localhost:5000/api/admin/category`).then((res) => {
+      axios.get(`http://localhost:5000/api/category/get`).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }

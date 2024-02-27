@@ -5,11 +5,8 @@ import axios from "axios";
 import foodimg from "../../../assets/login_food.png";
 
 const NewCategory = () => {
-    const [product, setProduct] = useState({
+    const [categoryData, setCategoryData] = useState({
         name: "",
-        desc: "",
-        category: "",
-        price: 0,
         images: [],
       });
     
@@ -18,7 +15,7 @@ const NewCategory = () => {
       const [selectedImages, setSelectedImages] = useState([]);
 
       const [category, setCategory] = useState("");
-  const [categoryImage, setCategoryImage] = useState();
+  // const [categoryImage, setCategoryImage] = useState();
     
     
     
@@ -34,7 +31,7 @@ const NewCategory = () => {
           if (isValidImage) {
             setSelectedImages((prevImages) => [...prevImages, ...files]);
     
-            setProduct((prevProduct) => ({
+            setCategoryData((prevProduct) => ({
               ...prevProduct,
               images: [...prevProduct.images, ...files],
             }));
@@ -51,7 +48,7 @@ const NewCategory = () => {
           return updatedImages;
         });
     
-        setProduct((prevProduct) => {
+        setCategoryData((prevProduct) => {
           const updatedImages = [...prevProduct.images];
           updatedImages.splice(index, 1);
           return { ...prevProduct, images: updatedImages };
@@ -62,16 +59,16 @@ const NewCategory = () => {
         e.preventDefault();
     
         const formdata = new FormData();
-        formdata.append("category", category );
-        formdata.append('file',categoryImage)
+        formdata.append("category", categoryData.name );
+        // formdata.append('file',categoryImage)
     
-        // product.images.forEach((file) => {
-        //   formData.append("images", file);
-        // });
+        categoryData.images.forEach((file) => {
+          formdata.append("images", file);
+        });
     
         try {
           const response = await axios.post(
-            `http://localhost:5000/api/admin/category/add`,
+            `http://localhost:5000/api/category/add`,
             formdata
           );
     
@@ -96,7 +93,7 @@ const NewCategory = () => {
       <main className="product-management">
         <section>
 
-        {category.length > 0 && <p className="" >{category}</p>}
+        
           {selectedImages.length > 0 && (
             <div className="form-group">
               <div className="grid grid-cols-3 gap-4 mt-1">
@@ -120,11 +117,11 @@ const NewCategory = () => {
             </div>
           )}
           
-          {product.name.length > 0 && <p>{` ${product.name}`}</p>}
+          {categoryData.name.length > 0 && <p>{` ${categoryData.name}`}</p>}
 
-          {product.price > 0 && <h3>₹{product.price}</h3>}
+          {/* {product.price > 0 && <h3>₹{product.price}</h3>} */}
 
-          {product.desc.length > 0 && <p className="" >{product.desc}</p>}
+          {/* {product.desc.length > 0 && <p className="" >{product.desc}</p>} */}
         </section>
 
         <article>
@@ -137,7 +134,7 @@ const NewCategory = () => {
                 placeholder="Name"
                 name="name"
                 onChange={(e) =>
-                    setCategory( e.target.value )
+                  setCategoryData({ ...categoryData, name: e.target.value })
                 }
               />
             </div>

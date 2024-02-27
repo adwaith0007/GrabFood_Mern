@@ -45,7 +45,7 @@ const MenuPage = () => {
   // console.log("showAddressModal:", showAddressModal);
   useEffect(() => {
     try {
-      axios.get(`http://localhost:5000/api/admin/category`).then((res) => {
+      axios.get(`http://localhost:5000/api/category/get`).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }
@@ -56,7 +56,7 @@ const MenuPage = () => {
     }
 
     try {
-      axios.get(`http://localhost:5000/api/product/`).then((res) => {
+      axios.get(`http://localhost:5000/api/product/get`).then((res) => {
         if (res.data.success) {
           setProductList(res.data.data);
         }

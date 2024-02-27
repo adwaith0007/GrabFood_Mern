@@ -4,7 +4,7 @@ const cors = require("cors");
 const userRouter = require("./Routes/userRoutes.js");
 const adminRouter = require("./Routes/adminRoutes.js");
 const productRouter = require("./Routes/productRoutes.js");
-const categoryRoutes = require("./Routes/categoryRoutes.js");
+const categoryRouter = require("./Routes/categoryRouter.js");
 const couponRouter = require("./Routes/couponRouter.js");
 const orderRouter = require("./Routes/orderRouter.js");
 const cartItemRoutes = require("./Routes/CartItemRoutes.js");
@@ -38,6 +38,7 @@ app.use(express.static("./uploads"));
 // api routes
 app.use("/api", userRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api", cartItemRoutes);

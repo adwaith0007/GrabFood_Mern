@@ -3,6 +3,10 @@ import { FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
+import toast from "react-hot-toast";
+import {  useNavigate } from "react-router-dom";
+
+
 
 const defaultImg =
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
@@ -12,6 +16,8 @@ const ProductManagement = () => {
   const [productDetails, setProductDetails] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -90,19 +96,28 @@ const ProductManagement = () => {
       const formData = new FormData();
       formData.append("name", nameUpdate);
       formData.append("price", String(priceUpdate));
-     
       formData.append("category", categoryUpdate);
       if (photoFile) {
         formData.append("photo", photoFile);
       }
 
-      await axios.put(`http://localhost:5000/api/product/update/${productId}`, formData);
+      const response = await axios.put(`http://localhost:5000/api/product/update/${productId}`, formData);
 
-      // Update local state with the new values
-      setPrice(priceUpdate);
-      
-      setCategory(categoryUpdate);
-      setPhoto(photoUpdate);
+      if (response.data.success) {
+        toast.success("Product updated successfully!");
+        
+        setProductDetails({
+          ...productDetails,
+          productName: nameUpdate,
+          price: priceUpdate,
+          category: categoryUpdate,
+          productImage: photoFile
+            ? [{ originalname: photoFile.name, url: response.data.data.url }]
+            : productDetails.productImage,
+        });
+      } else {
+        toast.error(response.data.message || "Failed to update Product");
+      }
     } catch (error) {
       console.error("Error updating product", error);
       setError("Failed to update product");
@@ -111,15 +126,26 @@ const ProductManagement = () => {
     }
   };
 
+  
   const deleteHandler = async (): Promise<void> => {
+    
     try {
-      // Delete the product on the server
-      await axios.delete(`http://localhost:5000/api/product/delete/${productId}`);
-
-      // Handle local state or redirect as needed
+      
+      const response = await axios.delete(`http://localhost:5000/api/product/delete/${productId}`);
+  
+      if (response.status === 200) {
+        
+        toast.success("Product deleted successfully");
+        navigate("/admin/product");
+      } else {
+        console.error("Error deleting product");
+        setError("Failed to delete product");
+        toast.error("Failed to delete product");
+      }
     } catch (error) {
       console.error("Error deleting product", error);
       setError("Failed to delete product");
+      toast.error("Failed to delete product");
     }
   };
 

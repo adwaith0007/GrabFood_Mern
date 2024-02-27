@@ -168,10 +168,26 @@ Description: desc,
 
 exports.deleteProduct= async (req,res)=>{
 
-  console.log('hiiiii');
-  
-  
+  const productId = req.params.productId;
+
+  try {
+    const product = await productModel.findOneAndDelete({ _id: productId });
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+   
+
+    return res.json({ success: true, message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting product', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 }
+  
+  
+
 
 
 // export const newProduct = TryCatch(

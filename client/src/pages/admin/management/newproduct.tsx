@@ -19,7 +19,7 @@ const NewProduct = () => {
 
   useEffect(() => {
     try {
-      axios.get(`http://localhost:5000/api/admin/category`).then((res) => {
+      axios.get(`http://localhost:5000/api/category/get`).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }
@@ -82,7 +82,7 @@ const NewProduct = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/admin/product/add`,
+        `http://localhost:5000/api/product/add`,
         formData
       );
 

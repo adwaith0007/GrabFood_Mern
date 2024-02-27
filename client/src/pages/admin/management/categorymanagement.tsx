@@ -3,20 +3,36 @@ import { FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const defaultImg =
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
+interface CategoryDetails {
+  _id: string;
+  category: string;
+  categoryImage: { originalname: string }[];
+}
+
 const CategoryManagement = () => {
   const { id } = useParams<{ id: string }>();
-  const [CategoryDetails, setCategoryDetails] = useState<any>({});
+  const [CategoryDetails, setCategoryDetails] = useState<CategoryDetails>({
+    _id: "",
+    category: "",
+    categoryImage: [],
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategoryDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/Category/${id}`);
+        const response = await axios.get(
+          `http://localhost:5000/api/Category/${id}`
+        );
         if (response.data.success) {
           setCategoryDetails(response.data.data);
         } else {
@@ -32,37 +48,28 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
-  const {
-    _id: categoryId,
-    CategoryName: name,
-    price,
-    
-    category,
-    CategoryImage,
-  } = CategoryDetails;
+  const { _id: categoryId, category, categoryImage } = CategoryDetails;
 
-  const image = `http://localhost:5000/${CategoryDetails.CategoryImage?.[0]?.originalname.replace(/ /g, "%20")}`
+  const image = `http://localhost:5000/${CategoryDetails.categoryImage?.[0]?.originalname.replace(
+    / /g,
+    "%20"
+  )}`;
 
-  const [priceUpdate, setPriceUpdate] = useState<number>(price );
- 
-  const [nameUpdate, setNameUpdate] = useState<string>(name );
-  const [categoryUpdate, setCategoryUpdate] = useState<string>(category );
+  console.log(categoryImage);
+
+  const [categoryUpdate, setCategoryUpdate] = useState<string>(category);
   // const [photoUpdate, setPhotoUpdate] = useState<string>( image );
 
   // const [photoUpdate, setPhotoUpdate] = useState( image );
 
-  const [photoUpdate, setPhotoUpdate] = useState<string>(CategoryImage?.[0]?.url || defaultImg);
+  const [photoUpdate, setPhotoUpdate] = useState<string>(
+    categoryImage?.[0]?.url || defaultImg
+  );
 
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [updating, setUpdating] = useState<boolean>(false);
- 
-
-  // console.log(`http://localhost:5000/${CategoryDetails.CategoryImage?.[0]?.originalname.replace(/ /g, "%20")}` );
-  // console.log(photoUpdate);
 
   console.log(image);
-  
-  
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file: File | undefined = e.target.files?.[0];
@@ -80,7 +87,9 @@ const CategoryManagement = () => {
     }
   };
 
-  const submitHandler = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitHandler = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     try {
@@ -88,21 +97,33 @@ const CategoryManagement = () => {
 
       // Update the Category on the server
       const formData = new FormData();
-      formData.append("name", nameUpdate);
-      formData.append("price", String(priceUpdate));
-     
       formData.append("category", categoryUpdate);
       if (photoFile) {
         formData.append("photo", photoFile);
       }
 
-      await axios.put(`http://localhost:5000/api/Category/${CategoryId}`, formData);
+      const response = await axios.put(
+        `http://localhost:5000/api/category/update/${categoryId}`,
+        formData
+      );
 
-      // Update local state with the new values
-      setPrice(priceUpdate);
-      
-      setCategory(categoryUpdate);
-      setPhoto(photoUpdate);
+      if (response.data.success) {
+        toast.success("Category updated successfully!");
+        // Update local state if needed
+        setCategoryDetails((prevCategoryDetails) => ({
+          ...prevCategoryDetails,
+          category: categoryUpdate,
+          // Update image only if a new image is uploaded
+          categoryImage: photoFile
+            ? [{ originalname: photoFile.name, url: response.data.data.url }]
+            : prevCategoryDetails.categoryImage,
+        }));
+      } else {
+        toast.error(response.data.message || "Failed to update Category");
+      }
+
+      // setCategory(categoryUpdate);
+      // setPhoto(photoUpdate);
     } catch (error) {
       console.error("Error updating Category", error);
       setError("Failed to update Category");
@@ -113,13 +134,22 @@ const CategoryManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     try {
-      // Delete the Category on the server
-      await axios.delete(`http://localhost:5000/api/category/${categoryId}`);
+      const response = await await axios.delete(
+        `http://localhost:5000/api/category/delete/${categoryId}`
+      );
 
-      // Handle local state or redirect as needed
+      if (response.status === 200) {
+        toast.success("category deleted successfully");
+        navigate("/admin/category");
+      } else {
+        console.error("Error deleting category");
+        setError("Failed to delete category");
+        toast.error("Failed to delete category");
+      }
     } catch (error) {
-      console.error("Error deleting Category", error);
-      setError("Failed to delete Category");
+      console.error("Error deleting category", error);
+      setError("Failed to delete category");
+      toast.error("Failed to delete category");
     }
   };
 
@@ -139,47 +169,26 @@ const CategoryManagement = () => {
           <strong>ID - {categoryId}</strong>
           {/* <img src={photoUpdate} alt="Category" /> */}
           <img src={image} alt="Category" />
-          <p>{name}</p>
-          
-          <h3>₹{price}</h3>
+          <p>{category}</p>
         </section>
         <article>
-          <button className="product-delete-btn" onClick={deleteHandler} disabled={updating}>
+          <button
+            className="product-delete-btn"
+            onClick={deleteHandler}
+            disabled={updating}
+          >
             <FaTrash />
           </button>
           <form onSubmit={submitHandler}>
             <h2>Manage</h2>
             <div>
-              <label>Name</label>
-              <input
-                type="text"
-                placeholder={name}
-                value={nameUpdate}
-                onChange={(e) => setNameUpdate(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Price</label>
-              <input
-                type="number"
-                placeholder={price}
-                value={priceUpdate}
-                onChange={(e) => setPriceUpdate(Number(e.target.value))}
-              />
-            </div>
-            
-            <div>
               <label>Category</label>
               <input
                 type="text"
-                placeholder={category}
                 value={categoryUpdate}
                 onChange={(e) => setCategoryUpdate(e.target.value)}
               />
             </div>
-
-           
-
 
             <div className="form-group">
               <label>Photo</label>
@@ -201,7 +210,7 @@ const CategoryManagement = () => {
               </div>
             </div>
 
-             {/* {selectedImages.length > 0 && (
+            {/* {selectedImages.length > 0 && (
               <div className="form-group">
                 
                 <div className="grid grid-cols-3 gap-4 mt-1">
@@ -222,7 +231,9 @@ const CategoryManagement = () => {
             )} */}
 
             {photoUpdate && <img src={photoUpdate} alt="New Image" />}
-            <button type="submit" disabled={updating}>Update</button>
+            <button type="submit" disabled={updating}>
+              Update
+            </button>
           </form>
         </article>
       </main>
