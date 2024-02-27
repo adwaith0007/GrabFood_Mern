@@ -26,12 +26,6 @@ import Cookie from "js-cookie";
 
 import Search from "../Search";
 
-
-
-
-
-
-
 interface PropsType {
   user: User | null;
 }
@@ -46,8 +40,7 @@ const Navbar = ({ user }: PropsType) => {
     { id: 2, name: "Product 2", quantity: 1, price: 15 },
   ]); // Assume you have a state for cart items
 
-
-  const [showSearch, setShowSearch]=useState(false)
+  const [showSearch, setShowSearch] = useState(false);
 
   const [cartSidebarOpen, setcartSidebarOpen] = useState(false);
 
@@ -97,9 +90,11 @@ const Navbar = ({ user }: PropsType) => {
           </Link>
           <div className="flex md:order-2 space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
             <div className="relative hidden md:block">
-              <button className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none" onClick={()=>setShowSearch(false)} >
+              <button
+                className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                onClick={() => setShowSearch(false)}
+              >
                 <span className="sr-only">Search icon</span>
-
               </button>
               <input
                 type="text"
@@ -113,6 +108,19 @@ const Navbar = ({ user }: PropsType) => {
                 <BsCart3 size={20} className="text-white" />
               </button>
             </div>
+
+            
+
+            <Link className="" to="/cart">
+              <div className="relative py-2   ">
+                <div className="t-0 absolute left-3">
+                  <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
+                    3
+                  </p>
+                </div>
+                <BsCart3 size={20} className="text-white file: mt-4 h-6 w-6 " />
+              </div>
+            </Link>
 
             {user ? (
               <>
@@ -135,7 +143,7 @@ const Navbar = ({ user }: PropsType) => {
                             alt="User Profile"
                           />
 
-                          {user?.name || user }
+                          {user?.name || user}
                         </>
                       ) : (
                         <>User Logo</>
@@ -324,7 +332,6 @@ const Navbar = ({ user }: PropsType) => {
           />
         )}
 
-
         {/* Mobile Menu */}
         {/* Overlay */}
         {nav ? (
@@ -385,7 +392,7 @@ const Navbar = ({ user }: PropsType) => {
 
       {showSearch && <Search setShowSearch={setShowSearch} />}
 
-      {cartSidebarOpen&&<CartSidebar/>}
+      {cartSidebarOpen && <CartSidebar />}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-const categoryModel = require("../Models/foodCategory");
+const categoryModel = require("../Models/Category");
 const { upload } = require("../middlewares/multer");
 const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 
