@@ -14,34 +14,26 @@ import { signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useLoginMutation } from "../../redux/api/userAPI";
 
-import { useSelector } from 'react-redux';
-import { selectUser } from './../../redux/userSlice';
-import { useDispatch } from 'react-redux';
-import { userExist, userNotExist } from '../../redux/reducer/useReducer';
-import { setUser } from './../../redux/userSlice';
+import { useSelector } from "react-redux";
+import { selectUser } from "./../../redux/userSlice";
+import { useDispatch } from "react-redux";
+import { userExist, userNotExist } from "../../redux/reducer/useReducer";
+import { setUser } from "./../../redux/userSlice";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { MessageResponse } from "../../types/api-types";
 
 import Cookie from "js-cookie";
 
-import {jwtDecode} from 'jwt-decode';
-
+import { jwtDecode } from "jwt-decode";
 
 const Login = ({ setToken }) => {
+  const [gender, setGender] = useState("");
+  const [date, setDate] = useState("");
 
-
-  
-
-  const [gender,setGender]= useState("");
-  const [date, setDate] =useState("");
-
-  const [login] =useLoginMutation()
+  const [login] = useLoginMutation();
 
   const dispatch = useDispatch();
 
-  
-
-  
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -66,75 +58,74 @@ const Login = ({ setToken }) => {
       loginPromise.then((res) => {
         const { token } = res.data;
 
-        const user = jwtDecode(token);
+        const userToken = jwtDecode(token);
 
-        
-        
+        const user = {
+          _id: userToken._id,
+          name: userToken.name,
+          email: userToken.email,
+          photo: userToken.photo,
+          role: userToken.role,
+          gender: userToken.gender,
+          token,
+        };
 
-        dispatch(userExist(user))
-        
+        console.log(user);
+
+        dispatch(userExist(user));
+
         Cookie.set("token", token, { sameSite: true });
 
         setToken(token);
         navigate("/");
-        
       });
     },
   });
 
-  
-
   const loginHandler = async () => {
     try {
-      const provider = new GoogleAuthProvider()
-      
+      const provider = new GoogleAuthProvider();
 
-      const { user } = await signInWithPopup(auth, provider)
+      const { user } = await signInWithPopup(auth, provider);
 
-      console.log({lname:user.displayName!,
-        email:user.email!,
-        photo:user.photoURL!,
-        gender:"sdfg",
-        role:"user",
-        dob :date,
-        _id :user.uid,});
-      
+      console.log({
+        lname: user.displayName!,
+        email: user.email!,
+        photo: user.photoURL!,
+        gender: "sdfg",
+        role: "user",
+        dob: date,
+        _id: user.uid,
+      });
 
-     const res = await login({
-        name:user.displayName!,
-        email:user.email!,
-        photo:user.photoURL!,
-        gender:"male",
-        role:"user",
-        dob :"5647",
-        _id :user.uid,
-      })
+      const res = await login({
+        name: user.displayName!,
+        email: user.email!,
+        photo: user.photoURL!,
+        gender: "male",
+        role: "user",
+        dob: "5647",
+        _id: user.uid,
+      });
 
-      if ("data" in res)
-      {
-
-        toast.success(res.data.message)
-
-      }else{
-        const error =res.error as FetchBaseQueryError;
+      if ("data" in res) {
+        toast.success(res.data.message);
+      } else {
+        const error = res.error as FetchBaseQueryError;
         const message = (error.data as MessageResponse).message;
-        toast.error(message)
+        toast.error(message);
       }
 
       // console.log(user)
     } catch (error) {
       toast.error("Sign In Failed");
     }
-
-    
   };
 
   // project-1066668375532
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
-     
-
       <div className="container custom-height flex justify-center items-center mx-auto ">
         <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">
           <div className="  hidden xl:flex w-1/2 ">
@@ -208,7 +199,10 @@ const Login = ({ setToken }) => {
                     </label>
                   </div>
 
-                  <Link to="/forgot_password" className="text-gray-900 hover:underline">
+                  <Link
+                    to="/forgot_password"
+                    className="text-gray-900 hover:underline"
+                  >
                     Forgot password?
                   </Link>
                 </div>

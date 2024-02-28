@@ -1,39 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import CartSection from './CartSection';
 import OrderSummarySection from './OrderSummarySection';
+import axios from 'axios';
+
 
 const CartPage = () => {
+
+    const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    // Fetch cart items from the server
-    // You can use axios or fetch for making API requests
-    fetch('/api/cart')
-      .then(response => response.json())
-      .then(data => setCartItems(data))
+    // Fetch products
+    axios.get('/api/products')
+      .then(response => setProducts(response.data))
+      .catch(error => console.error('Error fetching products:', error));
+
+    // Fetch cart items
+    axios.get('/api/cart')
+      .then(response => setCartItems(response.data))
       .catch(error => console.error('Error fetching cart items:', error));
   }, []);
 
-  const handleAddToCart = (productId, quantity) => {
-    // Make a POST request to add items to the cart
-    fetch('/api/cart/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ productId, quantity }),
-    })
-      .then(response => response.json())
-      .then(data => setCartItems(data))
+ const handleAddToCart = (productId, quantity) => {
+    axios.post('/api/cart/add', { productId, quantity })
+      .then(response => setCartItems(response.data))
       .catch(error => console.error('Error adding to cart:', error));
   };
 
-  // Similar functions for update and delete
+  const handleUpdateCart = (productId, quantity) => {
+    axios.post('/api/cart/update', { productId, quantity })
+      .then(response => setCartItems(response.data))
+      .catch(error => console.error('Error updating cart:', error));
+  };
+
+  const handleDeleteFromCart = (productId) => {
+    axios.post('/api/cart/delete', { productId })
+      .then(response => setCartItems(response.data))
+      .catch(error => console.error('Error deleting from cart:', error));
+  };
 
   return (
     <div className="flex">
-      <CartSection cartItems={cartItems} onAddToCart={handleAddToCart} />
-      <OrderSummarySection cartItems={cartItems} />
+       <CartSection
+          products={products}
+          cartItems={cartItems}
+          onAddToCart={handleAddToCart}
+          onUpdateCart={handleUpdateCart}
+          onDeleteFromCart={handleDeleteFromCart}
+        />
+        <OrderSummarySection cartItems={cartItems} />
+
+        <p>hi</p>
     </div>
   );
 };

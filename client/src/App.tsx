@@ -64,6 +64,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
   import {jwtDecode} from 'jwt-decode';
 
   import JwtPayload from './types/types';
+import CartPage from './pages/userPages/CartPage';
     
     function App() {
 
@@ -144,6 +145,7 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
 
 <Route element={<ProtectedRoute isAuthenticated={user? true : false }  />}  >
   <Route  path='/menu' element={<MenuPage/>} ></Route>
+  <Route  path='/cart' element={<CartPage/>} ></Route>
 
 <Route  path='user/profile' element={<UserProfile />} ></Route>
   <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>

@@ -4,6 +4,7 @@ const UserModel = require("../Models/userModels");
 const NewUser = require("../Models/user");
 
 const userController = require("../Controllers/userControllers");
+const cartController = require("../Controllers/cartController");
 
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
@@ -72,6 +73,8 @@ router.put("/resetPassword", userController.resetPassword);
 // });
 
 router.post("/user/getAddress",  (req, res) => {
+  console.log('innnnnnn');
+  
   userController.getAddress(req, res);
 });
 
@@ -208,6 +211,15 @@ router.get("/user/v1/:id", async (req, res, next) => {
   }
 });
 
+
+
+router.post("/cart/add/:userId", (req, res) => {
+  cartController.add(req, res);
+});
+
+// router.post("/cart/get", isUserLoggedIn, (req, res) => {
+//   cartController.get(req, res);
+// });
 
 
 
