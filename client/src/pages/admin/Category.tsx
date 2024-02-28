@@ -93,7 +93,7 @@ const Category = () => {
       
       photo: (
         <img
-          src={`http://localhost:5000/${item.categoryImage[0]?.originalname.replace(/ /g, "%20")}`}
+          src={`http://localhost:5000/${item.categoryImage[0]?.replace(/ /g, "%20")}`}
           alt={item.category}
         />
       ),

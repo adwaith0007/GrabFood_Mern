@@ -64,7 +64,7 @@ const Products = () => {
       
       photo: (
         <img
-          src={`http://localhost:5000/${item.productImage[0]?.originalname.replace(/ /g, "%20")}`}
+          src={`http://localhost:5000/${item.productImage[0]?.replace(/ /g, "%20")}`}
           alt={item.name}
         />
       ),

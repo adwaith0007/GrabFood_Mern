@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   AiOutlineClose,
@@ -25,20 +25,43 @@ import toast from "react-hot-toast";
 import Cookie from "js-cookie";
 
 import Search from "../Search";
+import axios from "axios";
 
 interface PropsType {
   user: User | null;
 }
 
 const Navbar = ({ user }: PropsType) => {
-  console.log(user);
+
+  
+
+  const [cartItems, setCartItems] = useState([]);
+
+
+  const userId = user._id
+
+  useEffect(() => {
+    
+  
+axios.get(`http://localhost:5000/api/cart/${userId}`)
+  .then(response => {
+    setCartItems(response.data.cart);
+  })
+  .catch(error => {
+    console.error('Error fetching cart items:', error);
+  });
+
+
+}, []);
+
+
+
+
+  
 
   const [nav, setNav] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Product 1", quantity: 2, price: 20 },
-    { id: 2, name: "Product 2", quantity: 1, price: 15 },
-  ]); // Assume you have a state for cart items
+ 
 
   const [showSearch, setShowSearch] = useState(false);
 
@@ -115,7 +138,7 @@ const Navbar = ({ user }: PropsType) => {
               <div className="relative py-2   ">
                 <div className="t-0 absolute left-3">
                   <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
-                    3
+                    {cartItems.length}
                   </p>
                 </div>
                 <BsCart3 size={20} className="text-white file: mt-4 h-6 w-6 " />

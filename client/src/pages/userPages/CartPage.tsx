@@ -2,24 +2,44 @@ import React, { useEffect, useState } from 'react';
 import CartSection from './CartSection';
 import OrderSummarySection from './OrderSummarySection';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { UserReducerInitialState } from '../../types/reducer-types';
 
 
 const CartPage = () => {
 
+    const {user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
+  
+    const userId =user._id;
+    
     const [products, setProducts] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState([]);
+    
+    useEffect(() => {
+        // Fetch products
+        // axios.get('/api/products')
+        //   .then(response => setProducts(response.data))
+        //   .catch(error => console.error('Error fetching products:', error));
+        
+        // // Fetch cart items
+        // axios.get('/api/cart')
+        //   .then(response => setCartItems(response.data))
+        //   .catch(error => console.error('Error fetching cart items:', error));
+        
+    
+    axios.get(`http://localhost:5000/api/cart/${userId}`)
+      .then(response => {
+        setCartItems(response.data.cart);
+      })
+      .catch(error => {
+        console.error('Error fetching cart items:', error);
+      });
 
-  useEffect(() => {
-    // Fetch products
-    axios.get('/api/products')
-      .then(response => setProducts(response.data))
-      .catch(error => console.error('Error fetching products:', error));
 
-    // Fetch cart items
-    axios.get('/api/cart')
-      .then(response => setCartItems(response.data))
-      .catch(error => console.error('Error fetching cart items:', error));
   }, []);
+
+  console.log(cartItems.length);
+  
 
  const handleAddToCart = (productId, quantity) => {
     axios.post('/api/cart/add', { productId, quantity })
@@ -42,7 +62,7 @@ const CartPage = () => {
   return (
     <div className="flex">
        <CartSection
-          products={products}
+          products={cartItems}
           cartItems={cartItems}
           onAddToCart={handleAddToCart}
           onUpdateCart={handleUpdateCart}
@@ -50,7 +70,7 @@ const CartPage = () => {
         />
         <OrderSummarySection cartItems={cartItems} />
 
-        <p>hi</p>
+        
     </div>
   );
 };

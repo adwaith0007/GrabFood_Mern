@@ -24,7 +24,8 @@ import { UserReducerInitialState } from "../../types/reducer-types";
 const MenuPage = () => {
   
   
-  const {user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer)
+  const {user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
+  
   const userId =user._id;
   const navigate = useNavigate();
 
@@ -188,7 +189,7 @@ const MenuPage = () => {
                 <>
                   <CategoryCards
                     name={item.category}
-                    imageUrl={`http://localhost:5000/${item.categoryImage[0].originalname}`}
+                    imageUrl={`http://localhost:5000/${item.categoryImage[0].replace(/ /g,"%20" )}`}
                     handler={changeCategory}
                   />
                 </>
@@ -207,10 +208,7 @@ const MenuPage = () => {
                     price={item.price}
                     description={item.Description}
                     name={item.productName}
-                    imageUrl={`http://localhost:5000/${item.productImage[0].originalname.replace(
-                      / /g,
-                      "%20"
-                    )}`}
+                    imageUrl={`http://localhost:5000/${item.productImage[0].replace(/ /g,"%20" )}`}
                     onAddToCart={() => addToCart(item)} // Pass the addToCart callback to ProductCard
                   />
                 </>

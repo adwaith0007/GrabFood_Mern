@@ -64,13 +64,13 @@ const UserSchema = new mongoose.Schema({
       },
       quantity: {
         type: Number,
-        defaultValue: 1,
+        default: 1,
       },
       price: {
         type: Number,
       },
-      image: {
-        type: String,
+      productImage: {
+        type: [String],
       },
       discountPrice: {
         type: Number,

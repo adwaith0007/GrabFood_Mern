@@ -16,6 +16,7 @@ exports.addCategory = async (req, res) => {
       }
 
       const image = req.files;
+      const filenames = image.map((file) => file.filename);
 
       const { category } = req.body;
       console.log(category);
@@ -33,7 +34,7 @@ exports.addCategory = async (req, res) => {
 
       const categoryDoc = new categoryModel({
         category,
-        categoryImage: image,
+        categoryImage: filenames,
       });
 
       await categoryDoc.save();

@@ -217,9 +217,11 @@ router.post("/cart/add/:userId", (req, res) => {
   cartController.add(req, res);
 });
 
-// router.post("/cart/get", isUserLoggedIn, (req, res) => {
-//   cartController.get(req, res);
-// });
+router.post("/cart/get",  (req, res) => {
+  cartController.get(req, res);
+});
+
+router.get('/cart/:userId', cartController.getCartItems);
 
 
 
