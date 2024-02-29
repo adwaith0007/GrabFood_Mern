@@ -29,6 +29,8 @@ const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
         </div>
         
       </div>
+
+      
       <div className="flex flex-col items-center space-x-4">
 
         <div>

@@ -101,7 +101,7 @@ const MenuPage = () => {
           quantity: 1,
           name: product.productName,
           price: product.price,
-          imageUrl: `http://localhost:5000/${product.productImage[0].originalname.replace(
+          imageUrl: `http://localhost:5000/${product.productImage[0].replace(
             / /g,
             "%20"
           )}`,

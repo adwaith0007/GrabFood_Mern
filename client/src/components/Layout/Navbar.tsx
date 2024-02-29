@@ -38,21 +38,19 @@ const Navbar = ({ user }: PropsType) => {
   const [cartItems, setCartItems] = useState([]);
 
 
-  const userId = user._id
+  // const userId = user._id
 
   useEffect(() => {
-    
-  
-axios.get(`http://localhost:5000/api/cart/${userId}`)
-  .then(response => {
-    setCartItems(response.data.cart);
-  })
-  .catch(error => {
-    console.error('Error fetching cart items:', error);
-  });
-
-
-}, []);
+    if (user && user._id) {
+      axios.get(`http://localhost:5000/api/cart/${user._id}`)
+        .then(response => {
+          setCartItems(response.data.cart);
+        })
+        .catch(error => {
+          console.error('Error fetching cart items:', error);
+        });
+    }
+  }, [user]);
 
 
 

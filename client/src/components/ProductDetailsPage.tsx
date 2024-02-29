@@ -40,8 +40,8 @@ const ProductDetailsPage = () => {
           <div className="flex-shrink-0 w-full lg:w-1/2">
             <ImageGallery
               items={productDetails.productImage.map((image, index) => ({
-                original: `http://localhost:5000/${image.originalname}`,
-                thumbnail: `http://localhost:5000/${image.originalname}`,
+                original: `http://localhost:5000/${image}`,
+                thumbnail: `http://localhost:5000/${image}`,
               }))}
               showPlayButton={false}
               showFullscreenButton={false}

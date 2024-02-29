@@ -12,7 +12,7 @@ const OrderSummarySection = ({ cartItems }) => {
         <div key={item.productId} className="mb-4 border p-4 flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold">{item.name}</h3>
-            <p>${item.price.toFixed(2)} each</p>
+            <p>₹{item.price.toFixed(2)} each</p>
           </div>
           <div>
             <p>Qty: {item.quantity}</p>
@@ -20,7 +20,7 @@ const OrderSummarySection = ({ cartItems }) => {
         </div>
       ))}
       <div className="border-t pt-4 mt-4">
-        <h3 className="text-xl font-bold">Total: ${getTotalPrice().toFixed(2)}</h3>
+        <h3 className="text-xl font-bold">Total: ₹{getTotalPrice().toFixed(2)}</h3>
       </div>
     </div>
   );
