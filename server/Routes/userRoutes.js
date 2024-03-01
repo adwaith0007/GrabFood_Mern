@@ -221,6 +221,18 @@ router.post("/cart/get",  (req, res) => {
   cartController.get(req, res);
 });
 
+
+
+router.post("/cart/decrease/:userId", (req, res) => {
+  cartController.decrease(req, res);
+});
+
+
+router.post("/cart/remove/:userId", (req, res) => {
+  cartController.remove(req, res);
+});
+
+
 router.get('/cart/:userId', cartController.getCartItems);
 
 
