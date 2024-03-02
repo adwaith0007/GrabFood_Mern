@@ -58,13 +58,17 @@ const NewCategory = lazy(() => import("./pages/admin/management/newcategory"));
 const ProductManagement = lazy(() => import("./pages/admin/management/productmanagement"));
 const CategoryManagement = lazy(() => import("./pages/admin/management/categorymanagement"));
   const TransactionManagement = lazy(() => import("./pages/admin/management/transactionmanagement"));
+
+  const CartPage = lazy(() => import("./pages/userPages/CartPage"));
+
+  const CheckoutPage = lazy(() => import("./pages/userPages/CheckoutPage"));
     
   import Cookies from 'js-cookie'
 
   import {jwtDecode} from 'jwt-decode';
 
   import JwtPayload from './types/types';
-import CartPage from './pages/userPages/CartPage';
+
     
     function App() {
 
@@ -146,6 +150,7 @@ import CartPage from './pages/userPages/CartPage';
 <Route element={<ProtectedRoute isAuthenticated={user? true : false }  />}  >
   <Route  path='/menu' element={<MenuPage/>} ></Route>
   <Route  path='/cart' element={<CartPage/>} ></Route>
+  <Route  path='/checkout' element={<CheckoutPage/>} ></Route>
 
 <Route  path='user/profile' element={<UserProfile />} ></Route>
   <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>
