@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import CheckoutOrderSummary from "../../components/user/CheckoutOrderSummary";
 import PaymentSection from "../../components/user/PaymentSection";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+
+import { faLight, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+
 import { Link } from "react-router-dom";
 import AddressInput from "../../components/AddressInput";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
+import ChooseAddress from "../../components/user/ChooseAddress";
 
 const CheckoutPage = () => {
   const { user } = useSelector(
@@ -17,31 +20,30 @@ const CheckoutPage = () => {
   const userId = user._id;
 
   const [addressTab, setAddressTab] = useState(false);
+  const [chooseaddressTab, setChooseaddressTab] = useState(false);
   const [addresses, setAddresses] = useState([]);
-  const[selectedAddress, setSelectedAddress] =useState()
+  const [selectedAddress, setSelectedAddress] = useState();
 
-  
   useEffect(() => {
     if (userId) {
       axios
-      .get(`http://localhost:5000/api/user/${userId}/addresses`)
-      
-      .then((response) => {
-        setAddresses(response.data);
-        setSelectedAddress(response.data[0]);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+
+        .then((response) => {
+          setAddresses(response.data);
+          setSelectedAddress(response.data[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [userId]);
 
-  
-  
-
-
   console.log(selectedAddress);
-  
+
+  const handleAddressSelect = (address) => {
+    setSelectedAddress(address);
+  };
 
   return (
     <div>
@@ -130,10 +132,18 @@ const CheckoutPage = () => {
         <div className="px-4 pt-5">
           <div className="flex justify-between  ">
             <div className="flex items-center gap-3">
-              <FontAwesomeIcon
-                icon={faLocationDot}
-                style={{ color: "#63E6BE" }}
-              />
+              {selectedAddress != undefined ? (
+                <FontAwesomeIcon
+                  icon={faLocationDot}
+                  style={{ color: "#63E6BE" }}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faLocationDot}
+                  beat
+                  style={{ color: "#63E6BE" }}
+                />
+              )}
 
               <p className="text-xl font-medium">Address</p>
             </div>
@@ -166,23 +176,56 @@ const CheckoutPage = () => {
             select your address or add a new address.
           </p>
           <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-            {selectedAddress!= undefined ? (
-              <div className="flex justify-between  " >
+            {selectedAddress != undefined ? (
+              <div className="flex justify-between   ">
                 <div>
-                  <h3 className="text-[#093bc9] font-semibold ">
-                    {selectedAddress.city}
-                  </h3>
+                  <div className="flex items-center gap-2 mb-2 ">
+                    <FontAwesomeIcon icon={faLocationDot} />
 
-                  <p>{selectedAddress.city }</p>
-                  <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} ` }</p>
+                    <h3 className="text-[#093bc9] font-semibold ">
+                      {selectedAddress.city}
+                    </h3>
+                  </div>
 
+                  <div className="w-[300px]" >
+                  <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
+                  <p>{selectedAddress.street}</p>
+
+
+                  </div>
+
+
+                  <button className="text-[#094fc9] font-normal mt-3">
+                    Edit address
+                  </button>
                 </div>
 
                 <div>
-                  <button className="text-[#093bc9] font-medium" >
+                  <button
+                  onClick={() => {
+                    setChooseaddressTab(!chooseaddressTab);
+                  }}
+                   className="text-[#093bc9] font-medium">
                     Choose another address
                   </button>
                 </div>
+
+                {chooseaddressTab ? (
+                <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+              ) : (
+                ""
+              )}
+
+              {chooseaddressTab && (
+                <ChooseAddress
+                  onClose={() => {
+                    setChooseaddressTab(false);
+                  }}
+
+                  onAddressSelect={handleAddressSelect}
+                />
+              )}
+
 
               </div>
             ) : (
