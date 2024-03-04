@@ -24,7 +24,7 @@ const orderSchema = mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   state: {
@@ -38,19 +38,19 @@ const orderSchema = mongoose.Schema({
   },
   subTotal: {
     type: Number,
-    required: true,
+    // required: true,
   },
   shipping: {
     type: Number,
-    required: true,
+    // required: true,
   },
   total: {
     type: Number,
-    required: true,
+    // required: true,
   },
   mode: {
     type: String,
-    required: true,
+    // required: true,
   },
   paymentStatus: {
     type: Boolean,

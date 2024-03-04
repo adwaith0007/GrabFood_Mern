@@ -50,11 +50,8 @@ const CategoryManagement = () => {
 
   const { _id: categoryId, category, categoryImage } = CategoryDetails;
 
-  const image = `http://localhost:5000/${CategoryDetails.categoryImage?.[0]?.originalname.replace(
-    / /g,
-    "%20"
-  )}`;
-
+  const image = `http://localhost:5000/${CategoryDetails.categoryImage?.[0]?.replace(/ /g,"%20")}`;
+ 
   console.log(categoryImage);
 
   const [categoryUpdate, setCategoryUpdate] = useState<string>(category);
@@ -63,7 +60,7 @@ const CategoryManagement = () => {
   // const [photoUpdate, setPhotoUpdate] = useState( image );
 
   const [photoUpdate, setPhotoUpdate] = useState<string>(
-    categoryImage?.[0]?.url || defaultImg
+    image || defaultImg
   );
 
   const [photoFile, setPhotoFile] = useState<File | undefined>();

@@ -1,12 +1,10 @@
-import React, { ChangeEvent, useEffect, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
-import {  useNavigate } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
 
 const defaultImg =
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
@@ -38,41 +36,19 @@ const ProductManagement = () => {
     fetchProductDetails();
   }, [id]);
 
-  const {
-    _id: productId,
-    productName: name,
-    price,
-    
-    category,
-    productImage,
-  } = productDetails;
+  const { _id: productId, productName: name, price, category, productImage } = productDetails;
+  const image = productImage?.[0]?.replace(/ /g, "%20");
+  const imageUrl = image ? `http://localhost:5000/${image}` : defaultImg;
 
-  const image = `http://localhost:5000/${productDetails.productImage?.[0]?.originalname.replace(/ /g, "%20")}`
-
-  const [priceUpdate, setPriceUpdate] = useState<number>(price );
- 
-  const [nameUpdate, setNameUpdate] = useState<string>(name );
-  const [categoryUpdate, setCategoryUpdate] = useState<string>(category );
-  // const [photoUpdate, setPhotoUpdate] = useState<string>( image );
-
-  // const [photoUpdate, setPhotoUpdate] = useState( image );
-
-  const [photoUpdate, setPhotoUpdate] = useState<string>(productImage?.[0]?.url || defaultImg);
-
+  const [updatedPrice, setUpdatedPrice] = useState<number>(price);
+  const [nameUpdate, setNameUpdate] = useState<string>(name);
+  const [categoryUpdate, setCategoryUpdate] = useState<string>(category);
+  const [photoUpdate, setPhotoUpdate] = useState<string>(imageUrl);
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [updating, setUpdating] = useState<boolean>(false);
- 
-
-  // console.log(`http://localhost:5000/${productDetails.productImage?.[0]?.originalname.replace(/ /g, "%20")}` );
-  // console.log(photoUpdate);
-
-  console.log(image);
-  
-  
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file: File | undefined = e.target.files?.[0];
-
     const reader: FileReader = new FileReader();
 
     if (file) {
@@ -92,11 +68,23 @@ const ProductManagement = () => {
     try {
       setUpdating(true);
 
-      // Update the product on the server
       const formData = new FormData();
-      formData.append("name", nameUpdate);
-      formData.append("price", String(priceUpdate));
-      formData.append("category", categoryUpdate);
+
+      // Append the name if it's changed
+      if (nameUpdate !== name) {
+        formData.append("name", nameUpdate);
+      }
+
+      // Append the rest of the fields (if they are changed)
+      if (updatedPrice !== price) {
+        formData.append("price", String(updatedPrice));
+      }
+
+      if (categoryUpdate !== category) {
+        formData.append("category", categoryUpdate);
+      }
+
+      // Append the photo if it's changed
       if (photoFile) {
         formData.append("photo", photoFile);
       }
@@ -105,12 +93,13 @@ const ProductManagement = () => {
 
       if (response.data.success) {
         toast.success("Product updated successfully!");
-        
+
+        // Update only the fields that have changed
         setProductDetails({
           ...productDetails,
           productName: nameUpdate,
-          price: priceUpdate,
-          category: categoryUpdate,
+          ...(updatedPrice !== price && { price: updatedPrice }),
+          ...(categoryUpdate !== category && { category: categoryUpdate }),
           productImage: photoFile
             ? [{ originalname: photoFile.name, url: response.data.data.url }]
             : productDetails.productImage,
@@ -126,15 +115,11 @@ const ProductManagement = () => {
     }
   };
 
-  
   const deleteHandler = async (): Promise<void> => {
-    
     try {
-      
       const response = await axios.delete(`http://localhost:5000/api/product/delete/${productId}`);
-  
+
       if (response.status === 200) {
-        
         toast.success("Product deleted successfully");
         navigate("/admin/product");
       } else {
@@ -163,10 +148,8 @@ const ProductManagement = () => {
       <main className="product-management">
         <section>
           <strong>ID - {productId}</strong>
-          {/* <img src={photoUpdate} alt="Product" /> */}
-          <img src={image} alt="Product" />
+          <img src={imageUrl} alt="Product" />
           <p>{name}</p>
-          
           <h3>₹{price}</h3>
         </section>
         <article>
@@ -188,12 +171,11 @@ const ProductManagement = () => {
               <label>Price</label>
               <input
                 type="number"
-                placeholder={price}
-                value={priceUpdate}
-                onChange={(e) => setPriceUpdate(Number(e.target.value))}
+                placeholder={price.toString()}
+                value={updatedPrice}
+                onChange={(e) => setUpdatedPrice(Number(e.target.value))}
               />
             </div>
-            
             <div>
               <label>Category</label>
               <input
@@ -203,10 +185,6 @@ const ProductManagement = () => {
                 onChange={(e) => setCategoryUpdate(e.target.value)}
               />
             </div>
-
-           
-
-
             <div className="form-group">
               <label>Photo</label>
               <div className="flex items-center">
@@ -226,29 +204,10 @@ const ProductManagement = () => {
                 />
               </div>
             </div>
-
-             {/* {selectedImages.length > 0 && (
-              <div className="form-group">
-                
-                <div className="grid grid-cols-3 gap-4 mt-1">
-                  {selectedImages.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img src={URL.createObjectURL(image)} alt={`Preview ${index}`} className="w-full h-32 object-cover rounded-md" />
-                      <button
-                        type="button"
-                        className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
-
             {photoUpdate && <img src={photoUpdate} alt="New Image" />}
-            <button type="submit" disabled={updating}>Update</button>
+            <button type="submit" disabled={updating}>
+              Update
+            </button>
           </form>
         </article>
       </main>

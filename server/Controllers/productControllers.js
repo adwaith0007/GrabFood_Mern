@@ -116,6 +116,48 @@ exports.getProductDetails = async (req, res) => {
 //   }
 // };
 
+// exports.updateProduct = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         return res.json({ success: false, message: err.message });
+//       }
+
+//       const productId = req.params.productId;
+
+//       console.log(req.body);
+
+//       console.log(productId);
+
+//       const { desc, price, category, name } = req.body;
+//       const image = req.file?.filename;
+
+//       await productModel.findOneAndUpdate(
+//         { _id: productId },
+//         {
+//           $set: {
+//             Description: desc,
+
+//             price: price,
+//             category: category,
+//             productName: name,
+//           },
+//         }
+//       );
+
+//       await productModel.updateOne(
+//         { _id: productId },
+//         { $push: { images: image } }
+//       );
+
+//       res.status(201).json({ success: true, message: "Product updated" });
+//     });
+//   } catch (error) {
+//     console.log("error while editing form", error);
+//   }
+// };
+
+
 exports.updateProduct = async (req, res) => {
   try {
     upload.single("photo")(req, res, async (err) => {
@@ -132,28 +174,32 @@ exports.updateProduct = async (req, res) => {
       const { desc, price, category, name } = req.body;
       const image = req.file?.filename;
 
-      await productModel.findOneAndUpdate(
-        { _id: productId },
-        {
-          $set: {
-            Description: desc,
+      const updatedProduct = {
+        Description: desc,
+        category: category,
+        productName: name,
+      };
 
-            price: price,
-            category: category,
-            productName: name,
-          },
-        }
-      );
+      if (category !== undefined) {
+        updatedProduct.category = category;
+      }
 
-      await productModel.updateOne(
-        { _id: productId },
-        { $push: { images: image } }
-      );
+      // Check if price is a valid number before updating
+      if (!isNaN(Number(price))) {
+        updatedProduct.price = Number(price);
+      }
+
+      if (image) {
+        updatedProduct.images = [image];
+      }
+
+      await productModel.findOneAndUpdate({ _id: productId }, { $set: updatedProduct });
 
       res.status(201).json({ success: true, message: "Product updated" });
     });
   } catch (error) {
     console.log("error while editing form", error);
+    res.status(500).json({ success: false, message: "Failed to update product" });
   }
 };
 
