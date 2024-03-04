@@ -42,6 +42,7 @@ app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api", cartItemRoutes);
+app.use("/api", orderRouter);
 
 
 

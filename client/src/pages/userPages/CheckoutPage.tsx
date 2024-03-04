@@ -11,6 +11,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import ChooseAddress from "../../components/user/ChooseAddress";
+import UpdateAddressInput from "../../components/user/UpdateAddressInput";
+import toast from "react-hot-toast";
 
 const CheckoutPage = () => {
   const { user } = useSelector(
@@ -20,9 +22,17 @@ const CheckoutPage = () => {
   const userId = user._id;
 
   const [addressTab, setAddressTab] = useState(false);
+  const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
-  const [addresses, setAddresses] = useState([]);
+
+  const [cartItems, setCartItems] = useState();
   const [selectedAddress, setSelectedAddress] = useState();
+  const [paymentMethod, setPaymentMethod] = useState('');
+
+
+  const handlePaymentChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
 
   useEffect(() => {
     if (userId) {
@@ -30,7 +40,6 @@ const CheckoutPage = () => {
         .get(`http://localhost:5000/api/user/${userId}/addresses`)
 
         .then((response) => {
-          setAddresses(response.data);
           setSelectedAddress(response.data[0]);
         })
         .catch((error) => {
@@ -39,11 +48,67 @@ const CheckoutPage = () => {
     }
   }, [userId]);
 
+  const handleAddressAdded = () => {
+    // Refresh the addresses after adding a new address
+    if (userId) {
+      axios
+        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+        .then((response) => {
+          setSelectedAddress(response.data[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
   console.log(selectedAddress);
+
+  const handleUpdateAddress = (address) => {
+    setSelectedAddress(address);
+  };
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
   };
+
+  const handleOrderCartItem = (item) =>{
+
+    setCartItems(item)
+  }
+
+
+  const handleOnPlaceOrder = async () => {
+
+    
+    
+    try {
+      
+      const orderDetails = {
+        userId,
+        products: cartItems, 
+        address: selectedAddress,
+        paymentMethod,
+        
+      };
+      
+      
+      const response = await axios.post('http://localhost:5000/api/placeOrder', orderDetails);
+
+      
+      toast.success('Order placed successfully!')
+      console.log('Order placed successfully:', response.data.order);
+    } catch (error) {
+      toast.error('Failed to place order. Please try again later.')
+      console.error('Error placing order:', error);
+      
+    }
+  };
+
+ 
+
+  
+  
 
   return (
     <div>
@@ -129,6 +194,10 @@ const CheckoutPage = () => {
       </div>
 
       <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
+
+
+      {/* <CheckoutOrderSummary /> */}
+
         <div className="px-4 pt-5">
           <div className="flex justify-between  ">
             <div className="flex items-center gap-3">
@@ -165,8 +234,10 @@ const CheckoutPage = () => {
 
               {addressTab && (
                 <AddressInput
+                  userId={userId}
+                  setAddress={handleAddressAdded}
                   onClose={() => {
-                    setAddressTab(!addressTab);
+                    setAddressTab(false);
                   }}
                 />
               )}
@@ -187,63 +258,82 @@ const CheckoutPage = () => {
                     </h3>
                   </div>
 
-                  <div className="w-[300px]" >
-                  <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
-                  <p>{selectedAddress.street}</p>
-
-
+                  <div className="w-[300px]">
+                    <p>{selectedAddress.street}</p>
+                    <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
                   </div>
 
-
-                  <button className="text-[#094fc9] font-normal mt-3">
+                  <button onClick={() => {
+                  setUpdateAddressTab(!addressTab);
+                }} className="text-[#094fc9] font-normal mt-3">
                     Edit address
                   </button>
-                </div>
 
-                <div>
-                  <button
-                  onClick={() => {
-                    setChooseaddressTab(!chooseaddressTab);
-                  }}
-                   className="text-[#093bc9] font-medium">
-                    Choose another address
-                  </button>
-                </div>
 
-                {chooseaddressTab ? (
+                  {updateAddressTab ? (
                 <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
               ) : (
                 ""
               )}
 
-              {chooseaddressTab && (
-                <ChooseAddress
+              {updateAddressTab && (
+                <UpdateAddressInput
+                  userId={userId}
+                  currentAddress={selectedAddress}
+                  onhandleUpdateAddress={handleUpdateAddress}
                   onClose={() => {
-                    setChooseaddressTab(false);
+                    setUpdateAddressTab(false);
                   }}
-
-                  onAddressSelect={handleAddressSelect}
                 />
               )}
 
 
+                </div>
+
+                <div>
+                  <button
+                    onClick={() => {
+                      setChooseaddressTab(!chooseaddressTab);
+                    }}
+                    className="text-[#093bc9] font-medium"
+                  >
+                    Choose another address
+                  </button>
+                </div>
+
+                {chooseaddressTab ? (
+                  <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+                ) : (
+                  ""
+                )}
+
+                {chooseaddressTab && (
+                  <ChooseAddress
+                    onClose={() => {
+                      setChooseaddressTab(false);
+                    }}
+                    onAddressSelect={handleAddressSelect}
+                  />
+                )}
               </div>
             ) : (
-              <p>add a new address</p>
+              <p className="text-red-500" >add a new address</p>
             )}
 
             <div className="flex flex-col rounded-lg bg-white sm:flex-row"></div>
           </div>
 
-          <p className="mt-8 text-lg font-medium">Shipping Methods</p>
+          <p className="mt-8 text-lg font-medium">Payment Methods</p>
           <form className="mt-5 grid gap-6">
             <div className="relative">
               <input
-                className="peer hidden"
+                className="peer  hidden"
                 id="radio_1"
                 type="radio"
-                name="radio"
-                checked
+                name="paymentMethod"
+                value="cashOnDelivery"
+                checked={paymentMethod === 'cashOnDelivery'}
+                onChange={handlePaymentChange}
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
               <label
@@ -256,10 +346,8 @@ const CheckoutPage = () => {
                   alt=""
                 />
                 <div className="ml-5">
-                  <span className="mt-2 font-semibold">Fedex Delivery</span>
-                  <p className="text-slate-500 text-sm leading-6">
-                    Delivery: 2-4 Days
-                  </p>
+                  <span className="mt-2 font-semibold">Cash On Delivery</span>
+                  
                 </div>
               </label>
             </div>
@@ -268,8 +356,10 @@ const CheckoutPage = () => {
                 className="peer hidden"
                 id="radio_2"
                 type="radio"
-                name="radio"
-                checked
+                name="paymentMethod"
+            value="onlinePayment"
+            checked={paymentMethod === 'onlinePayment'}
+            onChange={handlePaymentChange}
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
               <label
@@ -282,19 +372,25 @@ const CheckoutPage = () => {
                   alt=""
                 />
                 <div className="ml-5">
-                  <span className="mt-2 font-semibold">Fedex Delivery</span>
-                  <p className="text-slate-500 text-sm leading-6">
-                    Delivery: 2-4 Days
-                  </p>
+                  <span className="mt-2 font-semibold">Online Payment</span>
+                  
                 </div>
               </label>
             </div>
           </form>
         </div>
 
-        {/* <CheckoutOrderSummary /> */}
+        <CheckoutOrderSummary
 
-        <PaymentSection />
+onPlaceOrder={handleOnPlaceOrder}
+        
+        orderCartItem={handleOrderCartItem}
+        
+        />
+
+       
+
+        {/* <PaymentSection /> */}
       </div>
     </div>
   );

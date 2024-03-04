@@ -401,53 +401,88 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 exports.addAddress = async (req, res) => {
-  
-  
-  const {userId ,address} = req.body;
-  console.log(req.body);
+  const { userId, address } = req.body;
 
   try {
     const result = await UserModel.updateOne(
       { _id: userId },
-      { $push: { addresses: [address] } }
+      { $push: { addresses: { $each: [address], $position: 0 } } }
     );
-
-    console.log(result);
 
     if (result.modifiedCount > 0) {
       return res.json({ success: true, message: "Address Updated" });
     } else {
-      return res.status(404).json({ success: false, message: "User not found or no changes" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found or no changes" });
     }
   } catch (error) {
     console.error("Error while adding address", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+exports.updateAddress = async (req, res) => {
+  const { userId, addressId } = req.params;
+  const { address } = req.body;
+
+  try {
+    const result = await UserModel.updateOne(
+      { _id: userId, "addresses._id": addressId },
+      {
+        $set: {
+          "addresses.$.street": address.street,
+          "addresses.$.city": address.city,
+          "addresses.$.state": address.state,
+          "addresses.$.zipCode": address.zipCode,
+        },
+      }
+    );
+
+    if (result.modifiedCount > 0) {
+      return res.json({ success: true, message: "Address Updated" });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User or address not found, or no changes made.",
+      });
+    }
+  } catch (error) {
+    console.error("Error while updating address", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+exports.deleteAddress = async (req, res) => {
+  const { userId, addressId } = req.params;
+
+  try {
+    const result = await UserModel.updateOne(
+      { _id: userId },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+
+    if (result.modifiedCount > 0) {
+      return res.json({ success: true, message: "Address Deleted" });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User or address not found, or no changes made.",
+      });
+    }
+  } catch (error) {
+    console.error("Error while deleting address", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 
 
-exports.deleteAddress = async (req, res) => {
-  const { address, userId } = req.body;
 
-  try {
-    UserModel.updateOne(
-      { _id: userId },
-      { $pull: { addresses: { _id: address._id } } }
-    )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    return res.json({ success: true, message: "Address Deleted" });
-  } catch (error) {
-    console.log("error while deleting one address: " + error);
-    return res.json({ success: false, message: error.message });
-  }
-};
 
 
 exports.getAddress = async (req, res) => {

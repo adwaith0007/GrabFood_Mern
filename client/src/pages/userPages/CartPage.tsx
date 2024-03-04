@@ -19,7 +19,9 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/cart/${userId}`);
+        const response = await axios.get(
+          `http://localhost:5000/api/cart/${userId}`
+        );
         setCartItems(response.data.cart);
       } catch (error) {
         console.error("Error fetching cart items:", error);
@@ -31,19 +33,16 @@ const CartPage = () => {
     fetchCartItems();
   }, [userId]);
 
-
-
-
-
   const handleRemoveFromCart = async (product) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/cart/remove/${userId}`, { product });
+      const response = await axios.post(
+        `http://localhost:5000/api/cart/remove/${userId}`,
+        { product }
+      );
       console.log("Remove from cart response:", response.data);
-  
-      if (response.data.success) {
 
+      if (response.data.success) {
         console.log(response.data);
-        
 
         setCartItems(response.data.cartItems);
         console.log("Cart items after removal:", response.data.cartItems);
@@ -56,28 +55,24 @@ const CartPage = () => {
     }
   };
 
-  
-
   // const handleRemoveFromCart = async(product) => {
 
   //   try {
   //     const response = await axios.post(`http://localhost:5000/api/cart/remove/${userId}`, { product });
   //     if (response.data.success) {
 
-
   //       setCartItems(cartItems );
   //       console.log("Cart items after removal:", response.data.data);
   //       console.log("done");
 
   //       console.log(cartItems);
-        
-        
+
   //     }
-      
+
   //   } catch (error) {
   //     console.error("Error deleting from cart:", error);
   //   }
-   
+
   // };
 
   const handleIncreaseQuantity = (product) => {
@@ -163,7 +158,7 @@ const CartPage = () => {
                 onDecrease={(product) => handleDecreaseQuantity(product)}
               />
             ) : (
-              <p>{loading ? 'Loading...' : 'Your cart is empty'}</p>
+              <p>{loading ? "Loading..." : "Your cart is empty"}</p>
             )}
 
             <Link
@@ -180,19 +175,7 @@ const CartPage = () => {
             </Link>
           </div>
 
-          <OrderSummarySection
-         products={cartItems}
-         Amount={totalAmount}
-
-          
-          />
-
-
-
-
-
-          
-
+          <OrderSummarySection products={cartItems} Amount={totalAmount} />
         </div>
       </div>
     </div>

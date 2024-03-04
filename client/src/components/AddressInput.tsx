@@ -3,27 +3,15 @@ import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
 
 const AddressInput = ({ userId, setAddress, onClose }) => {
-
-
-
-
-
-
-
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-
-
-
-
-
-
   // Handle changes in input fields and update the address
   const handleAddressChange = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    
     const newAddress = {
       street,
       city,
@@ -31,19 +19,15 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
       zipCode,
     };
 
-    
-    
-
     try {
       if (!userId) {
         console.error("User ID is undefined");
         return;
       }
 
-      await axios.put(`http://localhost:5000/api/updateAddresses/${userId}`, {
+      await axios.put(`http://localhost:5000/api/addaddresses/${userId}`, {
         userId: userId,
-      address: newAddress,
-        
+        address: newAddress,
       });
 
       setAddress(newAddress);
@@ -58,15 +42,21 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center">
       <div className="bg-white p-8 z-50 rounded-md shadow-md w-[400px]">
         <div className="flex justify-end">
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800"
+          >
             <AiOutlineClose size={24} />
           </button>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Enter Your Address  </h2>
-        <form>
+        <h2 className="text-xl font-semibold mb-4">Enter Your Address </h2>
+        <form onSubmit={handleAddressChange} >
           <div className="mb-2">
-            <label htmlFor="street" className="block text-sm font-medium text-gray-600">
+            <label
+              htmlFor="street"
+              className="block text-sm font-medium text-gray-600"
+            >
               Street:
             </label>
             <input
@@ -80,7 +70,10 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
           </div>
 
           <div className="mb-2">
-            <label htmlFor="city" className="block text-sm font-medium text-gray-600">
+            <label
+              htmlFor="city"
+              className="block text-sm font-medium text-gray-600"
+            >
               City:
             </label>
             <input
@@ -94,7 +87,10 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
           </div>
 
           <div className="mb-2">
-            <label htmlFor="state" className="block text-sm font-medium text-gray-600">
+            <label
+              htmlFor="state"
+              className="block text-sm font-medium text-gray-600"
+            >
               State:
             </label>
             <input
@@ -108,7 +104,10 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
           </div>
 
           <div className="mb-2">
-            <label htmlFor="zipCode" className="block text-sm font-medium text-gray-600">
+            <label
+              htmlFor="zipCode"
+              className="block text-sm font-medium text-gray-600"
+            >
               ZIP Code:
             </label>
             <input
@@ -123,7 +122,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
 
           <button
             type="submit"
-            onClick={handleAddressChange}
+            
             className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Save Address

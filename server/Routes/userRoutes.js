@@ -78,39 +78,18 @@ router.post("/user/getAddress",  (req, res) => {
   userController.getAddress(req, res);
 });
 
-router.put("/updateAddresses/:userId", userController.addAddress);
+router.put("/addaddresses/:userId", userController.addAddress);
 
-//   router.post('/user/v1/new', async (req, res) => {
 
-//     const { name, email, photo, gender, _id, dob } = req.body;
 
-//       let user = await NewUser.findById(_id);
 
-//     if (user)
-//       return res.status(200).json({
-//         success: true,
-//         message: `Welcome, ${user.name}`,
-//       });
 
-//     if (!_id || !name || !email || !photo || !gender || !dob)
-//       return next(new ErrorHandler("Please add all fields", 400));
 
-//     user = await NewUser.create({
-//       name,
-//       email,
-//       photo,
-//       gender,
-//       _id,
-//       dob: new Date(dob),
-//     });
 
-//     return res.status(201).json({
-//       success: true,
-//       message: `Welcome, ${user.name}`,
-//     });
-//   }
-// );
 
+router.put("/user/:userId/addresses/:addressId", userController.updateAddress);
+
+router.delete("/user/:userId/addresses/:addressId", userController.deleteAddress);
 
 
 
@@ -168,17 +147,7 @@ router.post("/user/v1/new", async (req, res, next) => {
   }
 });
 
-// router.get("/user/v1/:id", async (req, res, next) => {
-//   const id = req.params.id;
-//   const user = await NewUser.findById(id);
 
-//   if (!user) return next(new ErrorHandler("Invalid Id", 400));
-
-//   return res.status(200).json({
-//     success: true,
-//     user,
-//   });
-// });
 
 
 router.get("/user/v1/:id", async (req, res, next) => {
