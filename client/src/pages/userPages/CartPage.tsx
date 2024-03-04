@@ -7,9 +7,7 @@ import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
 
 const CartPage = () => {
-  const { user } = useSelector(
-    (state: { userReducer: UserReducerInitialState }) => state.userReducer
-  );
+  const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
 
   const userId = user._id;
 

@@ -7,5 +7,11 @@ router.post('/placeOrder', (req, res) => {
     orderControllers.placeOrder(req, res);
   });
 
+  router.get('/order/user/:userId', (req, res) => {
+    orderControllers.getUserOrders(req, res);
+  });
+
+  router.put('/order/cancel/:orderId/product/:productId', orderControllers.cancelProduct);
+
 
 module.exports = router;

@@ -2,6 +2,7 @@ import { FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { OrderItem } from "../../../models/types";
+import { useState } from "react";
 // import { server } from "../../../redux/store";
 
 const server = import.meta.env.VITE_SERVER
@@ -83,7 +84,9 @@ const TransactionManagement = () => {
         </section>
 
         <article className="shipping-info-card">
-          <button className="product-delete-btn" onClick={deleteHandler}>
+          <button className="product-delete-btn" 
+          // onClick={deleteHandler}
+          >
             <FaTrash />
           </button>
           <h1>Order Info</h1>

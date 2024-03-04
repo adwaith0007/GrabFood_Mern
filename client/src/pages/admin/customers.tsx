@@ -13,32 +13,7 @@ interface DataType {
   action: ReactElement;
 }
 
-// const columns: Column<DataType>[] = [
-//   {
-//     Header: "Avatar",
-//     accessor: "avatar",
-//   },
-//   {
-//     Header: "Name",
-//     accessor: "name",
-//   },
-//   {
-//     Header: "Gender",
-//     accessor: "gender",
-//   },
-//   {
-//     Header: "Email",
-//     accessor: "email",
-//   },
-//   {
-//     Header: "Role",
-//     accessor: "role",
-//   },
-//   {
-//     Header: "Action",
-//     accessor: "action",
-//   },
-// ];
+
 
 const columns = [
   {

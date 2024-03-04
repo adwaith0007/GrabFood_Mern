@@ -69,6 +69,9 @@ const CategoryManagement = lazy(() => import("./pages/admin/management/categorym
 
   import JwtPayload from './types/types';
 import OrderPage from './pages/userPages/userDashbord/OrderPage';
+import ManageAddressPage from './pages/userPages/userDashbord/ManageAddressPage';
+import FavouritesPage from './pages/userPages/userDashbord/FavouritesPage';
+import MyWalletPage from './pages/userPages/userDashbord/MyWalletPage';
 
     
     function App() {
@@ -155,9 +158,13 @@ import OrderPage from './pages/userPages/userDashbord/OrderPage';
 
 <Route  path='user/profile' element={<UserProfile />} ></Route>
 <Route  path='user/orders' element={<OrderPage/>} ></Route>
+<Route  path='user/address' element={<ManageAddressPage/>} ></Route>
+<Route  path='user/favourites' element={<FavouritesPage/>} ></Route>
+<Route  path='user/wallet' element={<MyWalletPage/>} ></Route>
 
   <Route  path='/profile/Update' element={<ProfileUpdate/>} ></Route>
   <Route path="/product/:productId"   element={<ProductDetailsPage/>} />
+
 
 </Route>
 

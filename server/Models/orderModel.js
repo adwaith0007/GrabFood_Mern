@@ -12,16 +12,35 @@ const orderSchema = mongoose.Schema({
         ref: "product",
         required: true,
       },
+      productName: {
+        type: String,
+        required: true,
+      },
+
+      productImage: {
+        type: Array,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
       quantity: {
         type: Number,
         required: true,
       },
     },
   ],
-  address1: {
-    type: String,
+  address: {
+    type: Array,
     reuired: true,
   },
+
+  paymentMethod:{
+    type: String,
+  },
+
+
   name: {
     type: String,
     // required: true,
@@ -58,7 +77,7 @@ const orderSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    default: "waiting for admin",
+    default: "Processing",
   },
   razor_orderId: {
     type: String,

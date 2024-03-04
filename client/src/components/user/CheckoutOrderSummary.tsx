@@ -32,7 +32,10 @@ const CheckoutOrderSummary = ({orderCartItem, onPlaceOrder}) => {
     fetchCartItems();
   }, [userId]);
 
-  orderCartItem(cartItems)
+  // console.log(cartItems);
+  
+
+  // orderCartItem(cartItems)
 
   const totalAmount = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,

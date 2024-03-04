@@ -24,9 +24,9 @@ const CheckoutPage = () => {
   const [addressTab, setAddressTab] = useState(false);
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState();
 
   const [cartItems, setCartItems] = useState();
-  const [selectedAddress, setSelectedAddress] = useState();
   const [paymentMethod, setPaymentMethod] = useState('');
 
 
@@ -49,7 +49,7 @@ const CheckoutPage = () => {
   }, [userId]);
 
   const handleAddressAdded = () => {
-    // Refresh the addresses after adding a new address
+    
     if (userId) {
       axios
         .get(`http://localhost:5000/api/user/${userId}/addresses`)
@@ -76,6 +76,9 @@ const CheckoutPage = () => {
 
     setCartItems(item)
   }
+
+  
+  
 
 
   const handleOnPlaceOrder = async () => {
