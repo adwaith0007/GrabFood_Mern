@@ -70,8 +70,7 @@ const OrderPage = () => {
         `http://localhost:5000/api/order/cancel/${orderId}/product/${productId}`
       );
       if (response.data.success) {
-        // Product successfully canceled
-        // You may want to update the UI or take additional actions
+        
         console.log('Product canceled:', productId, 'from order:', orderId);
         // After canceling, fetch the updated orders
         fetchUserOrders();

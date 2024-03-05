@@ -124,11 +124,11 @@ const Navbar = ({ user }: PropsType) => {
                 placeholder="Search..."
               />
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <button onClick={openCart}>
                 <BsCart3 size={20} className="text-white" />
               </button>
-            </div>
+            </div> */}
 
             
 
