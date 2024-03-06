@@ -61,7 +61,7 @@ const ProductCard = ({
   // };
 
   return (
-    <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+    <div className="relative m-10 flex w-full max-w-xs  flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <Link
         className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
         to={`/product/${productId}`}
@@ -80,9 +80,9 @@ const ProductCard = ({
       </button>
       <div className="mt-4 px-5 pb-5">
         <a href="#">
-          <h5 className="text-xl tracking-tight text-slate-900">{name}</h5>
+          <h5 className="text-xl tracking-tight text-slate-900 line-clamp-1 ">{name}</h5>
         </a>
-        <div className="mt-2 mb-5 flex items-center justify-between">
+        <div className="mt-2 mb-2 flex items-center justify-between">
           <p>
             <span className="text-3xl font-bold text-slate-900">₹{price}</span>
             <span className="text-sm text-slate-900 line-through">₹699</span>
@@ -159,9 +159,9 @@ const ProductCard = ({
           </div>
         </div>
 
-        <div>
-          <p>{description}</p>
-        </div>
+        <div className="px-4 mb-4 overflow-hidden h-10 ">
+        <p className="text-sm text-slate-900 line-clamp-2">{description}</p>
+      </div>
 
         <button
           onClick={onAddToCart}

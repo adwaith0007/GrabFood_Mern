@@ -61,7 +61,7 @@ const AdminSidebar = () => {
         }
       >
         {/* <h2>Logo.</h2> */}
-        <img src={logo} alt=""></img>
+        {/* <img src={logo} alt=""></img> */}
         <DivOne location={location} />
         <DivTwo location={location} />
         <DivThree location={location} />
