@@ -31,6 +31,9 @@ const CartPage = () => {
     fetchCartItems();
   }, [userId]);
 
+  console.log(cartItems);
+  
+
   const handleRemoveFromCart = async (product) => {
     try {
       const response = await axios.post(
@@ -74,6 +77,8 @@ const CartPage = () => {
   // };
 
   const handleIncreaseQuantity = (product) => {
+    console.log(product.productId);
+    
     axios
       .post(`http://localhost:5000/api/cart/add/${userId}`, {
         product,

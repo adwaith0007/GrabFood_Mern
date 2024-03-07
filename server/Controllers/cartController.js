@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 exports.add = async (req, res) => {
   const { userId } = req.params;
 
-  console.log(userId);
+  // console.log(userId);
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const {
     product: {
@@ -21,7 +21,7 @@ exports.add = async (req, res) => {
     quantity,
   } = req.body;
 
-  console.log(productName);
+  console.log(productId);
 
   const image = productImage[0];
 
