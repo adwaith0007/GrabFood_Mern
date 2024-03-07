@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
   const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
@@ -56,48 +57,46 @@ const CartPage = () => {
     }
   };
 
-  // const handleRemoveFromCart = async(product) => {
-
-  //   try {
-  //     const response = await axios.post(`http://localhost:5000/api/cart/remove/${userId}`, { product });
-  //     if (response.data.success) {
-
-  //       setCartItems(cartItems );
-  //       console.log("Cart items after removal:", response.data.data);
-  //       console.log("done");
-
-  //       console.log(cartItems);
-
-  //     }
-
-  //   } catch (error) {
-  //     console.error("Error deleting from cart:", error);
-  //   }
-
-  // };
+  
 
   const handleIncreaseQuantity = (product) => {
+    const maxQuantity = 5;
+
     console.log(product.productId);
     
-    axios
-      .post(`http://localhost:5000/api/cart/add/${userId}`, {
-        product,
-        quantity: 1,
-      })
-      .then((response) => console.log("Product added to cart:", response.data))
-      .catch((error) => console.error("Error adding to cart:", error));
-
+  
     const existingItem = cartItems.find(
       (item) => item.productId === product.productId
     );
-
+  
     if (existingItem) {
+      const updatedQuantity = existingItem.quantity + 1;
+  
+      if (updatedQuantity > maxQuantity) {
+        // Display a toast message
+        toast.error(`Cannot add more than ${maxQuantity} items to the cart.`);
+  
+        return; // Do not update the cart if the maximum quantity is exceeded
+      }
+  
+      // Update the local cart state
       const updatedCart = cartItems.map((item) =>
         item.productId === product.productId
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
       setCartItems(updatedCart);
+  
+      // Make the API request to update the quantity on the backend
+      axios
+        .post(`http://localhost:5000/api/cart/add/${userId}`, {
+          product,
+          quantity: 1,
+        })
+        .then((response) =>
+          console.log("Product added to cart:", response.data)
+        )
+        .catch((error) => console.error("Error adding to cart:", error));
     }
   };
 

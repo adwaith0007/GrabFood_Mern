@@ -9,6 +9,11 @@ const cartController = require("../Controllers/cartController");
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 
+const {validateQuantity} = require("../middlewares/Cart");
+
+
+
+
 router.post("/login", userController.verifyUser, userController.login);
 
 router.post("/user/edit", isUserLoggedIn, (req, res) => {
@@ -73,7 +78,7 @@ router.put("/resetPassword", userController.resetPassword);
 // });
 
 router.post("/user/getAddress",  (req, res) => {
-  console.log('innnnnnn');
+  
   
   userController.getAddress(req, res);
 });
@@ -149,7 +154,7 @@ router.post("/user/v1/new", async (req, res, next) => {
 
 
 
-
+// for google login
 router.get("/user/v1/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -182,27 +187,6 @@ router.get("/user/v1/:id", async (req, res, next) => {
 
 
 
-router.post("/cart/add/:userId", (req, res) => {
-  cartController.add(req, res);
-});
-
-router.post("/cart/get",  (req, res) => {
-  cartController.get(req, res);
-});
-
-
-
-router.post("/cart/decrease/:userId", (req, res) => {
-  cartController.decrease(req, res);
-});
-
-
-router.post("/cart/remove/:userId", (req, res) => {
-  cartController.remove(req, res);
-});
-
-
-router.get('/cart/:userId', cartController.getCartItems);
 
 
 

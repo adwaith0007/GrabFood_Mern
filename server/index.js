@@ -7,7 +7,8 @@ const productRouter = require("./Routes/productRoutes.js");
 const categoryRouter = require("./Routes/categoryRouter.js");
 const couponRouter = require("./Routes/couponRouter.js");
 const orderRouter = require("./Routes/orderRouter.js");
-const cartItemRoutes = require("./Routes/CartItemRoutes.js");
+const cartRoutes = require("./Routes/cartRoutes.js");
+
 require("dotenv").config();
 
 const morgan = require("morgan");
@@ -40,9 +41,10 @@ app.use("/api", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
-app.use("/api/coupon", couponRouter);
-app.use("/api", cartItemRoutes);
+app.use("/api", cartRoutes);
 app.use("/api", orderRouter);
+app.use("/api/coupon", couponRouter);
+
 
 
 
