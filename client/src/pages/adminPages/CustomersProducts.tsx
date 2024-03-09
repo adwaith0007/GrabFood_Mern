@@ -1,13 +1,15 @@
-import UserSidebar from '../../../components/user/UserSidebar';
+import UserSidebar from '../../components/user/UserSidebar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ReactElement } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
-import TableHOC from '../../../components/admin/TableHOC';
+import TableHOC from '../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
-import { UserReducerInitialState } from '../../../types/reducer-types';
+import { UserReducerInitialState } from '../../types/reducer-types';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import toast from 'react-hot-toast';
 
 // Define interfaces for order data
 interface Address {
@@ -29,42 +31,66 @@ interface Product {
 interface OrderData {
   _id: string;
   userId: string;
-  orderDate: string;
   products: Product[];
   address: Address[];
   paymentMethod: string;
-  totalPrice:number;
   paymentStatus: boolean;
   status: string;
   createdAt: string;
 }
 
 interface DataType {
-    orderId: string;
-    no: number;
-    order: string;
-    totalPrice: number;
-    status: string;
-  orderDetails: ReactElement;
-  manageAction: ReactElement;
+  orderId: string;
+  photo: ReactElement;
+  name: string;
+  price: number;
+  quantity: number;
+  status: string;
+  cancelAction: ReactElement;
 }
 
 const columns: Column<DataType>[] = [
-  { Header:(<div className='flex justify-center ' >S.NO</div> ) , accessor: 'no' },
-  { Header:(<div className='flex justify-center ' >Order</div> ), accessor: 'order' },
-  { Header:(<div className='flex justify-center ' >Total Price</div> ) , accessor: 'totalPrice' },
-  { Header:(<div className='flex justify-center ' >Status</div> ) , accessor: 'status' },
-  { Header:(<div className='flex justify-center ' >Order Details</div> ) , accessor: 'orderDetails' },
-  
+  { Header: 'Photo', accessor: 'photo' },
+  { Header: 'Name', accessor: 'name' },
+  { Header: 'Quantity', accessor: 'quantity' },
+  { Header: 'Price', accessor: 'price' },
+  { Header: 'Status', accessor: 'status' },
+//   { Header: 'Action', accessor: 'cancelAction' },
 ];
 
-const MyOrderPage = () => {
-  const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
-  const userId = user._id;
+const CustomersProducts = () => {
+//   const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
+  
+const { customerId } = useParams<{ customerId: string }>();
+
+  const userId = customerId;
 
   const [rows, setRows] = useState<DataType[]>([]);
+  const [customerData, setCustomerData] = useState([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/api/admin/customers`)
+      .then((res) => {
+        if (res.data.success) {
+          setCustomerData(res.data.data);
+        } else {
+          toast.error("Error while loading categories");
+        }
+      })
+      .catch((error) => {
+        toast.error("Error while loading categories");
+        console.log(error);
+      });
+  }, []);
+
+  console.log(customerData);
+
+
+
+
 
   const handleCancelProduct = async (orderId: string, productId: string) => {
     try {
@@ -116,42 +142,29 @@ const MyOrderPage = () => {
     fetchUserOrders();
   }, [userId]);
 
-  console.log(userOrders);
-  
-
   useEffect(() => {
-
-    const newRows = userOrders.map((order, index) => ({
-        no: (<div className='flex justify-center ' >{index + 1}</div> ) ,
-        order: (<div className=' flex flex-col justify-center gap-1   ' >
-
-            <div className=' flex justify-center' >
-           Id: {order._id}
-
-            </div>
-
-            <div className=' flex justify-center' >
-          Date:  {order.orderDate}
-
-            </div>
-
-            
-            </div> ) ,
-        totalPrice:(<div className=' flex justify-center' >₹{order.totalPrice}</div> ),
-        
-        status: (<div className='flex justify-center ' >{order.status}</div> ) ,
-
-        orderDetails: <Link className='flex justify-center'  to={`/order/${order._id}/product`}>View</Link>,
-
-
-        
-  
-        
-  
-  
-      }));
     
-    
+    const newRows: DataType[] = userOrders.flatMap((order) =>
+      order.products.map((product) => ({
+        orderId: order._id,
+        photo: (
+          <img
+            src={`http://localhost:5000/${product.productImage[0]?.replace(/ /g, '%20')}`}
+            alt={product.productName}
+          />
+        ),
+        name: product.productName,
+        price: product.price,
+        quantity: product.quantity,
+        
+        status: (<p><span className={getStatusColor(order.status)}>{order.status}</span></p>),
+        // cancelAction: (
+        //   <button className='bg-red-500 text-white px-4 py-2 rounded '  onClick={() => handleCancelProduct(order._id, product.productId)}>
+        //     Cancel 
+        //   </button>
+        // ),
+      }))
+    );
 
     setRows(newRows);
   }, [userOrders]);
@@ -160,7 +173,7 @@ const MyOrderPage = () => {
 
   return (
     <div className="admin-container">
-      <UserSidebar />
+      <AdminSidebar />
       <main>{Table}</main>
       <Link to="/admin/product/new" className="create-product-btn">
         <FaPlus />
@@ -169,4 +182,4 @@ const MyOrderPage = () => {
   );
 };
 
-export default MyOrderPage;
+export default CustomersProducts;

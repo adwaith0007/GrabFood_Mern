@@ -6,6 +6,7 @@ import { server } from '../../server';
 import toast from "react-hot-toast";
 import TableHOC from '../../components/admin/TableHOC';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { Link } from 'react-router-dom';
 
 
 // interface DataType {
@@ -20,10 +21,7 @@ import AdminSidebar from '../../components/admin/AdminSidebar';
 
 
 const columns = [
-  // {
-  //   Header: 'S.NO',
-  //   accessor: (row, index) => index + 1,
-  // },
+ 
 
   {
     Header: 'S.NO',
@@ -42,6 +40,9 @@ const columns = [
     Header: 'PHONE',
     accessor: 'phone',
   },
+
+  { Header:(<div className='flex justify-center ' >All Orders</div> ) , accessor: 'orderDetails' },
+
   {
     Header: 'BLOCK',
     accessor: 'block',
@@ -97,6 +98,8 @@ const Customers = () => {
       username: item.username,
       email: item.email,
       phone: item.phone,
+
+      orderDetails: <Link className='flex justify-center'  to={`/admin/customer/${item._id}/products`}>View</Link>,
       
 
       block: <button

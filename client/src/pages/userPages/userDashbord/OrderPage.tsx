@@ -147,9 +147,7 @@ const OrderPage = () => {
     <div className="admin-container">
       <UserSidebar />
       <main>{Table}</main>
-      <Link to="/admin/product/new" className="create-product-btn">
-        <FaPlus />
-      </Link>
+      
     </div>
   );
 };
