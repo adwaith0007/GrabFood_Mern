@@ -16,7 +16,7 @@ import AddToCart from "../../pages/userPages/AddToCart";
 
 import logo from "../../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
-import CartSidebar from "../CartSidebar";
+
 import { User } from "../../types/types";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -41,16 +41,23 @@ const Navbar = ({ user }: PropsType) => {
   // const userId = user._id
 
   useEffect(() => {
-    if (user && user._id) {
-      axios.get(`http://localhost:5000/api/cart/${user._id}`)
-        .then(response => {
+    const fetchCartItems = async () => {
+      try {
+        if (user && user._id) {
+          const response = await axios.get(`http://localhost:5000/api/cart/${user._id}`);
+          console.log("Cart Items:", response.data.cart);
           setCartItems(response.data.cart);
-        })
-        .catch(error => {
-          console.error('Error fetching cart items:', error);
-        });
-    }
+        }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      }
+    };
+  
+    fetchCartItems();
   }, [user]);
+  
+
+  
 
 
 
@@ -58,12 +65,12 @@ const Navbar = ({ user }: PropsType) => {
   
 
   const [nav, setNav] = useState<boolean>(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+ 
  
 
   const [showSearch, setShowSearch] = useState(false);
 
-  const [cartSidebarOpen, setcartSidebarOpen] = useState(false);
+
 
   const [isOpenUser, setIsOpenUser] = useState(false);
   const isLoggedIn = true; // Replace with your authentication logic
@@ -74,13 +81,7 @@ const Navbar = ({ user }: PropsType) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const openCart = () => {
-    setIsCartOpen(true);
-  };
-
-  const closeCart = () => {
-    setIsCartOpen(false);
-  };
+  
 
   const logoutHandler = async () => {
     try {
@@ -124,11 +125,7 @@ const Navbar = ({ user }: PropsType) => {
                 placeholder="Search..."
               />
             </div>
-            {/* <div className="flex justify-center">
-              <button onClick={openCart}>
-                <BsCart3 size={20} className="text-white" />
-              </button>
-            </div> */}
+            
 
             
 
@@ -307,51 +304,7 @@ const Navbar = ({ user }: PropsType) => {
           </div>
         </div>
 
-        {/* Cart Sidebar */}
-        {/* {isCartOpen && (
-          <AddToCart cartItems={cartItems} closeCart={closeCart} />
-        )} */}
-
-        {isCartOpen ? (
-          // <AddToCart cartItems={cartItems} closeCart={closeCart} />
-          <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
-        ) : (
-          ""
-        )}
-
-        {isCartOpen && (
-          <CartSidebar
-            cartItems={cartItems}
-            closeCart={closeCart}
-            onRemove={(itemId) => {
-              const updatedCart = cartItems.filter(
-                (item) => item.id !== itemId
-              );
-              setCartItems(updatedCart);
-            }}
-            onIncrease={(itemId) => {
-              const updatedCart = cartItems.map((item) =>
-                item.id === itemId
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
-              );
-              setCartItems(updatedCart);
-            }}
-            onDecrease={(itemId) => {
-              const updatedCart = cartItems.map((item) =>
-                item.id === itemId && item.quantity > 1
-                  ? { ...item, quantity: item.quantity - 1 }
-                  : item
-              );
-              setCartItems(updatedCart);
-            }}
-            onProceedToPayment={() => {
-              // Implement your logic for proceeding to payment
-              // This can include routing to a payment page or any other relevant action
-              console.log("Proceeding to payment...");
-            }}
-          />
-        )}
+      
 
         {/* Mobile Menu */}
         {/* Overlay */}
@@ -411,9 +364,9 @@ const Navbar = ({ user }: PropsType) => {
         </div>
       </nav>
 
-      {showSearch && <Search setShowSearch={setShowSearch} />}
+      {/* {showSearch && <Search setShowSearch={setShowSearch} />} */}
 
-      {cartSidebarOpen && <CartSidebar />}
+      
     </div>
   );
 };

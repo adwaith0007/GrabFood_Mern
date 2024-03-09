@@ -12,10 +12,12 @@ exports.placeOrder = async (req, res) => {
           products,
           address,
           paymentMethod,
+          orderDate,
+          totalPrice
           
         } = req.body;
 
-        if (!userId || !products || !Array.isArray(products) || products.length === 0 || !address || !paymentMethod) {
+        if (!userId || !products || !Array.isArray(products) || products.length === 0 || !address || !paymentMethod || !orderDate || !totalPrice ) {
           return res.status(301).json({ success: false, message: "Please provide valid information for the order." });
         }
 
@@ -25,6 +27,8 @@ exports.placeOrder = async (req, res) => {
           products,
           address,
           paymentMethod,
+          orderDate,
+          totalPrice
           
         });
     

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faLight, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddressInput from "../../components/AddressInput";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -15,6 +15,8 @@ import UpdateAddressInput from "../../components/user/UpdateAddressInput";
 import toast from "react-hot-toast";
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
@@ -24,11 +26,12 @@ const CheckoutPage = () => {
   const [addressTab, setAddressTab] = useState(false);
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
+  const [orderSuccessPopUp, setorderSuccessPopUp] = useState(false);
+
   const [selectedAddress, setSelectedAddress] = useState();
 
   const [cartItems, setCartItems] = useState();
-  const [paymentMethod, setPaymentMethod] = useState('');
-
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   const handlePaymentChange = (event) => {
     setPaymentMethod(event.target.value);
@@ -49,7 +52,6 @@ const CheckoutPage = () => {
   }, [userId]);
 
   const handleAddressAdded = () => {
-    
     if (userId) {
       axios
         .get(`http://localhost:5000/api/user/${userId}/addresses`)
@@ -72,46 +74,76 @@ const CheckoutPage = () => {
     setSelectedAddress(address);
   };
 
-  const handleOrderCartItem = (item) =>{
-
-    setCartItems(item)
-  }
-
-  
-  
-
-
-  const handleOnPlaceOrder = async () => {
-
-    
-    
-    try {
-      
-      const orderDetails = {
-        userId,
-        products: cartItems, 
-        address: selectedAddress,
-        paymentMethod,
-        
-      };
-      
-      
-      const response = await axios.post('http://localhost:5000/api/placeOrder', orderDetails);
-
-      
-      toast.success('Order placed successfully!')
-      console.log('Order placed successfully:', response.data.order);
-    } catch (error) {
-      toast.error('Failed to place order. Please try again later.')
-      console.error('Error placing order:', error);
-      
-    }
+  const handleOrderCartItem = (item) => {
+    setCartItems(item);
   };
 
- 
+  const getCurrentDateTime = () => {
+    const currentDate = new Date();
+
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
+    let hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+
+    return formattedDateTime;
+  };
 
   
-  
+
+  const handleOnPlaceOrder = async () => {
+    console.log(cartItems);
+
+    const totalPrice = cartItems?.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+
+    if (!userId || !cartItems || !selectedAddress || !paymentMethod) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      const orderDetails = {
+        userId,
+        products: cartItems,
+        address: selectedAddress,
+        paymentMethod,
+        orderDate: getCurrentDateTime(),
+        totalPrice
+      };
+
+      console.log(orderDetails);
+
+      if (orderDetails.paymentMethod === "cashOnDelivery") {
+        const response = await axios.post(
+          "http://localhost:5000/api/placeOrder",
+          orderDetails
+        );
+
+        if (response.status === 201) {
+          toast.success("Order placed successfully!");
+          console.log("Order placed successfully:", response.data.order);
+
+          await axios.post("http://localhost:5000/api/deleteCartItems", {
+            userId,
+          });
+
+          navigate("/payment", { state: { orderDetails } });
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to place order. Please try again later.");
+      console.error("Error placing order:", error);
+    }
+  };
 
   return (
     <div>
@@ -197,9 +229,7 @@ const CheckoutPage = () => {
       </div>
 
       <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
-
-
-      {/* <CheckoutOrderSummary /> */}
+        {/* <CheckoutOrderSummary /> */}
 
         <div className="px-4 pt-5">
           <div className="flex justify-between  ">
@@ -266,31 +296,31 @@ const CheckoutPage = () => {
                     <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
                   </div>
 
-                  <button onClick={() => {
-                  setUpdateAddressTab(!addressTab);
-                }} className="text-[#094fc9] font-normal mt-3">
+                  <button
+                    onClick={() => {
+                      setUpdateAddressTab(!addressTab);
+                    }}
+                    className="text-[#094fc9] font-normal mt-3"
+                  >
                     Edit address
                   </button>
 
-
                   {updateAddressTab ? (
-                <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
-              ) : (
-                ""
-              )}
+                    <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+                  ) : (
+                    ""
+                  )}
 
-              {updateAddressTab && (
-                <UpdateAddressInput
-                  userId={userId}
-                  currentAddress={selectedAddress}
-                  onhandleUpdateAddress={handleUpdateAddress}
-                  onClose={() => {
-                    setUpdateAddressTab(false);
-                  }}
-                />
-              )}
-
-
+                  {updateAddressTab && (
+                    <UpdateAddressInput
+                      userId={userId}
+                      currentAddress={selectedAddress}
+                      onhandleUpdateAddress={handleUpdateAddress}
+                      onClose={() => {
+                        setUpdateAddressTab(false);
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div>
@@ -320,7 +350,7 @@ const CheckoutPage = () => {
                 )}
               </div>
             ) : (
-              <p className="text-red-500" >add a new address</p>
+              <p className="text-red-500">add a new address</p>
             )}
 
             <div className="flex flex-col rounded-lg bg-white sm:flex-row"></div>
@@ -335,7 +365,7 @@ const CheckoutPage = () => {
                 type="radio"
                 name="paymentMethod"
                 value="cashOnDelivery"
-                checked={paymentMethod === 'cashOnDelivery'}
+                checked={paymentMethod === "cashOnDelivery"}
                 onChange={handlePaymentChange}
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
@@ -350,7 +380,6 @@ const CheckoutPage = () => {
                 />
                 <div className="ml-5">
                   <span className="mt-2 font-semibold">Cash On Delivery</span>
-                  
                 </div>
               </label>
             </div>
@@ -360,9 +389,9 @@ const CheckoutPage = () => {
                 id="radio_2"
                 type="radio"
                 name="paymentMethod"
-            value="onlinePayment"
-            checked={paymentMethod === 'onlinePayment'}
-            onChange={handlePaymentChange}
+                value="onlinePayment"
+                checked={paymentMethod === "onlinePayment"}
+                onChange={handlePaymentChange}
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
               <label
@@ -376,7 +405,6 @@ const CheckoutPage = () => {
                 />
                 <div className="ml-5">
                   <span className="mt-2 font-semibold">Online Payment</span>
-                  
                 </div>
               </label>
             </div>
@@ -384,14 +412,9 @@ const CheckoutPage = () => {
         </div>
 
         <CheckoutOrderSummary
-
-onPlaceOrder={handleOnPlaceOrder}
-        
-        orderCartItem={handleOrderCartItem}
-        
+          onPlaceOrder={handleOnPlaceOrder}
+          orderCartItem={handleOrderCartItem}
         />
-
-       
 
         {/* <PaymentSection /> */}
       </div>

@@ -18,7 +18,11 @@ router.post("/cart/add/:userId",  (req, res) => {
   router.post("/cart/remove/:userId", (req, res) => {
     cartController.remove(req, res);
   });
+
   
+  router.post("/deleteCartItems", (req, res) => {
+    cartController.deleteCartItems(req, res);
+  });
   
   router.get('/cart/:userId', cartController.getCartItems);
   
