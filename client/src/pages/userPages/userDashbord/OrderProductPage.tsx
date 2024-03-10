@@ -1,13 +1,13 @@
-import UserSidebar from '../../../components/user/UserSidebar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ReactElement } from 'react';
-import { FaPlus } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../types/reducer-types';
+import DeletePopeUp from '../../../components/DeletePopeUp';
+import UserSidebar from '../../../components/user/UserSidebar';
 
 // Define interfaces for order data
 interface Address {
@@ -62,29 +62,12 @@ const OrderProductPage = () => {
 
   const { orderId } = useParams<{ orderId: string }>();
 
-
-
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [productDeletePopUp, setProductDeletePopUp] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const handleCancelProduct = async (orderId: string, productId: string) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/api/order/cancel/${orderId}/product/${productId}`
-      );
-      if (response.data.success) {
-        
-        console.log('Product canceled:', productId, 'from order:', orderId);
-        // After canceling, fetch the updated orders
-        fetchUserOrders();
-      } else {
-        console.error('Failed to cancel product:', response.data.error);
-      }
-    } catch (error) {
-      console.error('Error canceling product:', error);
-    }
-  };
 
   const fetchUserOrders = async () => {
     try {
@@ -101,9 +84,6 @@ const OrderProductPage = () => {
     }
   };
 
- console.log(userOrders);
-  
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'Processing':
@@ -113,23 +93,47 @@ const OrderProductPage = () => {
       case 'Delivered':
         return 'purple';
       default:
-        return 'black'; 
+        return 'black';
     }
   };
 
-  
-  
+  const handleCancelProduct = (orderId: string, productId: string) => {
+    setSelectedOrderId(orderId);
+    setSelectedProductId(productId);
+    setProductDeletePopUp(true);
+  };
+
+  const handlePopUpCancel = () => {
+    setProductDeletePopUp(false);
+    setSelectedOrderId(null);
+    setSelectedProductId(null);
+  };
+
+  const handlePopUpDelete = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/order/cancel/${selectedOrderId}/product/${selectedProductId}`
+      );
+      if (response.data.success) {
+        console.log('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
+        fetchUserOrders();
+      } else {
+        console.error('Failed to cancel product:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Error canceling product:', error);
+    } finally {
+      setProductDeletePopUp(false);
+      setSelectedOrderId(null);
+      setSelectedProductId(null);
+    }
+  };
 
   useEffect(() => {
     fetchUserOrders();
   }, [userId]);
 
-
-
-
-
   useEffect(() => {
-    
     const singleOrder = userOrders.find((order) => order._id === orderId);
 
     if (singleOrder) {
@@ -163,16 +167,20 @@ const OrderProductPage = () => {
     }
   }, [userOrders, orderId]);
 
-
-
-
   const Table = TableHOC<DataType>(columns, rows, 'dashboard-product-box', 'Orders', rows.length > 6)();
 
   return (
     <div className="admin-container">
+      
       <UserSidebar />
       <main>{Table}</main>
-      
+      {productDeletePopUp && (
+        <DeletePopeUp
+          onClose={handlePopUpCancel}
+          onConfirm={handlePopUpDelete}
+          message="Are you sure you want to cancel this product?"
+        />
+      )}
     </div>
   );
 };

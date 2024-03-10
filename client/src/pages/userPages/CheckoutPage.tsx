@@ -26,7 +26,7 @@ const CheckoutPage = () => {
   const [addressTab, setAddressTab] = useState(false);
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
-  const [orderSuccessPopUp, setorderSuccessPopUp] = useState(false);
+ 
 
   const [selectedAddress, setSelectedAddress] = useState();
 

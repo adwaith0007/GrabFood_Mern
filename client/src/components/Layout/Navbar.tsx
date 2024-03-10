@@ -105,7 +105,7 @@ const Navbar = ({ user }: PropsType) => {
             <AiOutlineMenu size={30} className="text-white cursor-pointer " />
           </div>
           <Link
-            to="/home"
+            to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} alt=""></img>
