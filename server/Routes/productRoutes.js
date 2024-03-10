@@ -18,6 +18,10 @@ router.put("/update/:productId", (req, res) => {
 });
 
 
+router.delete("/deleteImage/:productId", (req, res) => {
+  productControllers.deleteImage(req, res);
+});
+
 router.delete("/delete/:productId", (req, res) => {
   productControllers.deleteProduct(req, res);
 });

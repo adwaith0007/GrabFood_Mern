@@ -21,7 +21,7 @@ const { upload } = require("../middlewares/multer");
 
 //       try {
 //         const productDoc = new productModel({
-          
+
 //           productName: name,
 //           Description: desc,
 //           price,
@@ -55,13 +55,17 @@ const { upload } = require("../middlewares/multer");
 //   }
 // };
 
-
 exports.addProduct = async (req, res) => {
   try {
     upload.array("images")(req, res, async (err) => {
       if (err) {
         console.error("Error during file upload:", err);
-        return res.status(500).json({ success: false, message: "Internal server error in file upload" });
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: "Internal server error in file upload",
+          });
       }
 
       const images = req.files;
@@ -69,7 +73,9 @@ exports.addProduct = async (req, res) => {
 
       const { name, price, desc, category } = req.body;
       if (!name || !price || !desc || !category) {
-        return res.status(400).json({ success: false, message: "Please add all fields" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Please add all fields" });
       }
 
       try {
@@ -87,10 +93,17 @@ exports.addProduct = async (req, res) => {
 
         await productDoc.save();
 
-        res.status(201).json({ success: true, message: "Product added successfully" });
+        res
+          .status(201)
+          .json({ success: true, message: "Product added successfully" });
       } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: "Internal server error in saving product" });
+        res
+          .status(500)
+          .json({
+            success: false,
+            message: "Internal server error in saving product",
+          });
       }
     });
   } catch (error) {
@@ -202,51 +215,127 @@ exports.getProductDetails = async (req, res) => {
 //   }
 // };
 
+// now
+
+// exports.updateProduct = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         return res.json({ success: false, message: err.message });
+//       }
+
+//       const productId = req.params.productId;
+
+//       console.log(req.body);
+
+//       console.log(productId);
+
+//       const { desc, price, category, name } = req.body;
+//       const image = req.file?.filename;
+
+//       const updatedProduct = {
+//         Description: desc,
+//         category: category,
+//         productName: name,
+//       };
+
+//       if (category !== undefined) {
+//         updatedProduct.category = category;
+//       }
+
+//       // Check if price is a valid number before updating
+//       if (!isNaN(Number(price))) {
+//         updatedProduct.price = Number(price);
+//       }
+
+//       if (image) {
+//         updatedProduct.images = [image];
+//       }
+
+//       await productModel.findOneAndUpdate({ _id: productId }, { $set: updatedProduct });
+
+//       res.status(201).json({ success: true, message: "Product updated" });
+//     });
+//   } catch (error) {
+//     console.log("error while editing form", error);
+//     res.status(500).json({ success: false, message: "Failed to update product" });
+//   }
+// };
 
 exports.updateProduct = async (req, res) => {
   try {
-    upload.single("photo")(req, res, async (err) => {
+    upload.array("images")(req, res, async (err) => {
       if (err) {
-        return res.json({ success: false, message: err.message });
+        console.error("Error during file upload:", err);
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: "Internal server error in file upload",
+            
+          });
       }
-
       const productId = req.params.productId;
 
-      console.log(req.body);
-
-      console.log(productId);
-
       const { desc, price, category, name } = req.body;
-      const image = req.file?.filename;
+      const newImages = req.files?.map((file) => file.filename) || [];
+
+      const existingProduct = await productModel.findById(productId);
+
+      const updatedImages = existingProduct.productImage.concat(newImages);
 
       const updatedProduct = {
+        _id:productId,
+        productName: name,
+        productImage: updatedImages,
+        price: Number(price),
         Description: desc,
         category: category,
-        productName: name,
       };
 
-      if (category !== undefined) {
-        updatedProduct.category = category;
-      }
+      await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
 
-      // Check if price is a valid number before updating
-      if (!isNaN(Number(price))) {
-        updatedProduct.price = Number(price);
-      }
-
-      if (image) {
-        updatedProduct.images = [image];
-      }
-
-      await productModel.findOneAndUpdate({ _id: productId }, { $set: updatedProduct });
-
-      res.status(201).json({ success: true, message: "Product updated" });
+      res.status(201).json({ success: true, message: "Product updated", data:{updatedProduct} });
     });
   } catch (error) {
-    console.log("error while editing form", error);
-    res.status(500).json({ success: false, message: "Failed to update product" });
+    console.log("Error while updating product:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update product" });
   }
 };
+
+exports.deleteImage = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const { imageName } = req.body;
+
+    const existingProduct = await productModel.findById(productId);
+
+    const imageIndex = existingProduct.productImage.indexOf(imageName);
+
+    if (imageIndex !== -1) {
+      existingProduct.productImage.splice(imageIndex, 1);
+
+      await productModel.findByIdAndUpdate(productId, {
+        $set: { productImage: existingProduct.productImage },
+      });
+
+      res
+        .status(200)
+        .json({ success: true, message: "Image deleted successfully!" });
+    } else {
+      res
+        .status(404)
+        .json({ success: false, message: "Image not found in the product" });
+    }
+  } catch (error) {
+    console.error("Error deleting image", error);
+    res.status(500).json({ success: false, message: "Failed to delete image" });
+  }
+};
+
+
 
 exports.deleteProduct = async (req, res) => {
   const productId = req.params.productId;

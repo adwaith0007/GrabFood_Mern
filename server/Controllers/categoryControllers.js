@@ -4,6 +4,55 @@ const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 
 /* POST: http://localhost:5000/api/admin/category/add */
 
+// exports.addCategory = async (req, res) => {
+//   console.log("add category");
+
+//   try {
+//     upload.array("images")(req, res, async (err) => {
+//       console.log(req.body);
+
+//       if (err) {
+//         return res.json({ success: false, message: err.message });
+//       }
+
+//       const image = req.files;
+//       const filenames = image.map((file) => file.filename);
+
+//       const { category } = req.body;
+//       console.log(category);
+
+//       if (!category) {
+//         return res.json({ success: false, message: "Enter the category name" });
+//       }
+
+//       category = category.toLowerCase();
+
+     
+
+//       // Check if the category already exists
+//       const categoryExist = await categoryModel.findOne({ category });
+
+//       if (categoryExist) {
+//         return res.json({ success: false, message: "Category already exists" });
+//       }
+
+//       const categoryDoc = new categoryModel({
+//         category,
+//         categoryImage: filenames,
+//       });
+
+//       await categoryDoc.save();
+
+//       res
+//         .status(201)
+//         .json({ success: true, message: "Category added successfully" });
+//     });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+
 exports.addCategory = async (req, res) => {
   console.log("add category");
 
@@ -13,6 +62,11 @@ exports.addCategory = async (req, res) => {
 
       if (err) {
         return res.json({ success: false, message: err.message });
+      }
+
+      // Validate that the 'images' field is present in the request
+      if (!req.files || req.files.length === 0) {
+        return res.json({ success: false, message: "No images uploaded" });
       }
 
       const image = req.files;
@@ -25,8 +79,10 @@ exports.addCategory = async (req, res) => {
         return res.json({ success: false, message: "Enter the category name" });
       }
 
-      // Check if the category already exists
-      const categoryExist = await categoryModel.findOne({ category });
+      // Check if the category already exists (case-insensitive)
+      const categoryExist = await categoryModel.findOne({
+        category: { $regex: new RegExp(`^${category}$`, 'i') },
+      });
 
       if (categoryExist) {
         return res.json({ success: false, message: "Category already exists" });
@@ -44,6 +100,7 @@ exports.addCategory = async (req, res) => {
         .json({ success: true, message: "Category added successfully" });
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

@@ -6,15 +6,15 @@ import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const defaultImg =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
+const defaultImg ="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 const ProductManagement = () => {
   const { id } = useParams<{ id: string }>();
   const [productDetails, setProductDetails] = useState<any>({});
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [updating, setUpdating] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,29 +36,51 @@ const ProductManagement = () => {
     fetchProductDetails();
   }, [id]);
 
-  const { _id: productId, productName: name, price, category, productImage } = productDetails;
-  const image = productImage?.[0]?.replace(/ /g, "%20");
-  const imageUrl = image ? `http://localhost:5000/${image}` : defaultImg;
+  console.log(productDetails);
+  
 
-  const [updatedPrice, setUpdatedPrice] = useState<number>(price);
-  const [nameUpdate, setNameUpdate] = useState<string>(name);
-  const [categoryUpdate, setCategoryUpdate] = useState<string>(category);
-  const [photoUpdate, setPhotoUpdate] = useState<string>(imageUrl);
-  const [photoFile, setPhotoFile] = useState<File | undefined>();
-  const [updating, setUpdating] = useState<boolean>(false);
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
 
-  const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file: File | undefined = e.target.files?.[0];
-    const reader: FileReader = new FileReader();
+    if (files && files.length > 0) {
+      setSelectedImages((prevImages) => [...prevImages, ...Array.from(files)]);
+    }
+  };
 
-    if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setPhotoUpdate(reader.result);
-          setPhotoFile(file);
-        }
-      };
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => {
+      const updatedImages = [...prevImages];
+      updatedImages.splice(index, 1);
+      return updatedImages;
+    });
+  };
+
+  const handleRemoveExistingImage = async (imageIndex: number) => {
+    try {
+      const updatedImages = [...productDetails.productImage];
+      const removedImage = updatedImages.splice(imageIndex, 1)[0];
+
+      setProductDetails((prevProduct) => ({
+        ...prevProduct,
+        productImage: updatedImages,
+      }));
+
+      const response = await axios.delete(`http://localhost:5000/api/product/deleteImage/${id}`, {
+        data: { imageName: removedImage },
+      });
+
+      if (response.data.success) {
+        toast.success("Image deleted successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to delete image");
+        setProductDetails((prevProduct) => ({
+          ...prevProduct,
+          productImage: [...updatedImages, removedImage],
+        }));
+      }
+    } catch (error) {
+      console.error("Error deleting image", error);
+      toast.error("Failed to delete image");
     }
   };
 
@@ -70,40 +92,25 @@ const ProductManagement = () => {
 
       const formData = new FormData();
 
-      // Append the name if it's changed
-      if (nameUpdate !== name) {
-        formData.append("name", nameUpdate);
-      }
+      formData.append("name", productDetails.productName);
+      formData.append("price", String(productDetails.price));
+      formData.append("category", productDetails.category);
 
-      // Append the rest of the fields (if they are changed)
-      if (updatedPrice !== price) {
-        formData.append("price", String(updatedPrice));
-      }
+      productDetails.productImage.forEach((image: string) => {
+        formData.append("images", image);
+      });
 
-      if (categoryUpdate !== category) {
-        formData.append("category", categoryUpdate);
-      }
+      selectedImages.forEach((file: File) => {
+        formData.append("images", file);
+      });
 
-      // Append the photo if it's changed
-      if (photoFile) {
-        formData.append("photo", photoFile);
-      }
-
-      const response = await axios.put(`http://localhost:5000/api/product/update/${productId}`, formData);
+      const response = await axios.put(`http://localhost:5000/api/product/update/${id}`, formData);
+      console.log(response);
+      
 
       if (response.data.success) {
+        setProductDetails(response.data.data.updatedProduct);
         toast.success("Product updated successfully!");
-
-        // Update only the fields that have changed
-        setProductDetails({
-          ...productDetails,
-          productName: nameUpdate,
-          ...(updatedPrice !== price && { price: updatedPrice }),
-          ...(categoryUpdate !== category && { category: categoryUpdate }),
-          productImage: photoFile
-            ? [{ originalname: photoFile.name, url: response.data.data.url }]
-            : productDetails.productImage,
-        });
       } else {
         toast.error(response.data.message || "Failed to update Product");
       }
@@ -117,7 +124,7 @@ const ProductManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/product/delete/${productId}`);
+      const response = await axios.delete(`http://localhost:5000/api/product/delete/${id}`);
 
       if (response.status === 200) {
         toast.success("Product deleted successfully");
@@ -147,11 +154,55 @@ const ProductManagement = () => {
       <AdminSidebar />
       <main className="product-management">
         <section>
-          <strong>ID - {productId}</strong>
-          <img src={imageUrl} alt="Product" />
-          <p>{name}</p>
-          <h3>₹{price}</h3>
+          <strong>ID - {productDetails?._id}</strong>
+          {productDetails?.productImage && productDetails.productImage.length > 0 && (
+            <div className=" w-full form-group">
+              <div className=" w-full grid grid-cols-3 border-2  rounded-xl shadow p-3 gap-4 mt-1">
+                {productDetails.productImage.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={`http://localhost:5000/${image}`}
+                      alt={`Existing ${index}`}
+                      className="w-full h-32 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
+                      onClick={() => handleRemoveExistingImage(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {selectedImages.length > 0 && (
+            <div className="form-group">
+              <div className="grid grid-cols-3 gap-4 mt-1">
+                {selectedImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Preview ${index}`}
+                      className="w-full h-32 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <p>{productDetails?.productName}</p>
+          <h3>₹{productDetails?.price}</h3>
         </section>
+
         <article>
           <button className="product-delete-btn" onClick={deleteHandler} disabled={updating}>
             <FaTrash />
@@ -162,27 +213,24 @@ const ProductManagement = () => {
               <label>Name</label>
               <input
                 type="text"
-                placeholder={name}
-                value={nameUpdate}
-                onChange={(e) => setNameUpdate(e.target.value)}
+                value={productDetails?.productName}
+                onChange={(e) => setProductDetails({ ...productDetails, productName: e.target.value })}
               />
             </div>
             <div>
               <label>Price</label>
               <input
                 type="number"
-                placeholder={price.toString()}
-                value={updatedPrice}
-                onChange={(e) => setUpdatedPrice(Number(e.target.value))}
+                value={productDetails?.price}
+                onChange={(e) => setProductDetails({ ...productDetails, price: e.target.value })}
               />
             </div>
             <div>
               <label>Category</label>
               <input
                 type="text"
-                placeholder={category}
-                value={categoryUpdate}
-                onChange={(e) => setCategoryUpdate(e.target.value)}
+                value={productDetails?.category}
+                onChange={(e) => setProductDetails({ ...productDetails, category: e.target.value })}
               />
             </div>
             <div className="form-group">
@@ -200,11 +248,10 @@ const ProductManagement = () => {
                   accept="image/*"
                   multiple
                   className="hidden"
-                  onChange={changeImageHandler}
+                  onChange={handleImageChange}
                 />
               </div>
             </div>
-            {photoUpdate && <img src={photoUpdate} alt="New Image" />}
             <button type="submit" disabled={updating}>
               Update
             </button>
