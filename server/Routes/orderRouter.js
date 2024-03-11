@@ -11,6 +11,18 @@ router.post('/placeOrder', (req, res) => {
     orderControllers.getUserOrders(req, res);
   });
 
+  router.get('/orders', (req, res) => {
+    orderControllers.getAllOrders(req, res);
+  });
+
+  router.get('/orders/:orderId/:productId', (req, res) => {
+    orderControllers.getOrderProductDetails(req, res);
+  });
+
+  router.put('/orders/:orderId/product/:productId', (req, res) => {
+    orderControllers.updateProductStatus(req, res);
+  });
+
   router.put('/order/cancel/:orderId/product/:productId', orderControllers.cancelProduct);
 
 

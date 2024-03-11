@@ -141,7 +141,7 @@ const MyOrderPage = () => {
         
         status: (<div className='flex justify-center ' >{order.status}</div> ) ,
 
-        orderDetails: <Link className='flex justify-center'  to={`/order/${order._id}/product`}>View</Link>,
+        orderDetails: <Link className='flex justify-center'  to={`/user/order/${order._id}/product`}>View</Link>,
 
 
         

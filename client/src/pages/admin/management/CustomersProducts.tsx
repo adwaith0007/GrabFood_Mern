@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../types/reducer-types';
 import DeletePopeUp from '../../../components/DeletePopeUp';
 import UserSidebar from '../../../components/user/UserSidebar';
+import AdminSidebar from '../../../components/admin/AdminSidebar';
 
 // Define interfaces for order data
 interface Address {
@@ -22,8 +23,8 @@ interface Product {
   productName: string;
   productImage: string[];
   price: number;
-  status: string;
   quantity: number;
+  status: string;
   _id: string;
 }
 
@@ -57,11 +58,12 @@ const columns: Column<DataType>[] = [
   { Header: 'Action', accessor: 'cancelAction' },
 ];
 
-const OrderProductPage = () => {
-  const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
-  const userId = user._id;
+const CustomersProducts = () => {
+  
 
-  const { orderId } = useParams<{ orderId: string }>();
+  const { orderId, userId } = useParams();
+
+ 
 
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
@@ -137,8 +139,12 @@ const OrderProductPage = () => {
   useEffect(() => {
     const singleOrder = userOrders.find((order) => order._id === orderId);
 
+    console.log(singleOrder);
+    
+
     if (singleOrder) {
       const newRows: DataType[] = singleOrder.products.map((product) => ({
+       
         orderId: singleOrder._id,
         photo: (
           <img
@@ -155,12 +161,15 @@ const OrderProductPage = () => {
           </p>
         ),
         cancelAction: (
-          <button
-            className='bg-red-500 text-white px-4 py-2 rounded'
-            onClick={() => handleCancelProduct(singleOrder._id, product.productId)}
-          >
-            Cancel
-          </button>
+        //   <button
+        //     className='bg-red-500 text-white px-4 py-2 rounded'
+        //     onClick={() => handleCancelProduct(singleOrder._id, product.productId)}
+        //   >
+        //     Cancel
+        //   </button>
+
+        <Link className='w-full'  to={`/admin/customer/${orderId}/${product.productId}/manage`} >Manage</Link>
+
         ),
       }));
 
@@ -173,7 +182,7 @@ const OrderProductPage = () => {
   return (
     <div className="admin-container">
       
-      <UserSidebar />
+      <AdminSidebar />
       <main>{Table}</main>
       {productDeletePopUp && (
         <DeletePopeUp
@@ -186,4 +195,4 @@ const OrderProductPage = () => {
   );
 };
 
-export default OrderProductPage;
+export default CustomersProducts;

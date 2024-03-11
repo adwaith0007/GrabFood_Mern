@@ -72,6 +72,7 @@ exports.add = async (req, res) => {
     }
 
     const cartItems = {
+      userName: user.username,
       productId,
       productName,
       productImage: image,

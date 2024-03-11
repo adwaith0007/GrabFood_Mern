@@ -9,6 +9,11 @@ const orderSchema = mongoose.Schema({
     required: true,
   },
 
+  userName: {
+    type: String,
+    required: true,
+  },
+
   orderDate: {
     type: String,
     required: true,
@@ -40,6 +45,12 @@ const orderSchema = mongoose.Schema({
         type: Number,
         required: true,
       },
+
+      status: {
+        type: String,
+        default: "Processing",
+      },
+
     },
   ],
   address: {
@@ -85,10 +96,7 @@ const orderSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  status: {
-    type: String,
-    default: "Processing",
-  },
+ 
   razor_orderId: {
     type: String,
   },

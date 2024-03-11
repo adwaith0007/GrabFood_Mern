@@ -21,7 +21,10 @@ const TransactionManagement = lazy(
   () => import("../pages/admin/management/transactionmanagement")
 );
 import Category from "../pages/admin/Category";
-import CustomersProducts from "../pages/adminPages/CustomersProducts";
+
+import CustomersOrder from "../pages/adminPages/CustomersOrder";
+import Home from "../pages/userPages/Home";
+import CustomersProducts from "../pages/admin/management/CustomersProducts";
 
 const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
 const Customers = lazy(() => import("../pages/adminPages/Customers"));
@@ -40,8 +43,8 @@ const AdminRoutes = () => {
       <Route path="/product" element={<Products />} />
       <Route path="/category" element={<Category />} />
       <Route path="/customer" element={<Customers />} />
-      <Route path="customer/:customerId/products" element={<CustomersProducts />} />  
       <Route path="/transaction" element={<Transaction />} />
+      <Route path="customer/:customerId/products" element={ <CustomersOrder /> } />  
 
       <Route path="/admin" element={<LoginPage />}></Route>
 
@@ -63,8 +66,10 @@ const AdminRoutes = () => {
 
       <Route path="/category/:id" element={<CategoryManagement />} />
 
+      <Route path="/customer/:userId/order/:orderId/product" element={<CustomersProducts />} />
+
       <Route
-        path="/transaction/:id"
+        path="/customer/:orderId/:productId/manage"
         element={<TransactionManagement />}
       />
     </Routes>
