@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useTable } from 'react-table';
 import { getCustomers } from '../../helper/helper';
 import axios from 'axios';
-import { server } from '../../server';
+
 import toast from "react-hot-toast";
 import TableHOC from '../../components/admin/TableHOC';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import { Link } from 'react-router-dom';
+
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
 
 
 // interface DataType {
@@ -72,7 +75,7 @@ const Customers = () => {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/admin/customers`)
+    api.get(`/admin/customers`)
       .then((res) => {
         if (res.data.success) {
           setCustomerData(res.data.data);
@@ -123,7 +126,7 @@ const Customers = () => {
       
       console.log(id);
       
-      const response = await axios.put(`http://localhost:5000/api/admin/customers?id=${id}`,
+      const response = await api.put(`/admin/customers?id=${id}`,
         { isBlocked: !isBlocked }
         );
      

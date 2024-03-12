@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import foodimg from "../../../assets/login_food.png";
 
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const NewProduct = () => {
   const [product, setProduct] = useState({
     name: "",
@@ -19,7 +22,7 @@ const NewProduct = () => {
 
   useEffect(() => {
     try {
-      axios.get(`http://localhost:5000/api/category/get`).then((res) => {
+      api.get(`/category/get`).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }
@@ -81,8 +84,8 @@ const NewProduct = () => {
     });
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/product/add`,
+      const response = await api.post(
+        `/product/add`,
         formData
       );
 

@@ -1,6 +1,6 @@
 import UserSidebar from '../../../components/user/UserSidebar';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { ReactElement } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,9 @@ import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../types/reducer-types';
+
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
 
 // Define interfaces for order data
 interface Address {
@@ -68,8 +71,8 @@ const MyOrderPage = () => {
 
   const handleCancelProduct = async (orderId: string, productId: string) => {
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/order/cancel/${orderId}/product/${productId}`
+      const response = await api.put(
+        `/order/cancel/${orderId}/product/${productId}`
       );
       if (response.data.success) {
         
@@ -86,7 +89,7 @@ const MyOrderPage = () => {
 
   const fetchUserOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/order/user/${userId}`);
+      const response = await api.get(`/order/user/${userId}`);
       if (response.data.success) {
         setUserOrders(response.data.orders);
       } else {

@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
-
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
 interface DataType {
   photo: ReactElement;
   name: string;
@@ -45,7 +46,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/product/get");
+        const response = await api.get("/product/get");
         if (response.data.success) {
           setProductList(response.data.data);
         }
@@ -64,7 +65,7 @@ const Products = () => {
       
       photo: (
         <img
-          src={`http://localhost:5000/${item.productImage[0]?.replace(/ /g, "%20")}`}
+          src={`${server}/${item.productImage[0]?.replace(/ /g, "%20")}`}
           alt={item.name}
         />
       ),

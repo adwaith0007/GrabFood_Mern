@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
 
 import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
 
 // import AddressModal from "../../components/AddressInput";
 
@@ -102,7 +103,7 @@ const MenuPage = () => {
           quantity: 1,
           name: product.productName,
           price: product.price,
-          imageUrl: `http://localhost:5000/${product.productImage[0].replace(
+          imageUrl: `${server}/${product.productImage[0].replace(
             / /g,
             "%20"
           )}`,
@@ -190,7 +191,7 @@ const MenuPage = () => {
                 <>
                   <CategoryCards
                     name={item.category}
-                    imageUrl={`http://localhost:5000/${item.categoryImage[0].replace(/ /g,"%20" )}`}
+                    imageUrl={`${server}/${item.categoryImage[0].replace(/ /g,"%20" )}`}
                     handler={changeCategory}
                   />
                 </>
@@ -209,7 +210,7 @@ const MenuPage = () => {
                     price={item.price}
                     description={item.Description}
                     name={item.productName}
-                    imageUrl={`http://localhost:5000/${item.productImage[0].replace(/ /g,"%20" )}`}
+                    imageUrl={`${server}/${item.productImage[0].replace(/ /g,"%20" )}`}
                     onAddToCart={() => addToCart(item)} // Pass the addToCart callback to ProductCard
                   />
                 </>

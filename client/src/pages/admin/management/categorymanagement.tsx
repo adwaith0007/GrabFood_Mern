@@ -5,6 +5,8 @@ import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
 
 const defaultImg =
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
@@ -33,8 +35,8 @@ const CategoryManagement = () => {
   useEffect(() => {
     const fetchCategoryDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/Category/${id}`
+        const response = await api.get(
+          `/Category/${id}`
         );
         if (response.data.success) {
           setCategoryDetails(response.data.data);
@@ -51,7 +53,7 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
-  const image = `http://localhost:5000/${categoryDetails?.categoryImage?.[0]?.replace(/ /g,"%20")}`;
+  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g,"%20")}`;
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file: File | undefined = e.target.files?.[0];
@@ -81,8 +83,8 @@ const CategoryManagement = () => {
         formData.append("photo", photoFile);
       }
 
-      const response = await axios.put(
-        `http://localhost:5000/api/category/update/${categoryDetails._id}`,
+      const response = await api.put(
+        `/category/update/${categoryDetails._id}`,
         formData
       );
 
@@ -104,8 +106,8 @@ const CategoryManagement = () => {
     const confirmDeletion = window.confirm("Are you sure you want to delete this category?");
     if (confirmDeletion) {
       try {
-        const response = await axios.delete(
-          `http://localhost:5000/api/category/delete/${categoryDetails._id}`
+        const response = await api.delete(
+          `/category/delete/${categoryDetails._id}`
         );
 
         if (response.status === 200) {

@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import foodimg from "../../../assets/login_food.png";
 
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const NewCategory = () => {
   const [categoryData, setCategoryData] = useState({
     name: "",
@@ -48,8 +51,8 @@ const NewCategory = () => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/category/add`,
+      const response = await api.post(
+        `/category/add`,
         formData
       );
 

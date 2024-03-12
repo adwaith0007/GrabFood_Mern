@@ -23,6 +23,11 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  profilePicture: {
+    type: String,
+  },
+
+
 
   addresses: [
     {

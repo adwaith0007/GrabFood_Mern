@@ -1,6 +1,9 @@
 import React from "react";
 import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const CartSection = ({
   products,
   onIncrease,
@@ -46,7 +49,7 @@ const CartSection = ({
              
 
               <img className="h-24 w-24"
-              src={`http://localhost:5000/${product.productImage[0]?.replace(
+              src={`${server}/${product.productImage[0]?.replace(
                 / /g,
                 "%20"
               )}`}

@@ -1,124 +1,17 @@
-// import { ReactElement, useEffect, useState } from "react";
-// import { Link } from "react-router-dom";
-// import { Column } from "react-table";
-// import AdminSidebar from "../../components/admin/AdminSidebar";
-// import TableHOC from "../../components/admin/TableHOC";
-// import axios from "axios";
-// import toast from "react-hot-toast";
-
-// interface DataType {
-//   user: string;
-//   amount: number;
-//   discount: number;
-//   quantity: number;
-//   status: ReactElement;
-//   action: ReactElement;
-// }
-
-// const arr: Array<DataType> = [
-//   {
-//     user: "Charas",
-//     amount: 4500,
-//     discount: 400,
-//     status: <span className="red">Processing</span>,
-//     quantity: 3,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-
-//   {
-//     user: "Xavirors",
-//     amount: 6999,
-//     discount: 400,
-//     status: <span className="green">Shipped</span>,
-//     quantity: 6,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-//   {
-//     user: "Xavirors",
-//     amount: 6999,
-//     discount: 400,
-//     status: <span className="purple">Delivered</span>,
-//     quantity: 6,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-// ];
-
-// const columns: Column<DataType>[] = [
-//   {
-//     Header: "Avatar",
-//     accessor: "user",
-//   },
-//   {
-//     Header: "Amount",
-//     accessor: "amount",
-//   },
-//   {
-//     Header: "Discount",
-//     accessor: "discount",
-//   },
-//   {
-//     Header: "Quantity",
-//     accessor: "quantity",
-//   },
-//   {
-//     Header: "Status",
-//     accessor: "status",
-//   },
-//   {
-//     Header: "Action",
-//     accessor: "action",
-//   },
-// ];
-
-// const Transaction = () => {
-//   const [rows, setRows] = useState<DataType[]>(arr);
-//   const [allOrders, setAllOrders] = useState()
-
-//   useEffect(() => {
-//     axios.get(`http://localhost:5000/api/orders`)
-//       .then((res) => {
-//         if (res.data.success) {
-//           setAllOrders(res.data.allOrders);
-//         } else {
-//           toast.error("Error while loading categories");
-//         }
-//       })
-//       .catch((error) => {
-//         toast.error("Error while loading categories");
-//         console.log(error);
-//       });
-//   }, []);
-
-//   console.log(allOrders);
-  
-
-//   const Table = TableHOC<DataType>(
-//     columns,
-//     rows,
-//     "dashboard-product-box",
-//     "Transactions",
-//     rows.length > 6
-//   )();
-//   return (
-//     <div className="admin-container">
-//       <AdminSidebar />
-//       <main>{Table}</main>
-//     </div>
-//   );
-// };
-
-// export default Transaction;
 
 
 import React, { useEffect, useState } from 'react';
 import { useTable } from 'react-table';
 import { getCustomers } from '../../helper/helper';
-import axios from 'axios';
-import { server } from '../../server';
+
+
 import toast from "react-hot-toast";
 import TableHOC from '../../components/admin/TableHOC';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import { Link } from 'react-router-dom';
+
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
 
 
 // interface DataType {
@@ -190,7 +83,7 @@ const Transaction = () => {
 
 
   useEffect(() => {
-        axios.get(`http://localhost:5000/api/orders`)
+        api.get(`/orders`)
           .then((res) => {
             if (res.data.success) {
               setAllOrders(res.data.allOrders);
@@ -209,7 +102,7 @@ const Transaction = () => {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/admin/customers`)
+    api.get(`/admin/customers`)
       .then((res) => {
         if (res.data.success) {
           setCustomerData(res.data.data);
@@ -261,7 +154,7 @@ const Transaction = () => {
       
       console.log(id);
       
-      const response = await axios.put(`http://localhost:5000/api/admin/customers?id=${id}`,
+      const response = await api.put(`/admin/customers?id=${id}`,
         { isBlocked: !isBlocked }
         );
      

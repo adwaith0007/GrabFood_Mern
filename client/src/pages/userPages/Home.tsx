@@ -7,6 +7,9 @@ import s3 from "../../assets/s3.png";
 import s4_1 from "../../assets/s4_1.png";
 import s5bg from "../../assets/s5bg.png";
 
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
+
 import '../../App.scss' 
 
 const Home = () => {

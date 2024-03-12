@@ -9,6 +9,9 @@ import AddressInput from '../../../components/AddressInput';
 import UpdateAddressInput from '../../../components/user/UpdateAddressInput';
 import ChooseAddress from '../../../components/user/ChooseAddress';
 
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const ManageAddressPage = () => {
 
   const { user } = useSelector(
@@ -26,8 +29,8 @@ const ManageAddressPage = () => {
 
   useEffect(() => {
     if (userId) {
-      axios
-        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
 
         .then((response) => {
           setSelectedAddress(response.data[0]);
@@ -41,8 +44,8 @@ const ManageAddressPage = () => {
   const handleAddressAdded = () => {
     
     if (userId) {
-      axios
-        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
         .then((response) => {
           setSelectedAddress(response.data[0]);
         })

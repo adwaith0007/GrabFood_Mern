@@ -10,6 +10,9 @@ import DeletePopeUp from '../../../components/DeletePopeUp';
 import UserSidebar from '../../../components/user/UserSidebar';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
+
 // Define interfaces for order data
 interface Address {
   street: string;
@@ -74,7 +77,7 @@ const CustomersProducts = () => {
 
   const fetchUserOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/order/user/${userId}`);
+      const response = await api.get(`/order/user/${userId}`);
       if (response.data.success) {
         setUserOrders(response.data.orders);
       } else {
@@ -114,8 +117,8 @@ const CustomersProducts = () => {
 
   const handlePopUpDelete = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/order/cancel/${selectedOrderId}/product/${selectedProductId}`
+      const response = await api.put(
+        `/order/cancel/${selectedOrderId}/product/${selectedProductId}`
       );
       if (response.data.success) {
         console.log('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
@@ -148,7 +151,7 @@ const CustomersProducts = () => {
         orderId: singleOrder._id,
         photo: (
           <img
-            src={`http://localhost:5000/${product.productImage[0]?.replace(/ /g, '%20')}`}
+            src={`${server}/${product.productImage[0]?.replace(/ /g, '%20')}`}
             alt={product.productName}
           />
         ),

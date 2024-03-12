@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 const server = import.meta.env.VITE_SERVER;
 
+import api from '../../../api';
+
 const defaultImg ="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 const ProductManagement = () => {
@@ -19,10 +21,12 @@ const ProductManagement = () => {
   const [updating, setUpdating] = useState<boolean>(false);
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(`${server}/api/product/${id}`);
+        const response = await api.get(`/product/${id}`);
         if (response.data.success) {
           setProductDetails(response.data.data);
         } else {
@@ -67,7 +71,7 @@ const ProductManagement = () => {
         productImage: updatedImages,
       }));
 
-      const response = await axios.delete(`${server}/api/product/deleteImage/${id}`, {
+      const response = await api.delete(`/product/deleteImage/${id}`, {
         data: { imageName: removedImage },
       });
 
@@ -106,7 +110,7 @@ const ProductManagement = () => {
         formData.append("images", file);
       });
 
-      const response = await axios.put(`${server}/api/product/update/${id}`, formData);
+      const response = await api.put(`/product/update/${id}`, formData);
       console.log(response);
       
 
@@ -126,7 +130,7 @@ const ProductManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     try {
-      const response = await axios.delete(`${server}/api/product/delete/${id}`);
+      const response = await api.delete(`/product/delete/${id}`);
 
       if (response.status === 200) {
         toast.success("Product deleted successfully");

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { OrderItem } from "../../../models/types";
 
 const server = import.meta.env.VITE_SERVER;
+import api from '../../../api';
 
 const TransactionManagement = () => {
   const { orderId, productId } = useParams();
@@ -15,7 +16,7 @@ const TransactionManagement = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await axios.get(`${server}/api/orders/${orderId}/${productId}`);
+        const response = await api.get(`/orders/${orderId}/${productId}`);
         const orderDetails = response.data;
         setUserOrderDetails(orderDetails);
         console.log(orderDetails);
@@ -34,7 +35,7 @@ const TransactionManagement = () => {
    
     try {
       
-      await axios.put(`${server}/api/orders/${orderId}/product/${productId}`, {
+      await api.put(`/orders/${orderId}/product/${productId}`, {
         status: "Delivered",
       });
 

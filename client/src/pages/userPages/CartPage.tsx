@@ -7,6 +7,9 @@ import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
+import api from '../../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const CartPage = () => {
   const { user } = useSelector((state: { userReducer: UserReducerInitialState }) => state.userReducer);
 
@@ -18,8 +21,8 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/cart/${userId}`
+        const response = await api.get(
+          `/cart/${userId}`
         );
         setCartItems(response.data.cart);
       } catch (error) {
@@ -37,8 +40,8 @@ const CartPage = () => {
 
   const handleRemoveFromCart = async (product) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/cart/remove/${userId}`,
+      const response = await api.post(
+        `/cart/remove/${userId}`,
         { product }
       );
       console.log("Remove from cart response:", response.data);
@@ -88,8 +91,8 @@ const CartPage = () => {
       setCartItems(updatedCart);
   
       // Make the API request to update the quantity on the backend
-      axios
-        .post(`http://localhost:5000/api/cart/add/${userId}`, {
+      api
+        .post(`/cart/add/${userId}`, {
           product,
           quantity: 1,
         })
@@ -101,8 +104,8 @@ const CartPage = () => {
   };
 
   const handleDecreaseQuantity = (product) => {
-    axios
-      .post(`http://localhost:5000/api/cart/decrease/${userId}`, {
+    api
+      .post(`/cart/decrease/${userId}`, {
         product,
         quantity: 1,
       })

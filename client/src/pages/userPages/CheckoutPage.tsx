@@ -14,6 +14,9 @@ import ChooseAddress from "../../components/user/ChooseAddress";
 import UpdateAddressInput from "../../components/user/UpdateAddressInput";
 import toast from "react-hot-toast";
 
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
+
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
@@ -39,8 +42,8 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (userId) {
-      axios
-        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
 
         .then((response) => {
           setSelectedAddress(response.data[0]);
@@ -53,8 +56,8 @@ const CheckoutPage = () => {
 
   const handleAddressAdded = () => {
     if (userId) {
-      axios
-        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
         .then((response) => {
           setSelectedAddress(response.data[0]);
         })
@@ -123,8 +126,8 @@ const CheckoutPage = () => {
       console.log(orderDetails);
 
       if (orderDetails.paymentMethod === "cashOnDelivery") {
-        const response = await axios.post(
-          "http://localhost:5000/api/placeOrder",
+        const response = await api.post(
+          "/placeOrder",
           orderDetails
         );
 
@@ -132,7 +135,7 @@ const CheckoutPage = () => {
           toast.success("Order placed successfully!");
           console.log("Order placed successfully:", response.data.order);
 
-          await axios.post("http://localhost:5000/api/deleteCartItems", {
+          await api.post("/deleteCartItems", {
             userId,
           });
 

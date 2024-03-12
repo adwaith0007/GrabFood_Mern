@@ -196,6 +196,9 @@ import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../types/reducer-types';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 
+import api from '../../api';
+const server = import.meta.env.VITE_SERVER;
+
 // Define interfaces for order data
 interface Address {
   street: string;
@@ -262,8 +265,8 @@ const CustomersOrder = () => {
 
   const handleCancelProduct = async (orderId: string, productId: string) => {
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/order/cancel/${orderId}/product/${productId}`
+      const response = await api.put(
+        `/order/cancel/${orderId}/product/${productId}`
       );
       if (response.data.success) {
         
@@ -280,7 +283,7 @@ const CustomersOrder = () => {
 
   const fetchUserOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/order/user/${userId}`);
+      const response = await api.get(`/order/user/${userId}`);
       if (response.data.success) {
         setUserOrders(response.data.orders);
       } else {
