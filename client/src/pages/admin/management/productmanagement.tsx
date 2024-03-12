@@ -6,6 +6,8 @@ import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+const server = import.meta.env.VITE_SERVER;
+
 const defaultImg ="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 const ProductManagement = () => {
@@ -20,7 +22,7 @@ const ProductManagement = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/product/${id}`);
+        const response = await axios.get(`${server}/api/product/${id}`);
         if (response.data.success) {
           setProductDetails(response.data.data);
         } else {
@@ -65,7 +67,7 @@ const ProductManagement = () => {
         productImage: updatedImages,
       }));
 
-      const response = await axios.delete(`http://localhost:5000/api/product/deleteImage/${id}`, {
+      const response = await axios.delete(`${server}/api/product/deleteImage/${id}`, {
         data: { imageName: removedImage },
       });
 
@@ -104,7 +106,7 @@ const ProductManagement = () => {
         formData.append("images", file);
       });
 
-      const response = await axios.put(`http://localhost:5000/api/product/update/${id}`, formData);
+      const response = await axios.put(`${server}/api/product/update/${id}`, formData);
       console.log(response);
       
 
@@ -124,7 +126,7 @@ const ProductManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/product/delete/${id}`);
+      const response = await axios.delete(`${server}/api/product/delete/${id}`);
 
       if (response.status === 200) {
         toast.success("Product deleted successfully");
@@ -161,7 +163,7 @@ const ProductManagement = () => {
                 {productDetails.productImage.map((image, index) => (
                   <div key={index} className="relative">
                     <img
-                      src={`http://localhost:5000/${image}`}
+                      src={`${server}/${image}`}
                       alt={`Existing ${index}`}
                       className="w-full h-32 object-cover rounded-md"
                     />

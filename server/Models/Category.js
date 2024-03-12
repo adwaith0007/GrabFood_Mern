@@ -10,6 +10,10 @@ const categorySchema = mongoose.Schema({
     type: Array,
     
   },
+  deleted: {
+    type: Boolean,
+    default: false,
+  }
   
 });
 

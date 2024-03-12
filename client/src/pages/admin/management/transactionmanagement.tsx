@@ -24,7 +24,7 @@ const TransactionManagement = () => {
       }
     };
 
-    // Ensure that orderId and productId are available before making the API call
+    
     if (orderId && productId) {
       fetchOrderDetails();
     }
@@ -33,12 +33,12 @@ const TransactionManagement = () => {
   const updateHandler = async () => {
    
     try {
-      // Make a PUT request to update the order status
+      
       await axios.put(`${server}/api/orders/${orderId}/product/${productId}`, {
         status: "Delivered",
       });
 
-      // Update the local state after a successful request
+     
       setUserOrderDetails((prev) => ({
         ...prev,
         status: "Delivered",

@@ -17,6 +17,7 @@ import AddressInput from "../../components/AddressInput";
 import { useNavigate } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
 
+import api from '../../api';
 
 // import AddressModal from "../../components/AddressInput";
 
@@ -48,7 +49,7 @@ const MenuPage = () => {
   // console.log("showAddressModal:", showAddressModal);
   useEffect(() => {
     try {
-      axios.get(`http://localhost:5000/api/category/get`).then((res) => {
+      api.get(`/category/get`).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }
@@ -59,7 +60,7 @@ const MenuPage = () => {
     }
 
     try {
-      axios.get(`http://localhost:5000/api/product/get`).then((res) => {
+      api.get(`/product/get`).then((res) => {
         if (res.data.success) {
           setProductList(res.data.data);
         }
@@ -75,7 +76,7 @@ const MenuPage = () => {
    
     
 
-    axios.post(`http://localhost:5000/api/cart/add/${userId}`, { product, quantity:1 })
+    api.post(`/cart/add/${userId}`, { product, quantity:1 })
     .then(response => console.log('Product added to cart:', response.data))
     .catch(error => console.error('Error adding to cart:', error));
 

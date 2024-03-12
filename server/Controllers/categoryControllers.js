@@ -2,7 +2,8 @@ const categoryModel = require("../Models/Category");
 const { upload } = require("../middlewares/multer");
 const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 
-/* POST: http://localhost:5000/api/admin/category/add */
+
+
 
 // exports.addCategory = async (req, res) => {
 //   console.log("add category");
@@ -15,6 +16,11 @@ const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 //         return res.json({ success: false, message: err.message });
 //       }
 
+      
+//       if (!req.files || req.files.length === 0) {
+//         return res.json({ success: false, message: "No images uploaded" });
+//       }
+
 //       const image = req.files;
 //       const filenames = image.map((file) => file.filename);
 
@@ -25,12 +31,10 @@ const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 //         return res.json({ success: false, message: "Enter the category name" });
 //       }
 
-//       category = category.toLowerCase();
-
-     
-
-//       // Check if the category already exists
-//       const categoryExist = await categoryModel.findOne({ category });
+      
+//       const categoryExist = await categoryModel.findOne({
+//         category: { $regex: new RegExp(`^${category}$`, 'i') },
+//       });
 
 //       if (categoryExist) {
 //         return res.json({ success: false, message: "Category already exists" });
@@ -48,38 +52,26 @@ const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
 //         .json({ success: true, message: "Category added successfully" });
 //     });
 //   } catch (error) {
+//     console.error(error);
 //     res.status(500).json({ success: false, message: "Internal server error" });
 //   }
 // };
 
 
 exports.addCategory = async (req, res) => {
-  console.log("add category");
 
   try {
-    upload.array("images")(req, res, async (err) => {
-      console.log(req.body);
-
+    upload.single('image')(req, res, async (err) => {
       if (err) {
         return res.json({ success: false, message: err.message });
       }
 
-      // Validate that the 'images' field is present in the request
-      if (!req.files || req.files.length === 0) {
-        return res.json({ success: false, message: "No images uploaded" });
-      }
-
-      const image = req.files;
-      const filenames = image.map((file) => file.filename);
-
       const { category } = req.body;
-      console.log(category);
 
       if (!category) {
         return res.json({ success: false, message: "Enter the category name" });
       }
 
-      // Check if the category already exists (case-insensitive)
       const categoryExist = await categoryModel.findOne({
         category: { $regex: new RegExp(`^${category}$`, 'i') },
       });
@@ -88,26 +80,46 @@ exports.addCategory = async (req, res) => {
         return res.json({ success: false, message: "Category already exists" });
       }
 
+      const image = req.file;
+
+      if (!image) {
+        return res.json({ success: false, message: "No image uploaded" });
+      }
+
       const categoryDoc = new categoryModel({
         category,
-        categoryImage: filenames,
+        categoryImage: 
+           image.originalname,
+          
+        
       });
 
       await categoryDoc.save();
 
-      res
-        .status(201)
-        .json({ success: true, message: "Category added successfully" });
+      res.status(201).json({ success: true, message: "Category added successfully" });
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+
+}
+
+
+exports.adminListCategory = async (req, res) => {
+  try {
+    const data = await categoryModel.find({});
+    
+    res.status(200).json({ success: true, data: data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.listCategory = async (req, res) => {
   try {
-    const data = await categoryModel.find({});
+    
+    const data = await categoryModel.find({ deleted: false });
     res.status(200).json({ success: true, data: data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -133,65 +145,79 @@ exports.getcategoryDetails = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
-  const { category } = req.body;
-
-  try {
-    await categoryModel.findOneAndDelete({ _id: category._id });
-    return res
-      .status(200)
-      .json({ success: true, message: "Category deleted " });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Error while deleting category - backend",
-    });
-  }
-};
-
-exports.demo = async (req, res) => {
-  console.log(req.file);
-};
 
 
+
+
+
+
+// exports.updateCategory = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         return res.json({ success: false, message: err.message });
+//       }
+
+//       const categoryId = req.params.categoryId;
+
+//       console.log(req.body);
+
+//       console.log(categoryId);
+
+//       const { category } = req.body;
+//       const image = req.file?.filename;
+
+//       await categoryModel.findOneAndUpdate(
+//         { _id: categoryId },
+//         {
+//           $set: {
+//             category: category,
+//           },
+//         }
+//       );
+
+//       await categoryModel.updateOne(
+//         { _id: categoryId },
+//         { $push: { images: image } }
+//       );
+
+//       res.status(201).json({ success: true, message: "Category updated" });
+//     });
+//   } catch (error) {
+//     console.log("error while editing form", error);
+//   }
+// };
 
 exports.updateCategory = async (req, res) => {
-  try {
-    upload.single("photo")(req, res, async (err) => {
-      if (err) {
-        return res.json({ success: false, message: err.message });
-      }
 
-      const categoryId = req.params.categoryId;
-
-      console.log(req.body);
-
-      console.log(categoryId);
-
+  upload.single('image'), async (req, res) => {
+    try {
+      const categoryId = req.params.id;
       const { category } = req.body;
-      const image = req.file?.filename;
-
-      await categoryModel.findOneAndUpdate(
-        { _id: categoryId },
-        {
-          $set: {
-            category: category,
-          },
-        }
-      );
-
-      await categoryModel.updateOne(
-        { _id: categoryId },
-        { $push: { images: image } }
-      );
-
-      res.status(201).json({ success: true, message: "Category updated" });
-    });
-  } catch (error) {
-    console.log("error while editing form", error);
+  
+      let categoryToUpdate = await categoryModel.findById(categoryId);
+  
+      if (!categoryToUpdate) {
+        return res.status(404).json({ success: false, message: 'Category not found' });
+      }
+  
+      
+      categoryToUpdate.category = category;
+  
+      
+      if (req.file) {
+        categoryToUpdate.categoryImage = [req.file.filename];
+      }
+  
+      const updatedCategory = await categoryToUpdate.save();
+  
+      res.status(200).json({ success: true, data: updatedCategory });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
   }
-};
+}
 
 
 
@@ -213,5 +239,26 @@ exports.deleteCategory= async (req,res)=>{
   } catch (error) {
     console.error('Error deleting category', error);
     return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+}
+
+exports.softDeleteCategory= async (req,res)=>{
+  const { categoryId } = req.params;
+
+  try {
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
+      categoryId,
+      { deleted: true },
+      { new: true }
+    );
+
+    if (!updatedCategory) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+
+    res.status(200).json({ success: true, data: updatedCategory });
+  } catch (error) {
+    console.error('Error soft deleting category:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }

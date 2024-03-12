@@ -27,6 +27,8 @@ import Cookie from "js-cookie";
 import Search from "../Search";
 import axios from "axios";
 
+const server = import.meta.env.VITE_SERVER;
+
 interface PropsType {
   user: User | null;
 }
@@ -44,7 +46,7 @@ const Navbar = ({ user }: PropsType) => {
     const fetchCartItems = async () => {
       try {
         if (user && user._id) {
-          const response = await axios.get(`http://localhost:5000/api/cart/${user._id}`);
+          const response = await axios.get(`${server}/api/cart/${user._id}`);
           console.log("Cart Items:", response.data.cart);
           setCartItems(response.data.cart);
         }
