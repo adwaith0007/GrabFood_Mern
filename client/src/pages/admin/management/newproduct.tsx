@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
-import axios from "axios";
-import foodimg from "../../../assets/login_food.png";
-
 import api from '../../../api';
-const server = import.meta.env.VITE_SERVER;
 
 const NewProduct = () => {
   const [product, setProduct] = useState({
@@ -17,7 +13,6 @@ const NewProduct = () => {
   });
 
   const [categoryList, setCategoryList] = useState([]);
-
   const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(() => {
@@ -33,92 +28,84 @@ const NewProduct = () => {
     }
   }, []);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = e.target.files;
+    const newImages = Array.from(files);
 
-    if (files && files.length > 0) {
-      // Check if the uploaded file is an image
-      const isValidImage = Array.from(files).every((file) =>
-        file.type.startsWith("image/")
-      );
+    setSelectedImages([...selectedImages, ...newImages]);
 
-      if (isValidImage) {
-        setSelectedImages((prevImages) => [...prevImages, ...files]);
+    await setProduct((prevProduct) => ({
+      ...prevProduct,
+      images: [...prevProduct.images, ...newImages], // Update images array correctly
+    }));
 
-        setProduct((prevProduct) => ({
-          ...prevProduct,
-          images: [...prevProduct.images, ...files],
-        }));
-      } else {
-        toast.error("Please select valid image files.");
-      }
-    }
+    // Log selected images and updated product state
+    console.log("Selected Images:", newImages);
+    // console.log("Updated Product State:", {
+    //   ...product,
+    //   images: [...product.images, ...newImages], // Ensure images array is updated
+    // });
+
+    console.log(product.images);
+    
+
   };
 
   const handleRemoveImage = (index) => {
-    setSelectedImages((prevImages) => {
-      const updatedImages = [...prevImages];
-      updatedImages.splice(index, 1);
-      return updatedImages;
-    });
+    setSelectedImages((prevImages) =>
+      prevImages.filter((_, i) => i !== index)
+    );
 
-    setProduct((prevProduct) => {
-      const updatedImages = [...prevProduct.images];
-      updatedImages.splice(index, 1);
-      return { ...prevProduct, images: updatedImages };
-    });
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      images: prevProduct.images.filter((_, i) => i !== index),
+    }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    console.log(product.images);
+    
 
-    formData.append("name", product.name);
-    formData.append("desc", product.desc);
-    formData.append("category", product.category);
-    formData.append("price", product.price);
-
-    product.images.forEach((file) => {
-      formData.append("images", file);
-    });
+    console.log(product.images.forEach((file) => file ));
 
     try {
-      const response = await api.post(
-        `/product/add`,
-        formData
-      );
+      const formData = new FormData();
+      formData.append("name", product.name);
+      formData.append("desc", product.desc);
+      formData.append("category", product.category);
+      formData.append("price", product.price);
+      // product.images.forEach((file) => formData.append("images", file));
+
+      product.images.forEach((file, index) =>{ formData.append(`image_${index}`, file); console.log("Appended file:", file)});
+
+      // product.images.forEach((file) => {
+      //   formData.append("images", file);
+      //   console.log("Appended file:", file);
+      // });
+
+      // Log FormData object just before the request is sent
+      console.log("FormData:", formData);
+
+      const response = await api.post(`/product/add`, formData);
 
       if (response.data.success) {
         toast.success("Product added");
+        // Reset form fields and selected images after successful submission
+        setProduct({
+          name: "",
+          desc: "",
+          category: "",
+          price: 0,
+          images: [],
+        });
+        setSelectedImages([]);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      if (error.response) {
-        toast.error(`Error: ${error.response.data.message}`);
-      } else {
-        toast.error(`Error: ${error.message}`);
-      }
-    }
-  };
-
-  const changeImageHandler = (e) => {
-    const file = e.target.files?.[0];
-
-    const reader = new FileReader();
-
-    if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setProduct((prevProduct) => ({
-            ...prevProduct,
-            photoPrev: reader.result,
-            photo: file,
-          }));
-        }
-      };
+      toast.error(`Error: ${error.message}`);
     }
   };
 
@@ -127,8 +114,10 @@ const NewProduct = () => {
       <AdminSidebar />
       <main className="product-management">
         <section>
-
-        {product.category.length > 0 && <p className="" >{product.category}</p>}
+          {/* Display selected category */}
+          {product.category && <p>{product.category}</p>}
+          
+          {/* Display selected images */}
           {selectedImages.length > 0 && (
             <div className="form-group">
               <div className="grid grid-cols-3 gap-4 mt-1">
@@ -152,11 +141,14 @@ const NewProduct = () => {
             </div>
           )}
           
-          {product.name.length > 0 && <p>{` ${product.name}`}</p>}
-
-          {product.price > 0 && <h3>₹{product.price}</h3>}
-
-          {product.desc.length > 0 && <p className="" >{product.desc}</p>}
+          {/* Display product name */}
+          {product.name && <p>{product.name}</p>}
+          
+          {/* Display product price */}
+          {product.price && <h3>₹{product.price}</h3>}
+          
+          {/* Display product description */}
+          {product.desc && <p>{product.desc}</p>}
         </section>
 
         <article>
@@ -168,6 +160,7 @@ const NewProduct = () => {
                 type="text"
                 placeholder="Name"
                 name="name"
+                value={product.name}
                 onChange={(e) =>
                   setProduct({ ...product, name: e.target.value })
                 }
@@ -180,6 +173,7 @@ const NewProduct = () => {
                 id="productPrice"
                 placeholder="Price"
                 name="price"
+                value={product.price}
                 onChange={(e) =>
                   setProduct({ ...product, price: e.target.value })
                 }
@@ -192,6 +186,7 @@ const NewProduct = () => {
                 id="productDesc"
                 placeholder="Description"
                 name="desc"
+                value={product.desc}
                 onChange={(e) =>
                   setProduct({ ...product, desc: e.target.value })
                 }
@@ -203,6 +198,7 @@ const NewProduct = () => {
               <select
                 name="category"
                 id="category"
+                value={product.category}
                 onChange={(e) =>
                   setProduct({ ...product, category: e.target.value })
                 }
@@ -237,27 +233,6 @@ const NewProduct = () => {
               </div>
             </div>
 
-            {/* {selectedImages.length > 0 && (
-              <div className="form-group">
-                
-                <div className="grid grid-cols-3 gap-4 mt-1">
-                  {selectedImages.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img src={URL.createObjectURL(image)} alt={`Preview ${index}`} className="w-full h-32 object-cover rounded-md" />
-                      <button
-                        type="button"
-                        className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
-
-            {/* {product.photoPrev && <img src={product.photoPrev} alt="New Image" className="mt-4 rounded-md" />} */}
             <button
               type="submit"
               className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300"

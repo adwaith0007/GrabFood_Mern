@@ -14,6 +14,8 @@ const {validateQuantity} = require("../middlewares/Cart");
 
 
 
+
+
 router.post("/login", userController.verifyUser, userController.login);
 
 router.post("/user/edit", isUserLoggedIn, (req, res) => {
@@ -184,6 +186,8 @@ router.get("/user/v1/:id", async (req, res, next) => {
     });
   }
 });
+
+
 
 
 

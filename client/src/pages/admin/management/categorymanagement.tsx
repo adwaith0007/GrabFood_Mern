@@ -19,15 +19,12 @@ interface CategoryDetails {
 
 const CategoryManagement = () => {
   const { id } = useParams<{ id: string }>();
-  const [categoryDetails, setCategoryDetails] = useState<CategoryDetails>({
-    _id: "",
-    category: "",
-    categoryImage: [],
-  });
+  const [categoryDetails, setCategoryDetails] = useState({});
+  const [photoFile, setPhotoFile] = useState<File | undefined>();
+ 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [updating, setUpdating] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -35,9 +32,7 @@ const CategoryManagement = () => {
   useEffect(() => {
     const fetchCategoryDetails = async () => {
       try {
-        const response = await api.get(
-          `/Category/${id}`
-        );
+        const response = await api.get(`/Category/${id}`);
         if (response.data.success) {
           setCategoryDetails(response.data.data);
         } else {
@@ -53,10 +48,16 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
+  console.log(categoryDetails);
+  
+
   const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g,"%20")}`;
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file: File | undefined = e.target.files?.[0];
+    const file = e.target.files?.[0];
+
+    console.log(file);
+    
 
     const reader: FileReader = new FileReader();
 
@@ -70,22 +71,28 @@ const CategoryManagement = () => {
     }
   };
 
+  console.log(photoFile);
+
+  console.log(categoryDetails?.category);
+  
+  
+
   const submitHandler = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     try {
-      setUpdating(true);
+      
 
       const formData = new FormData();
-      formData.append("category", categoryDetails.category);
+      formData.append("category", categoryDetails?.category);
 
       if (photoFile) {
         formData.append("photo", photoFile);
       }
 
       const response = await api.put(
-        `/category/update/${categoryDetails._id}`,
-        formData
+        `/category/update/${categoryDetails?._id}`,
+        formData, { timeout: 10000 }
       );
 
       if (response.data.success) {
@@ -162,7 +169,7 @@ const CategoryManagement = () => {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group flex gap-2 ">
               <label>Photo</label>
               <div className="flex items-center">
                 <label
@@ -179,10 +186,22 @@ const CategoryManagement = () => {
                   onChange={changeImageHandler}
                 />
               </div>
+
+              <div className="flex items-center">
+                <button
+                  
+                  className="cursor-pointer bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-all duration-300"
+                >
+                  Undo Soft Deleted
+                </button>
+                
+              </div>
             </div>
 
             {photoFile && <img src={URL.createObjectURL(photoFile)} alt="New Image" />}
-            <button type="submit" disabled={updating}>
+            <button type="submit" 
+            disabled={updating}
+            >
               Update
             </button>
           </form>

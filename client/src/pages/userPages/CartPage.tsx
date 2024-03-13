@@ -7,7 +7,7 @@ import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import api from '../../../api';
+import api from '../../api';
 const server = import.meta.env.VITE_SERVER;
 
 const CartPage = () => {

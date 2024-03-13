@@ -18,6 +18,8 @@ const NewCategory = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
+    
+
     if (file) {
       // Check if the uploaded file is an image
       if (file.type.startsWith("image/")) {
@@ -47,15 +49,19 @@ const NewCategory = () => {
     formData.append("category", categoryData.name);
 
     if (categoryData.image) {
-      formData.append("image", categoryData.image);
+      formData.append('file', categoryData.image);
     }
 
     try {
-      const response = await api.post(
-        `/category/add`,
-        formData
-      );
+      const response = await api.post(`/category/add`,formData);
 
+      // const response = await api.post(`/category/upload`,formData);
+      
+      // const response = await axios.post(`http://localhost:5000/api/category/upload`,formData);                                                                     
+      
+      // const response = await axios.post(`http://localhost:5000/api/category/add`,formData);
+      
+      // const response = await axios.post(`http://localhost:7000/upload`,formData);
       if (response.data.success) {
         toast.success("Category added");
       } else {
