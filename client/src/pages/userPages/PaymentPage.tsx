@@ -54,12 +54,10 @@ const PaymentPage = () => {
             // callback_url: `${server}/api/paymentverification`,
 
             handler: async function (response) {
+              console.log('Response data:', response);
                 try {
                     const verificationResponse = await axios.post(
-                        `${server}/api/paymentverification`,
-                        { ...response },
-                        { withCredentials: true }
-                    );
+                        `${server}/api/paymentverification`,{ ...response });
                     if (verificationResponse.data.success) {
                         navigate("/home");
                         toast.success("Your order is on the move");
@@ -86,6 +84,9 @@ const PaymentPage = () => {
 
         const rzp1 = new window.Razorpay(options);
         rzp1.on("payment.failed", function (response) {
+
+          console.log(response)
+
             console.error("Payment failed:", response.error.code);
             toast.error("Payment failed");
             navigate("/cart");

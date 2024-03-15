@@ -1,10 +1,11 @@
-const orderModel = require("../Models/orderModel");
+const orderModel = require("../Models/order");
 
 const UserModel = require("../Models/userModels");
 
 const Razorpay = require("razorpay")
 
 const crypto =require("crypto");
+const { log } = require("console");
 
 require('dotenv').config();
 
@@ -628,9 +629,11 @@ exports.paymentverification = async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
 
+    console.log('body',razorpay_payment_id, razorpay_order_id, razorpay_signature);
+
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expected_signature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_API_KEY)
+      .createHmac("sha256", 'di489bhFwIvJ0YVnd487dJfH')
       .update(body.toString())
       .digest("hex");
     
@@ -668,3 +671,25 @@ exports.paymentverification = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
+// exports.paymentverification = async (req, res) => {
+//   try {
+      
+//     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+      
+//       // const payment = await razorpay.payments.fetch(paymentId);
+//       // if (payment.status === 'captured') {
+//       //     console.log('Payment successfully verified');
+//       //     res.status(200).json({ success: true });
+//       // } else {
+//       //     console.log('Payment verification failed');
+//       //     res.status(400).json({ success: false });
+//       // }
+//   } catch (error) {
+//       console.error('Error occurred while verifying payment:', error);
+//       res.status(500).json({ error: 'An error occurred while verifying payment' });
+//   }
+// };

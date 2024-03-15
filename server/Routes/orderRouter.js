@@ -14,6 +14,7 @@ router.post('/placeOrder', (req, res) => {
   });
 
   router.post('/paymentverification', (req, res) => {
+    console.log("hi")
     orderControllers.paymentverification(req, res);
   });
 

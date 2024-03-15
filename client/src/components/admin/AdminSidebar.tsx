@@ -86,6 +86,12 @@ const DivOne = ({ location }: { location: Location }) => (
         Icon={RiDashboardFill}
         location={location}
       />
+       <Li
+        url="/admin/orders"
+        text="Orders"
+        Icon={AiFillFileText}
+        location={location}
+      />
       <Li
         url="/admin/category"
         text="Category"
@@ -104,6 +110,7 @@ const DivOne = ({ location }: { location: Location }) => (
         Icon={IoIosPeople}
         location={location}
       />
+     
       <Li
         url="/admin/transaction"
         text="Transaction"
@@ -112,7 +119,7 @@ const DivOne = ({ location }: { location: Location }) => (
       />
 
 <Li
-        url="/admin/app/coupon"
+        url="/admin/coupon"
         text="Coupon"
         Icon={RiCoupon3Fill}
         location={location}
