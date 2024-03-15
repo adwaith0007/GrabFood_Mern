@@ -75,6 +75,7 @@ const orderSchema = mongoose.Schema({
   },
   phone: {
     type: Number,
+    required: true,
   },
   subTotal: {
     type: Number,

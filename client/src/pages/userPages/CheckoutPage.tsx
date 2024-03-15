@@ -142,6 +142,17 @@ const CheckoutPage = () => {
           navigate("/payment", { state: { orderDetails } });
         }
       }
+      
+      
+      if (orderDetails.paymentMethod === "onlinePayment") {
+        
+        navigate("/payment", { state: { orderDetails } });
+      } 
+
+
+      
+
+
     } catch (error) {
       toast.error("Failed to place order. Please try again later.");
       console.error("Error placing order:", error);

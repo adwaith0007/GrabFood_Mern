@@ -3,8 +3,18 @@ const router = express.Router();
 const orderControllers = require("../Controllers/orderControllers");
 
 
+
+
 router.post('/placeOrder', (req, res) => {
     orderControllers.placeOrder(req, res);
+  });
+
+  router.post('/checkout', (req, res) => {
+    orderControllers.checkout(req, res);
+  });
+
+  router.post('/paymentverification', (req, res) => {
+    orderControllers.paymentverification(req, res);
   });
 
   router.get('/order/user/:userId', (req, res) => {

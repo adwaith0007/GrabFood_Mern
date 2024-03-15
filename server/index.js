@@ -9,12 +9,9 @@ const couponRouter = require("./Routes/couponRouter.js");
 const orderRouter = require("./Routes/orderRouter.js");
 const cartRoutes = require("./Routes/cartRoutes.js");
 
-//
-const  upload  = require("../server/middlewares/multer.js"); 
-// const multer = require('multer');
-// const path = require('path');
+// const Razorpay = require("razorpay")
 
-// 
+
 
 require("dotenv").config();
 
@@ -27,7 +24,10 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(morgan("tiny"));
 
 app.use(express.json());
@@ -54,51 +54,13 @@ app.use("/api/coupon", couponRouter);
 
 
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//       cb(null, 'uploads');
-//   },
-//   filename: (req, file, cb) => {
-//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//       cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-//   }
+
+
+
+// exports.instance = new Razorpay({
+//   key_id: process.env.RAZORPAY_API_KEY,
+//   key_secret: process.env.RAZORPAY_API_SECRET,
 // });
-
-// // Initialize multer with the defined storage
-// const upload = multer({
-//   storage: storage
-// });
-
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, file.originalname);
-//   },
-// });
-
-// const upload = multer({ storage });
-
-// Handle POST request to /upload
-app.post('/upload', upload.single('file'), (req, res) => {
-  const name = req.body.category;
-  const file = req.file;
-
-  console.log('Name:', name);
-  console.log('File:', file);
-  
-  // if (!file || !name) {
-  //     return res.status(400).json({ message: 'Name and file are required.' });
-  // }
-
-  console.log("h");
-  
- 
-  res.status(200).json({ message: 'File uploaded successfully.' });
-});
-
 
 
 
