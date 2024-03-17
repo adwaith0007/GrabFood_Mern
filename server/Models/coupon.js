@@ -6,7 +6,7 @@ const couponSchema = mongoose.Schema({
     required: true,
     uppercase: true,
   },
-  expiry: {
+  expiryDate: {
     type: Date,
     required: true,
   },
@@ -21,10 +21,7 @@ const couponSchema = mongoose.Schema({
     type: Number,
     requires: true,
   },
-  discountMax: {
-    type: Number,
-    requires: true,
-  },
+  
 });
 
 const couponModel = mongoose.model("coupon", couponSchema);

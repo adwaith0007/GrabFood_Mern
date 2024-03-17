@@ -53,6 +53,10 @@ router.put("/update/:categoryId", (req, res) => {
 });
 
 router.delete("/delete/:categoryId", (req, res) => {
+  categoryControllers.deleteCategory(req, res);
+});
+
+router.put("/softDelete/:categoryId", (req, res) => {
   categoryControllers.softDeleteCategory(req, res);
 });
 

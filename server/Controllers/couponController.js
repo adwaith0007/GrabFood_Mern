@@ -1,25 +1,38 @@
 const couponModel = require("../Models/coupon");
 
 exports.addCoupon = async (req, res) => {
-    // const { couponName, desc, couponCode, discount, maxDisc,expiry } = req.body;
+  try {
+   
+    const { couponName, description, discount, couponCode , expiryDate } = req.body;
 
-    console.log(req.body.couponName);
-  
-    // try {
-    //   const couponDoc = new couponModel({
-    //     couponName,
-    //     couponCode,
-    //     discount,
-    //     desc,
-    //     expiry,
-    //     discountMax: maxDisc,
-    //   });
-    //   await couponDoc.save();
-    //   return res.json({ success: true, message: "Coupon added successfully" });
-    // } catch (error) {
-    //   console.log("error while adding coupon", error);
-    //   return res.json({ success: false, message: "coupon not added" });
-    // }
+    
+    if (!couponName || !description || !discount || !couponCode || !expiryDate) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+   
+    const discountValue = parseFloat(discount);
+    if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
+        return res.status(400).json({ error: "Discount must be a number between 0 and 100" });
+    }
+
+    const couponDoc = new couponModel({
+      couponName,
+      description,
+      couponCode,
+      discount,
+      expiryDate
+      
+    });
+    await couponDoc.save();
+
+    
+    res.status(201).json({ message: "Coupon created successfully" });
+} catch (error) {
+    // Return an error response if something goes wrong
+    console.error("Error creating coupon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+}
   };
 
 
@@ -32,6 +45,27 @@ exports.addCoupon = async (req, res) => {
       return res.json({ success: false });
     }
   };
+
+  exports.applyCoupon = async (req, res) => {
+    try {
+        const { couponCode } = req.body;
+
+       
+        const coupon = await couponModel.findOne({ couponCode });
+
+        if (coupon) {
+            
+            const discount = coupon.discount; 
+
+            res.json({ success: true, discount });
+        } else {
+            res.json({ success: false, message: 'Coupon not found' });
+        }
+    } catch (error) {
+        console.error('Error applying coupon:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
   
   exports.deleteCoupon = async (req, res) => {
     const { coupon } = req.body;

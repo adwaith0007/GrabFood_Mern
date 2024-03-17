@@ -8,7 +8,11 @@ router.post('/add', (req, res) => {
   });
 
   router.get('/get', (req, res) => {
-    couponControllers.getCoupon(req, res);
+    couponControllers.getCoupons(req, res);
+  });
+
+  router.post('/apply', (req, res) => {
+    couponControllers.applyCoupon(req, res);
   });
 
 

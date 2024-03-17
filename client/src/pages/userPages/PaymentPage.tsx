@@ -9,12 +9,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api";
+import OrderSuccess from "./OrderSuccess";
 const server = import.meta.env.VITE_SERVER;
 
 const PaymentPage = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
-  );
+    );
+
+    const [paymentMethod, setPaymentMethod] = useState("");
+
+    const [orderSuccess, setOrderSuccess ] = useState(false);
+    
+   
 
   const userId = user._id;
 
@@ -23,15 +30,28 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
-  const orderDetails = location.state && location.state.orderDetails;
+  const checkoutData = location.state && location.state.checkoutData;
 
   useEffect(() => {
     setLoading(false);
   }, []);
 
-  const handleRazorpayPayment = async () => {
-    console.log(orderDetails);
+  const handlePaymentChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
 
+  const handleRazorpayPayment = async () => {
+    
+    const orderDetails ={
+      userId:checkoutData.userId,
+      products: checkoutData.products,
+      address: checkoutData.address,
+      paymentMethod:'onlinePayment',
+      orderDate: checkoutData.orderDate,
+      totalPrice :checkoutData.totalPrice,
+    }
+    console.log('orderDetails',orderDetails);
+    
     try {
         const response = await api.post("/checkout", {
             amount: orderDetails.totalPrice,
@@ -59,7 +79,8 @@ const PaymentPage = () => {
                     const verificationResponse = await axios.post(
                         `${server}/api/paymentverification`,{ ...response });
                     if (verificationResponse.data.success) {
-                        navigate("/home");
+                         setOrderSuccess(true);
+                        // navigate("/home");
                         toast.success("Your order is on the move");
                     } else {
                         toast.error("Payment verification failed");
@@ -104,10 +125,10 @@ const PaymentPage = () => {
 
   return (
     <div className="">
-      <div className="flex flex-col items-center border-b bg-white py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
-        <Link to="#" className="text-2xl font-bold text-gray-800">
-          checkout
-        </Link>
+     <div className="flex flex-col items-center border-b bg-white py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
+        <a href="#" className="text-2xl font-bold text-gray-800">
+          Payment
+        </a>
 
         <div className="mt-4 py-2 text-xs sm:mt-0 sm:ml-auto sm:text-base">
           <div className="relative">
@@ -123,28 +144,143 @@ const PaymentPage = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    stroke-width="2"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
                 </a>
                 <span className="font-semibold text-gray-900">Shop</span>
               </li>
-              {/* Add other navigation items */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+              <li className="flex items-center space-x-3 text-left sm:space-x-4">
+                <a
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-semibold text-emerald-700"
+                  href="#"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </a>
+                <span className="font-semibold text-gray-900">Checkout</span>
+              </li>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+
+              <li className="flex items-center space-x-3 text-left sm:space-x-4">
+                <a
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-600 text-xs font-semibold text-white ring ring-gray-600 ring-offset-2"
+                  href="#"
+                >
+                  3
+                </a>
+                <span className="font-semibold text-gray-900">Payment</span>
+              </li>
+              
             </ul>
           </div>
         </div>
       </div>
 
-      {orderDetails.paymentMethod === "onlinePayment" && (
-        <button onClick={handleRazorpayPayment}>Pay with Razorpay</button>
-      )}
 
-      {orderDetails.paymentMethod === "cashOnDelivery" && (
+      <p className="mt-8 text-lg font-medium">Payment Methods</p>
+          <form className="mt-5 grid gap-6">
+            <div className="relative">
+              <input
+                className="peer  hidden"
+                id="radio_1"
+                type="radio"
+                name="paymentMethod"
+                value="cashOnDelivery"
+                // checked={paymentMethod === "cashOnDelivery"}
+                // onChange={handlePaymentChange}
+              />
+              <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+              <label
+                className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                htmlFor="radio_1"
+              >
+                <img
+                  className="w-14 object-contain"
+                  src="/images/naorrAeygcJzX0SyNI4Y0.png"
+                  alt=""
+                />
+                <div className="ml-5">
+                  <span className="mt-2 font-semibold">Cash On Delivery</span>
+                </div>
+              </label>
+            </div>
+            <div className="relative">
+              <input
+                className="peer hidden"
+                id="radio_2"
+                type="radio"
+                name="paymentMethod"
+                value="onlinePayment"
+                // checked={paymentMethod === "onlinePayment"}
+                // onChange={handlePaymentChange}
+              />
+              <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+              <label
+                className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                htmlFor="radio_2"
+              >
+                <img
+                  className="w-14 object-contain"
+                  src="/images/oG8xsl3xsOkwkMsrLGKM4.png"
+                  alt=""
+                />
+                <div className="ml-5">
+                  <span className="mt-2 font-semibold">Online Payment</span>
+                </div>
+              </label>
+            </div>
+          </form>
+
+      {/* {orderDetails.paymentMethod === "onlinePayment" && ( */}
+        <button onClick={handleRazorpayPayment}>Pay with Razorpay</button>
+      {/* )} */}
+
+      {orderSuccess && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-md max-w-sm text-center">
             <div className="success-animation mb-6">
@@ -171,7 +307,7 @@ const PaymentPage = () => {
               Order Successful!
             </p>
             <p className="text-gray-600 mt-2">
-              {/* Thank you for your order. We have received your payment and your order is on its way. */}
+              Thank you for your order. We have received your payment and your order is on its way.
             </p>
             <Link
               to={"/menu"}
@@ -182,6 +318,8 @@ const PaymentPage = () => {
           </div>
         </div>
       )}
+
+
     </div>
   );
 };

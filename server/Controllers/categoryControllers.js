@@ -293,23 +293,44 @@ exports.deleteCategory = async (req, res) => {
   }
 };
 
+
+
 exports.softDeleteCategory = async (req, res) => {
   const { categoryId } = req.params;
 
   try {
-    const updatedCategory = await categoryModel.findByIdAndUpdate(
-      categoryId,
-      { deleted: true },
-      { new: true }
-    );
+    const category = await categoryModel.findById( categoryId);
 
-    if (!updatedCategory) {
-      return res.status(404).json({ error: "Category not found" });
+    if (!category) {
+      return res.status(404).json({ success: false, message: 'Category not found' });
     }
 
-    res.status(200).json({ success: true, data: updatedCategory });
+    // Toggle the 'deleted' field
+    category.deleted = !category.deleted;
+
+    await category.save();
+
+    return res.status(200).json({ success: true, data: category });
   } catch (error) {
-    console.error("Error soft deleting category:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error soft deleting category:', error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
+
+
+// router.get('/product/get', async (req, res) => {
+//   const { category, limit } = req.query;
+//   let query = {};
+
+//   if (category) {
+//       query = { category: category };
+//   }
+
+//   try {
+//       const products = await Product.find(query).limit(parseInt(limit) || 10); // Default limit to 10 if not provided
+//       res.json({ success: true, data: products });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ success: false, message: 'Server Error' });
+//   }
+// });

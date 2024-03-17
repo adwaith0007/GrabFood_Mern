@@ -1,76 +1,57 @@
 import React, { useEffect, useState } from "react";
-
-import axios from "axios";
-import serverUrl from "../../server";
 import CategoryCards from "../../components/CategoryCards";
 import ProductCard from "../../components/ProductCard";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { selectUser } from "./../../redux/userSlice";
-
-import s2_1 from "../../assets/s2_1.png";
-import { useLatestProductsQuery } from "../../redux/api/productAPI";
-
-import CartSidebar from "../../components/CartSidebar";
-import AddressInput from "../../components/AddressInput";
-
 import { useNavigate } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
-
-import api from '../../api';
+import api from "../../api";
 const server = import.meta.env.VITE_SERVER;
 
-// import AddressModal from "../../components/AddressInput";
-
-
 const MenuPage = () => {
-  
-  
-  const {user} = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
-  
-  const userId =user._id;
+  const { user } = useSelector(
+    (state: { userReducer: UserReducerInitialState }) => state.userReducer
+  );
+
+  const userId = user._id;
   const navigate = useNavigate();
 
-  // const {data} =useLatestProductsQuery("")
-
-  // const userData = useSelector(selectUser);
-
-  // console.log(userData);
-
   const [categoryList, setCategoryList] = useState([]);
-
   const [productList, setProductList] = useState([]);
-
   const [cartItems, setCartItems] = useState([]);
+  const [selectedCategory, setSelectedCategory ] = useState('')
+  const rowsPerPage = 1; // Adjust the number of rows per page here
 
-  const [userAddress, setUserAddress] = useState({});
-
-  const [showAddressModal, setShowAddressModal] = useState(false);
-
-  // console.log("showAddressModal:", showAddressModal);
   useEffect(() => {
     try {
-      api.get(`/category/get`).then((res) => {
+      api.get(`/category/get`  ).then((res) => {
         if (res.data.success) {
           setCategoryList(res.data.data);
         }
       });
     } catch (error) {
-      toast.error("Error white while loading categories");
+      toast.error("Error while loading categories");
       console.log(error);
     }
 
+    fetchProducts();
+  }, [selectedCategory]); // Fetch products only once on initial render
+
+  const fetchProducts = () => {
     try {
-      api.get(`/product/get`).then((res) => {
-        if (res.data.success) {
-          setProductList(res.data.data);
-        }
-      });
+      // api.get(`/product/get?limit=${rowsPerPage}`)
+
+      api.get(`/product/get`+ (selectedCategory ? `?category=${selectedCategory}`: ''))
+        .then((res) => {
+          if (res.data.success) {
+            setProductList(res.data.data);
+          }
+        });
     } catch (error) {
-      toast.error("Error white while loading products");
+      toast.error("Error while loading products");
       console.log(error);
     }
-  }, []);
+  };
 
   const addToCart = (product) => {
     
@@ -114,71 +95,8 @@ const MenuPage = () => {
     toast.success(`${product.productName} added to cart!`);
   };
 
-  const changeCategory = () => {
-    console.log("cart");
-  };
-
-  const handleRemoveFromCart = (productId) => {
-    const updatedCart = cartItems.filter(
-      (item) => item.productId !== productId
-    );
-    setCartItems(updatedCart);
-  };
-
-  const handleIncreaseQuantity = (productId) => {
-    const updatedCart = cartItems.map((item) =>
-      item.productId === productId
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
-    );
-    setCartItems(updatedCart);
-  };
-
-  const handleDecreaseQuantity = (productId) => {
-    const updatedCart = cartItems.map((item) =>
-      item.productId === productId
-        ? { ...item, quantity: Math.max(1, item.quantity - 1) }
-        : item
-    );
-    setCartItems(updatedCart);
-  };
-
-  const handleProceedToPayment = () => {
-    console.log("Handling Proceed to Payment...");
-
-    if (cartItems.length === 0) {
-      toast.error(
-        "Your cart is empty. Add items before proceeding to payment."
-      );
-      return;
-    }
-
-    if (
-      !userAddress ||
-      !userAddress.street ||
-      !userAddress.city ||
-      !userAddress.state ||
-      !userAddress.zipCode
-    ) {
-      // Open the address input modal if the address is not complete
-
-      setShowAddressModal(true);
-
-      return;
-    }
-
-    console.log("Proceeding to payment!");
-    console.log("Cart Items:", cartItems);
-    console.log("User Address:", userAddress);
-
-    // Add logic to handle the actual payment process here
-
-    const userId = "65913f07581f920ea7c196cf"; // Replace with actual userId (e.g., from user authentication)
-
-    // Pass the userId to the AddressInput component
-    setShowAddressModal(true);
-    setUserAddress({}); // Clear the userAddress state
-    navigate(`/address/${userId}`);
+  const selectedCategoryHandler = (name) => {
+    setSelectedCategory(name);
   };
 
   return (
@@ -191,8 +109,11 @@ const MenuPage = () => {
                 <>
                   <CategoryCards
                     name={item.category}
-                    imageUrl={`${server}/${item.categoryImage[0].replace(/ /g,"%20" )}`}
-                    handler={changeCategory}
+                    imageUrl={`${server}/${item.categoryImage[0].replace(
+                      / /g,
+                      "%20"
+                    )}`}
+                    handler={() => selectedCategoryHandler(item.category)}
                   />
                 </>
               )}
@@ -210,37 +131,17 @@ const MenuPage = () => {
                     price={item.price}
                     description={item.Description}
                     name={item.productName}
-                    imageUrl={`${server}/${item.productImage[0].replace(/ /g,"%20" )}`}
-                    onAddToCart={() => addToCart(item)} // Pass the addToCart callback to ProductCard
+                    imageUrl={`${server}/${item.productImage[0].replace(
+                      / /g,
+                      "%20"
+                    )}`}
+                    onAddToCart={() => addToCart(item)}
                   />
                 </>
               )}
             </div>
           ))}
         </div>
-
-        {/* {cartItems.length > 0 && (
-          <CartSidebar
-            cartItems={cartItems}
-            closeCart={() => setCartItems([])}
-            onRemove={(productId) => handleRemoveFromCart(productId)}
-            onIncrease={(productId) => handleIncreaseQuantity(productId)}
-            onDecrease={(productId) => handleDecreaseQuantity(productId)}
-            // onProceedToPayment={() => handleProceedToPayment()}
-            handleProceedToPayment={() => handleProceedToPayment()}
-          />
-        )} */}
-
-        {/* AddressModal component */}
-        {/* {showAddressModal && (
-          <AddressInput
-            userId="65913f07581f920ea7c196cf"
-            setAddress={setUserAddress}
-            onClose={() => setShowAddressModal(false)}
-          />
-        )} */}
-
-        
       </div>
     </div>
   );

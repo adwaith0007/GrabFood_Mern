@@ -14,7 +14,8 @@ import ChooseAddress from "../../components/user/ChooseAddress";
 import UpdateAddressInput from "../../components/user/UpdateAddressInput";
 import toast from "react-hot-toast";
 
-import api from '../../api';
+import api from "../../api";
+import CouponCard from "../../components/user/CouponCard";
 const server = import.meta.env.VITE_SERVER;
 
 const CheckoutPage = () => {
@@ -29,16 +30,17 @@ const CheckoutPage = () => {
   const [addressTab, setAddressTab] = useState(false);
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
- 
 
   const [selectedAddress, setSelectedAddress] = useState();
 
-  const [cartItems, setCartItems] = useState();
-  const [paymentMethod, setPaymentMethod] = useState("");
+ 
 
-  const handlePaymentChange = (event) => {
-    setPaymentMethod(event.target.value);
-  };
+  const [cartItems, setCartItems] = useState();
+  // const [paymentMethod, setPaymentMethod] = useState("");
+
+  // const handlePaymentChange = (event) => {
+  //   setPaymentMethod(event.target.value);
+  // };
 
   useEffect(() => {
     if (userId) {
@@ -52,6 +54,10 @@ const CheckoutPage = () => {
           console.error(error);
         });
     }
+
+  
+
+
   }, [userId]);
 
   const handleAddressAdded = () => {
@@ -98,60 +104,48 @@ const CheckoutPage = () => {
     return formattedDateTime;
   };
 
-  
+  const handleOnPlaceOrder = async (totalAmount) => {
+    console.log( 'total', totalAmount);
 
-  const handleOnPlaceOrder = async () => {
-    console.log(cartItems);
+   
 
-    const totalPrice = cartItems?.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-
-    if (!userId || !cartItems || !selectedAddress || !paymentMethod) {
+    if (!userId || !cartItems || !selectedAddress ) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     try {
-      const orderDetails = {
+      const checkoutData = {
         userId,
         products: cartItems,
         address: selectedAddress,
-        paymentMethod,
+        // paymentMethod,
         orderDate: getCurrentDateTime(),
-        totalPrice
+        totalPrice :totalAmount,
       };
 
-      console.log(orderDetails);
+      console.log( 'checkoutData', checkoutData);
 
-      if (orderDetails.paymentMethod === "cashOnDelivery") {
-        const response = await api.post(
-          "/placeOrder",
-          orderDetails
-        );
+      navigate("/payment", { state: { checkoutData } });
 
-        if (response.status === 201) {
-          toast.success("Order placed successfully!");
-          console.log("Order placed successfully:", response.data.order);
+      // if (orderDetails.paymentMethod === "cashOnDelivery") {
+      //   const response = await api.post("/placeOrder", orderDetails);
 
-          await api.post("/deleteCartItems", {
-            userId,
-          });
+      //   if (response.status === 201) {
+      //     toast.success("Order placed successfully!");
+      //     console.log("Order placed successfully:", response.data.order);
 
-          navigate("/payment", { state: { orderDetails } });
-        }
-      }
-      
-      
-      if (orderDetails.paymentMethod === "onlinePayment") {
-        
-        navigate("/payment", { state: { orderDetails } });
-      } 
+      //     await api.post("/deleteCartItems", {
+      //       userId,
+      //     });
 
+      //     navigate("/payment", { state: { orderDetails } });
+      //   }
+      // }
 
-      
-
+      // if (orderDetails.paymentMethod === "onlinePayment") {
+      //   navigate("/payment", { state: { orderDetails } });
+      // }
 
     } catch (error) {
       toast.error("Failed to place order. Please try again later.");
@@ -370,7 +364,12 @@ const CheckoutPage = () => {
             <div className="flex flex-col rounded-lg bg-white sm:flex-row"></div>
           </div>
 
-          <p className="mt-8 text-lg font-medium">Payment Methods</p>
+
+          
+            <CouponCard  />
+          
+
+          {/* <p className="mt-8 text-lg font-medium">Payment Methods</p>
           <form className="mt-5 grid gap-6">
             <div className="relative">
               <input
@@ -422,7 +421,7 @@ const CheckoutPage = () => {
                 </div>
               </label>
             </div>
-          </form>
+          </form> */}
         </div>
 
         <CheckoutOrderSummary

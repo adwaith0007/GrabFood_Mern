@@ -14,19 +14,17 @@ const defaultImg =
 interface CategoryDetails {
   _id: string;
   category: string;
-  categoryImage: { originalname: string }[];
+  categoryImage: string[];
+  deleted: boolean;
 }
 
 const CategoryManagement = () => {
   const { id } = useParams<{ id: string }>();
-  const [categoryDetails, setCategoryDetails] = useState({});
+  const [categoryDetails, setCategoryDetails] = useState<CategoryDetails>();
   const [photoFile, setPhotoFile] = useState<File | undefined>();
- 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const [updating, setUpdating] = useState<boolean>(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,53 +46,24 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
-  console.log(categoryDetails);
-  
-
-  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g,"%20")}`;
+  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g, "%20")}`;
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
-    console.log(file);
-    
-
-    const reader: FileReader = new FileReader();
-
     if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setPhotoFile(file);
-        }
-      };
+      setPhotoFile(file);
     }
   };
 
-  console.log(photoFile);
-
-  console.log(categoryDetails?.category);
-  
-  
-
   const submitHandler = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-
     try {
-      
-
       const formData = new FormData();
       formData.append("category", categoryDetails?.category);
-
       if (photoFile) {
         formData.append("photo", photoFile);
       }
-
-      const response = await api.put(
-        `/category/update/${categoryDetails?._id}`,
-        formData, { timeout: 10000 }
-      );
-
+      const response = await api.put(`/category/update/${categoryDetails?._id}`, formData, { timeout: 10000 });
       if (response.data.success) {
         toast.success("Category updated successfully!");
         setCategoryDetails(response.data.data);
@@ -106,6 +75,25 @@ const CategoryManagement = () => {
       setError("Failed to update Category");
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleSoftDelete = async (): Promise<void> => {
+    try {
+      const response = await api.put(`/category/softDelete/${categoryDetails._id}`);
+      if (response.data.success) {
+        const updatedCategory = { ...categoryDetails, deleted: !categoryDetails.deleted };
+        setCategoryDetails(updatedCategory);
+        // toast.success(`Category ${updatedCategory.deleted ? 'soft ' : ''}deleted successfully`);
+      } else {
+        console.error("Error deleting category");
+        setError("Failed to delete category");
+        toast.error("Failed to delete category");
+      }
+    } catch (error) {
+      console.error("Error deleting category", error);
+      setError("Failed to delete category");
+      toast.error("Failed to delete category");
     }
   };
 
@@ -165,10 +153,9 @@ const CategoryManagement = () => {
               <input
                 type="text"
                 value={categoryDetails?.category}
-                onChange={(e) => setCategoryDetails({ ...categoryDetails, category:  e.target.value })}
+                onChange={(e) => setCategoryDetails({ ...categoryDetails, category: e.target.value })}
               />
             </div>
-
             <div className="form-group flex gap-2 ">
               <label>Photo</label>
               <div className="flex items-center">
@@ -186,22 +173,17 @@ const CategoryManagement = () => {
                   onChange={changeImageHandler}
                 />
               </div>
-
               <div className="flex items-center">
                 <button
-                  
-                  className="cursor-pointer bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-all duration-300"
+                  className={`px-2 py-1 cursor-pointer ${categoryDetails.deleted ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
+                  onClick={handleSoftDelete}
                 >
-                  Undo Soft Deleted
+                  {categoryDetails.deleted ? 'Undo Deleted' : 'Soft Delete'}
                 </button>
-                
               </div>
             </div>
-
             {photoFile && <img src={URL.createObjectURL(photoFile)} alt="New Image" />}
-            <button type="submit" 
-            disabled={updating}
-            >
+            <button type="submit" disabled={updating}>
               Update
             </button>
           </form>

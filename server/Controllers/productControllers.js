@@ -187,8 +187,27 @@ exports.addProduct = async (req, res) => {
 
 exports.listProduct = async (req, res) => {
   try {
-    const data = await productModel.find({});
-    res.status(200).json({ success: true, data: data });
+    console.log('in');
+
+    // Check if the category is "All Products"
+    if (req.query.category && req.query.category === "All Products") {
+      // Fetch all products
+      const data = await productModel.find({});
+      res.status(200).json({ success: true, data: data });
+    } else if (req.query.category) {
+      // Fetch products filtered by the specified category
+      const category = req.query.category;
+      console.log(category);
+      
+      const filteredProducts = await productModel.find({ category });
+      console.log(filteredProducts);
+      
+      res.status(200).json({ success: true, data: filteredProducts });
+    } else {
+      // If no category is specified, fetch all products
+      const data = await productModel.find({});
+      res.status(200).json({ success: true, data: data });
+    }
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

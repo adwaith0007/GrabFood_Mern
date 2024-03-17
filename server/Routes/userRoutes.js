@@ -13,25 +13,28 @@ const {validateQuantity} = require("../middlewares/Cart");
 
 
 
-
-
-
-router.post("/login", userController.verifyUser, userController.login);
+router.post("/login",  (req, res) => {
+  userController.login(req, res);
+});
 
 router.post("/user/edit", isUserLoggedIn, (req, res) => {
   userController.edit(req, res);
 });
 
+
+router.post("/register", (req, res) => {
+  userController.register(req, res);
+});
+
+
+
+
 router.get("/users/delete/:id", isAdminLoggedIn, (req, res) => {
   userController.delete(req, res);
 });
 
-// POST Methods
 
-router.post("/register", (req, res) => {
-  /* register user ok */
-  userController.register(req, res);
-});
+
 
 router.post("/user/new", (req, res) => {
   /* register user ok */
@@ -55,8 +58,8 @@ router.post("/authenticate", (req, res) => {
 });
 
 // GET Methods
-
 router.get("/user/:username", userController.getUser); /* user login  */
+
 router.get(
   "/generateOTP",
   userController.localVariables,
@@ -79,7 +82,7 @@ router.put("/resetPassword", userController.resetPassword);
 //   userController.getAddress(req, res);
 // });
 
-router.post("/user/getAddress",  (req, res) => {
+router.post("/user/getAddress", isUserLoggedIn,  (req, res) => {
   
   
   userController.getAddress(req, res);

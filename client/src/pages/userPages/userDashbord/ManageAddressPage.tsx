@@ -9,7 +9,7 @@ import AddressInput from '../../../components/AddressInput';
 import UpdateAddressInput from '../../../components/user/UpdateAddressInput';
 import ChooseAddress from '../../../components/user/ChooseAddress';
 
-import api from '../../api';
+import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
 
 const ManageAddressPage = () => {

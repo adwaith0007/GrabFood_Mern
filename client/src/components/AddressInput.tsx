@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
+import api from '../api'
 
 const AddressInput = ({ userId, setAddress, onClose }) => {
   const [street, setStreet] = useState("");
@@ -25,7 +26,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
         return;
       }
 
-      await axios.put(`http://localhost:5000/api/addaddresses/${userId}`, {
+      await api.put(`/addaddresses/${userId}`, {
         userId: userId,
         address: newAddress,
       });
