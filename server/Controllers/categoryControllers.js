@@ -1,72 +1,12 @@
 const categoryModel = require("../Models/category");
-const upload = require("../middlewares/multer");            
-// const { uploadSingle, uploadMultiple } = require("../middlewares/multer");
-
-// exports.addCategory = async (req, res) => {
-//   console.log("add category");
-
-//   try {
-//     upload.array("images")(req, res, async (err) => {
-//       console.log(req.body);
-
-//       if (err) {
-//         return res.json({ success: false, message: err.message });
-//       }
-
-//       if (!req.files || req.files.length === 0) {
-//         return res.json({ success: false, message: "No images uploaded" });
-//       }
-
-//       const image = req.files;
-//       const filenames = image.map((file) => file.filename);
-
-//       const { category } = req.body;
-//       console.log(category);
-
-//       if (!category) {
-//         return res.json({ success: false, message: "Enter the category name" });
-//       }
-
-//       const categoryExist = await categoryModel.findOne({
-//         category: { $regex: new RegExp(`^${category}$`, 'i') },
-//       });
-
-//       if (categoryExist) {
-//         return res.json({ success: false, message: "Category already exists" });
-//       }
-
-//       const categoryDoc = new categoryModel({
-//         category,
-//         categoryImage: filenames,
-//       });
-
-//       await categoryDoc.save();
-
-//       res
-//         .status(201)
-//         .json({ success: true, message: "Category added successfully" });
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
+const upload = require("../middlewares/multer");
 
 exports.addCategory = async (req, res) => {
   try {
-    // upload.single("file")(req, res, async (err) => {
-    //   if (err) {
-    //     return res.json({ success: false, message: err.message });
-    //   }
-
-      const name = req.body.category;
-      // const file = req.file;
-
-      console.log('in');
-      
-
-      console.log("Name:", name);
-      // console.log("File:", file);
+    upload.single("file")(req, res, async (err) => {
+      if (err) {
+        return res.json({ success: false, message: err.message });
+      }
 
       const { category } = req.body;
 
@@ -84,8 +24,6 @@ exports.addCategory = async (req, res) => {
 
       const image = req.file;
 
-      console.log("File:", image);
-
       if (!image) {
         return res.json({ success: false, message: "No image uploaded" });
       }
@@ -100,12 +38,14 @@ exports.addCategory = async (req, res) => {
       res
         .status(201)
         .json({ success: true, message: "Category added successfully" });
-    // });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
 
 exports.adminListCategory = async (req, res) => {
   try {
@@ -117,6 +57,8 @@ exports.adminListCategory = async (req, res) => {
   }
 };
 
+
+
 exports.listCategory = async (req, res) => {
   try {
     const data = await categoryModel.find({ deleted: false });
@@ -125,6 +67,8 @@ exports.listCategory = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 exports.getcategoryDetails = async (req, res) => {
   try {
@@ -253,13 +197,11 @@ exports.updateProduct = async (req, res) => {
 
       await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: "Product updated",
-          data: { updatedProduct },
-        });
+      res.status(201).json({
+        success: true,
+        message: "Product updated",
+        data: { updatedProduct },
+      });
     });
   } catch (error) {
     console.log("Error while updating product:", error);
@@ -268,6 +210,8 @@ exports.updateProduct = async (req, res) => {
       .json({ success: false, message: "Failed to update product" });
   }
 };
+
+
 
 exports.deleteCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
@@ -293,44 +237,29 @@ exports.deleteCategory = async (req, res) => {
   }
 };
 
-
-
 exports.softDeleteCategory = async (req, res) => {
   const { categoryId } = req.params;
 
   try {
-    const category = await categoryModel.findById( categoryId);
+    const category = await categoryModel.findById(categoryId);
 
     if (!category) {
-      return res.status(404).json({ success: false, message: 'Category not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
     }
 
-    // Toggle the 'deleted' field
+    
     category.deleted = !category.deleted;
 
     await category.save();
 
     return res.status(200).json({ success: true, data: category });
   } catch (error) {
-    console.error('Error soft deleting category:', error);
-    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    console.error("Error soft deleting category:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
-
-// router.get('/product/get', async (req, res) => {
-//   const { category, limit } = req.query;
-//   let query = {};
-
-//   if (category) {
-//       query = { category: category };
-//   }
-
-//   try {
-//       const products = await Product.find(query).limit(parseInt(limit) || 10); // Default limit to 10 if not provided
-//       res.json({ success: true, data: products });
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ success: false, message: 'Server Error' });
-//   }
-// });

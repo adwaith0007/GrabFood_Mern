@@ -189,13 +189,13 @@ exports.listProduct = async (req, res) => {
   try {
     console.log('in');
 
-    // Check if the category is "All Products"
+    
     if (req.query.category && req.query.category === "All Products") {
-      // Fetch all products
+      
       const data = await productModel.find({});
       res.status(200).json({ success: true, data: data });
     } else if (req.query.category) {
-      // Fetch products filtered by the specified category
+      
       const category = req.query.category;
       console.log(category);
       
@@ -204,7 +204,7 @@ exports.listProduct = async (req, res) => {
       
       res.status(200).json({ success: true, data: filteredProducts });
     } else {
-      // If no category is specified, fetch all products
+      
       const data = await productModel.find({});
       res.status(200).json({ success: true, data: data });
     }

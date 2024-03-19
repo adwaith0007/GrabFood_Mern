@@ -29,14 +29,14 @@ router.post('/upload', upload.single('file'), (req, res) => {
 
 
 
-router.post("/add", upload.single('file'), (req, res) => {
-  categoryControllers.addCategory(req, res);
-});
-
-
-// router.post("/add", (req, res) => {
+// router.post("/add", upload.single('file'), (req, res) => {
 //   categoryControllers.addCategory(req, res);
 // });
+
+
+router.post("/add", (req, res) => {
+  categoryControllers.addCategory(req, res);
+});
 
 router.get("/get", (req, res) => {
   categoryControllers.listCategory(req, res);
