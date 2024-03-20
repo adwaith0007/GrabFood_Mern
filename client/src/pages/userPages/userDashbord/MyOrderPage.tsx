@@ -1,6 +1,4 @@
-import UserSidebar from '../../../components/user/UserSidebar';
 import React, { useEffect, useState } from 'react';
-
 import { ReactElement } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -8,8 +6,9 @@ import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../types/reducer-types';
-
 import api from '../../../api';
+import UserSidebar from '../../../components/user/UserSidebar';
+
 const server = import.meta.env.VITE_SERVER;
 
 // Define interfaces for order data
@@ -36,20 +35,21 @@ interface OrderData {
   products: Product[];
   address: Address[];
   paymentMethod: string;
-  totalPrice:number;
+  totalPrice: number;
   paymentStatus: boolean;
   status: string;
   createdAt: string;
 }
 
 interface DataType {
-    orderId: string;
-    no: number;
-    order: string;
-    totalPrice: number;
-    status: string;
+  orderId: string;
+  no: number;
+  order: string;
+  totalPrice: number;
+  status: string;
   orderDetails: ReactElement;
   manageAction: ReactElement;
+  invoice: ReactElement; // Add invoice property to DataType interface
 }
 
 const columns: Column<DataType>[] = [
@@ -58,7 +58,7 @@ const columns: Column<DataType>[] = [
   { Header:(<div className='flex justify-center ' >Total Price</div> ) , accessor: 'totalPrice' },
   { Header:(<div className='flex justify-center ' >Status</div> ) , accessor: 'status' },
   { Header:(<div className='flex justify-center ' >Order Details</div> ) , accessor: 'orderDetails' },
-  
+  { Header:(<div className='flex justify-center ' >Invoice</div> ) , accessor: 'invoice' }, // Display invoice button
 ];
 
 const MyOrderPage = () => {
@@ -75,7 +75,6 @@ const MyOrderPage = () => {
         `/order/cancel/${orderId}/product/${productId}`
       );
       if (response.data.success) {
-        
         console.log('Product canceled:', productId, 'from order:', orderId);
         // After canceling, fetch the updated orders
         fetchUserOrders();
@@ -84,6 +83,21 @@ const MyOrderPage = () => {
       }
     } catch (error) {
       console.error('Error canceling product:', error);
+    }
+  };
+
+  const downloadInvoice = async (orderId: string) => {
+    try {
+      // Fetch the invoice PDF for the given orderId
+      const response = await api.get(`/order/invoice/${orderId}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice_${orderId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error fetching invoice:', error);
     }
   };
 
@@ -119,42 +133,32 @@ const MyOrderPage = () => {
     fetchUserOrders();
   }, [userId]);
 
-  console.log(userOrders);
-  
-
   useEffect(() => {
-
     const newRows = userOrders.map((order, index) => ({
-        no: (<div className='flex justify-center ' >{index + 1}</div> ) ,
-        order: (<div className=' flex flex-col justify-center gap-1   ' >
+      no: (<div className='flex justify-center ' >{index + 1}</div> ) ,
+      order: (<div className=' flex flex-col justify-center gap-1   ' >
 
-            <div className=' flex justify-center' >
-           Id: {order._id}
+          <div className=' flex justify-center' >
+         Id: {order._id}
 
-            </div>
+          </div>
 
-            <div className=' flex justify-center' >
-          Date:  {order.orderDate}
+          <div className=' flex justify-center' >
+        Date:  {order.orderDate}
 
-            </div>
+          </div>
 
-            
-            </div> ) ,
-        totalPrice:(<div className=' flex justify-center' >₹{order.totalPrice}</div> ),
-        
-        status: (<div className='flex justify-center ' >{order.status}</div> ) ,
+          
+          </div> ) ,
+      totalPrice:(<div className=' flex justify-center' >₹{order.totalPrice}</div> ),
+      
+      status: (<div className='flex justify-center ' >{order.status}</div> ) ,
 
-        orderDetails: <Link className='flex justify-center'  to={`/user/order/${order._id}/product`}>View</Link>,
+      orderDetails: <Link className='flex justify-center'  to={`/user/order/${order._id}/product`}>View</Link>,
 
-
-        
-  
-        
-  
-  
-      }));
-    
-    
+      // Add invoice button
+      invoice: <button className=" w-full bg-slate-800 py-2 rounded hover:bg-black  text-white btn btn-primary" onClick={() => downloadInvoice(order._id)}>Download </button>,
+    }));
 
     setRows(newRows);
   }, [userOrders]);
@@ -165,7 +169,6 @@ const MyOrderPage = () => {
     <div className="admin-container">
       <UserSidebar />
       <main>{Table}</main>
-      
     </div>
   );
 };

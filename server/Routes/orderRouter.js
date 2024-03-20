@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const orderControllers = require("../Controllers/orderControllers");
 
+const invoiceController = require("../Controllers/invoiceControllers");
 
-
+const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 
 router.post('/placeOrder', (req, res) => {
     orderControllers.placeOrder(req, res);
@@ -32,6 +33,13 @@ router.post('/placeOrder', (req, res) => {
 
   router.put('/orders/:orderId/product/:productId', (req, res) => {
     orderControllers.updateProductStatus(req, res);
+  });
+
+
+  router.get("/order/invoice/:orderId" , (req, res) => {
+    console.log('hii');
+    
+    invoiceController.generateInvoice(req, res);
   });
 
   router.put('/order/cancel/:orderId/product/:productId', orderControllers.cancelProduct);

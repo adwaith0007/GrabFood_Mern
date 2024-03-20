@@ -4,7 +4,7 @@ const UserModel = require("../Models/userModels");
 const NewUser = require("../Models/user");
 
 const userController = require("../Controllers/userControllers");
-const invoiceController = require("../Controllers/invoiceControllers");
+
 
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
@@ -109,9 +109,7 @@ router.get('/user/:userId/addresses', (req, res) => {
 });
 
 
-router.get("/invoice/:id", isUserLoggedIn, (req, res) => {
-  invoiceController.generateInvoice(req, res);
-});
+
 
 
 
