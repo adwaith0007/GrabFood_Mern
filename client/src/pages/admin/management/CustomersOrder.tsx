@@ -184,19 +184,19 @@
 
 
 
-import UserSidebar from '../../components/user/UserSidebar';
+import UserSidebar from '../../../components/user/UserSidebar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ReactElement } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
-import TableHOC from '../../components/admin/TableHOC';
+import TableHOC from '../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
-import { UserReducerInitialState } from '../../types/reducer-types';
-import AdminSidebar from '../../components/admin/AdminSidebar';
+import { UserReducerInitialState } from '../../../types/reducer-types';
+import AdminSidebar from '../../../components/admin/AdminSidebar';
 
-import api from '../../api';
+import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
 
 // Define interfaces for order data

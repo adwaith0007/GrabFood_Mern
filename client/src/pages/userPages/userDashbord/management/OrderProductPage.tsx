@@ -3,13 +3,13 @@ import axios from 'axios';
 import { ReactElement } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
-import TableHOC from '../../../components/admin/TableHOC';
+import TableHOC from '../../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
-import { UserReducerInitialState } from '../../../types/reducer-types';
-import DeletePopeUp from '../../../components/DeletePopeUp';
-import UserSidebar from '../../../components/user/UserSidebar';
+import { UserReducerInitialState } from '../../../../types/reducer-types';
+import DeletePopeUp from '../../../../components/DeletePopeUp';
+import UserSidebar from '../../../../components/user/UserSidebar';
 
-import api from '../../../api';
+import api from '../../../../api';
 const server = import.meta.env.VITE_SERVER;
 
 // Define interfaces for order data
@@ -91,11 +91,13 @@ const OrderProductPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Processing':
+        return ' purple';
+        case 'Canceled':
         return 'red';
       case 'Shipped':
         return 'green';
       case 'Delivered':
-        return 'purple';
+        return 'green';
       default:
         return 'black';
     }

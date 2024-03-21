@@ -104,7 +104,7 @@ const CheckoutPage = () => {
     return formattedDateTime;
   };
 
-  const handleOnPlaceOrder = async (totalAmount) => {
+  const handleOnPlaceOrder = async (totalAmount,discountAmount,couponCode) => {
     console.log( 'total', totalAmount);
 
    
@@ -119,6 +119,8 @@ const CheckoutPage = () => {
         userId,
         products: cartItems,
         address: selectedAddress,
+        discountAmount,
+        couponCode,
         // paymentMethod,
         orderDate: getCurrentDateTime(),
         totalPrice :totalAmount,
@@ -361,12 +363,14 @@ const CheckoutPage = () => {
               <p className="text-red-500">add a new address</p>
             )}
 
-            <div className="flex flex-col rounded-lg bg-white sm:flex-row"></div>
+           
           </div>
 
+          <div className="mt-8 space-y-3 max-h-[250px] overflow-auto rounded-lg border bg-white px-2 py-4 sm:px-6 custom-scrollbar">
 
           
             <CouponCard  />
+          </div>
           
 
           {/* <p className="mt-8 text-lg font-medium">Payment Methods</p>

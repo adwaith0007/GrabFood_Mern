@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import PaymentPage from "../pages/userPages/PaymentPage";
 import MyOrderPage from "../pages/userPages/userDashbord/MyOrderPage";
-import OrderProductPage from "../pages/userPages/userDashbord/OrderProductPage";
+import OrderProductPage from "../pages/userPages/userDashbord/management/OrderProductPage";
 
 const MenuPage = lazy(() => import("../pages/userPages/MenuPage"));
 const CartPage = lazy(() => import("../pages/userPages/CartPage"));
@@ -30,7 +30,7 @@ const UserRoutes = () => {
       <Route path="user/wallet" element={<MyWalletPage />}></Route>
       <Route path="/payment" element={<PaymentPage/>}></Route>  
 
-      <Route path="user/order/:orderId/product" element={<OrderProductPage />} />    
+      <Route path="user/orders/:orderId/product" element={<OrderProductPage />} />    
 
       <Route path="/profile/Update" element={<ProfileUpdate />}></Route>
       <Route path="/product/:productId" element={<ProductDetailsPage />} />

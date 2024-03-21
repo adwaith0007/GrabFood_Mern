@@ -27,11 +27,14 @@ const CouponCard = () => {
     const [copiedIndex, setCopiedIndex] = useState(-1); // to keep track of the copied coupon index
 
     return (
-        <div className="mt-8 space-y-3 max-h-[250px] overflow-auto rounded-lg border bg-white px-2 py-4 sm:px-6 custom-scrollbar">
+        <div >
             {couponData.length > 0 && (
                 couponData.map((coupon, index) => (
-                    <div className="container mx-auto" key={index}>
-                        <div className="bg-gradient-to-br from-purple-600 to-indigo-600 text-white text-center py-7 px-20 rounded-lg shadow-md relative">
+                    <div className="container mx-auto   " key={index}>
+                        
+
+                        
+                        <div className="bg-gradient-to-br mb-5 from-purple-600 to-indigo-600 text-white text-center py-7 px-20 rounded-lg shadow-md relative">
                             <h3 className="text-xl font-semibold mb-4">
                                 {coupon.couponName} 
                             </h3>
@@ -58,6 +61,7 @@ const CouponCard = () => {
                             <div className="w-12 h-12 bg-white rounded-full absolute top-1/2 transform -translate-y-1/2 left-0 -ml-6"></div>
                             <div className="w-12 h-12 bg-white rounded-full absolute top-1/2 transform -translate-y-1/2 right-0 -mr-6"></div>
                         </div>
+                        
                     </div>
                 ))
             )}

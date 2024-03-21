@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
-import api from '../../api';
+import api from '../../../api';
 import DatePicker from "react-datepicker"; // Import DatePicker component
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,7 +9,7 @@ const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const allNumbers = "1234567890";
 const allSymbols = "!@#$%^&*()_+";
 
-const CouponPage = () => {
+const AddCouponPage = () => {
     const [size, setSize] = useState<number>(8);
     const [prefix, setPrefix] = useState<string>("");
     const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
@@ -163,4 +163,4 @@ const CouponPage = () => {
     );
 };
 
-export default CouponPage;
+export default AddCouponPage;

@@ -9,8 +9,8 @@ const Linecharts = lazy(() => import("../pages/admin/charts/linecharts"));
 
 const Stopwatch = lazy(() => import("../pages/admin/apps/stopwatch"));
 const Toss = lazy(() => import("../pages/admin/apps/toss"));
-const NewProduct = lazy(() => import("../pages/admin/management/newproduct"));
-const NewCategory = lazy(() => import("../pages/admin/management/newcategory"));
+const NewProduct = lazy(() => import("../pages/admin/management/AddProduct"));
+const NewCategory = lazy(() => import("../pages/admin/management/AddCategory"));
 const ProductManagement = lazy(
   () => import("../pages/admin/management/productmanagement")
 );
@@ -22,24 +22,25 @@ const TransactionManagement = lazy(
 );
 import Category from "../pages/admin/Category";
 
-import CustomersOrder from "../pages/adminPages/CustomersOrder";
+import CustomersOrder from "../pages/admin/management/CustomersOrder";
 import Home from "../pages/userPages/Home";
 import CustomersProducts from "../pages/admin/management/CustomersProducts";
-import CouponPage from "../pages/adminPages/CouponPage";
+import CouponPage from "../pages/admin/CouponPage";
+import AddProduct from "../pages/admin/management/AddProduct";
+import AddCategory from "../pages/admin/management/AddCategory";
+import AddCouponPage from "../pages/admin/management/AddCouponPage";
 
 const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
-const Customers = lazy(() => import("../pages/adminPages/Customers"));
+const Customers = lazy(() => import("../pages/admin/Customers"));
 const SignupPage = lazy(() => import("../pages/adminPages/SignupPage"));
-const AddCategory = lazy(() => import("../pages/adminPages/AddCategory"));
-const AddProduct = lazy(() => import("../pages/adminPages/AddProduct"));
+
 
 const AdminRoutes = () => {
   return (
     <Routes>
       <Route path="/admin/signup" element={<SignupPage />}></Route>
 
-      <Route path="/admin/category/add" element={<AddCategory />}></Route>
-      <Route path="/admin/product/add2" element={<AddProduct />}></Route>
+      
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/product" element={<Products />} />
       <Route path="/category" element={<Category />} />
@@ -47,6 +48,7 @@ const AdminRoutes = () => {
       <Route path="/transaction" element={<Transaction />} />
       <Route path="customer/:customerId/products" element={ <CustomersOrder /> } />  
       <Route path="/coupon" element={<CouponPage />} />
+      <Route path="/coupon/add" element={<AddCouponPage />} />
 
       <Route path="/admin" element={<LoginPage />}></Route>
 
@@ -60,9 +62,9 @@ const AdminRoutes = () => {
       <Route path="/app/toss" element={<Toss />} />
 
       {/* Management */}
-      <Route path="/product/new" element={<NewProduct />} />
+      <Route path="/product/add" element={<AddProduct />} />
 
-      <Route path="/category/new" element={<NewCategory />} />
+      <Route path="/category/add" element={<AddCategory />} />
 
       <Route path="/product/:id" element={<ProductManagement />} />
 

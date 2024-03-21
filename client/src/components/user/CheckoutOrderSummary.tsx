@@ -13,7 +13,8 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
 
   const [cartItems, setCartItems] = useState([]);
   const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState();
+  const [pctDiscount, setPctDiscount] = useState();
+  const [discountAmount, setDiscountAmount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,27 +38,36 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
 
     try {
       const response = await api.post('/coupon/apply', { couponCode });
-      setDiscount(response.data.discount);
+      setPctDiscount(response.data.discount);
     } catch (error) {
       console.error("Error applying coupon:", error);
       // Add appropriate error handling or feedback to the user
     }
   };
 
-  let totalAmount;
+  useEffect(()=>{
 
-  if (discount !== undefined && discount !== null) {
-    const discountPercentage = parseFloat(discount);
-    if (!isNaN(discountPercentage)) {
-        totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        const discountAmount = (totalAmount * discountPercentage) / 100;
-        totalAmount -= discountAmount;
+    
+    
+    
+    if (pctDiscount !== undefined && pctDiscount !== null) {
+      const discountPercentage = parseFloat(pctDiscount);
+      if (!isNaN(discountPercentage)) {
+        const  totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        // const discountAmount = (totalAmount * discountPercentage) / 100;
+        const calculatedDiscountAmount = (totalAmount * discountPercentage) / 100;
+        setDiscountAmount(calculatedDiscountAmount);
+        // totalAmount -= discountAmount;
+      } else {
+        console.log("Invalid discount value:", pctDiscount);
+      }
     } else {
-        console.log("Invalid discount value:", discount);
+      // totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+      setDiscountAmount(0);
     }
-  } else {
-    totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  }
+  },[pctDiscount])
+    
+    const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) - discountAmount;
 
   return (
     <div className="px-4 pt-8 relative ">
@@ -118,12 +128,12 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
         </div>
       </form>
 
-      { discount &&(
+      { pctDiscount &&(
 
         
         <div className="flex font-semibold justify-end gap-3 text-sm uppercase">
           <span>discount</span>
-          <span>{discount}%</span>
+          <span>{pctDiscount}%</span>
         </div>
           )
       }
@@ -137,7 +147,7 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
       </div>
 
       <button
-        onClick={() => onPlaceOrder(totalAmount)}
+        onClick={() => onPlaceOrder(totalAmount, discountAmount,couponCode )}
         className=" absolute  bottom-0  w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
       >
         Place Order

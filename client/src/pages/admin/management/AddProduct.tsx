@@ -3,7 +3,7 @@ import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import api from '../../../api';
 
-const NewProduct = () => {
+const AddProduct = () => {
   const [product, setProduct] = useState({
     name: "",
     desc: "",
@@ -246,4 +246,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default AddProduct;

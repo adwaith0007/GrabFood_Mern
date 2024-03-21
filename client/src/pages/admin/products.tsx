@@ -90,7 +90,7 @@ const Products = () => {
     <div className="admin-container">
       <AdminSidebar />
       <main>{Table}</main>
-      <Link to="/admin/product/new" className="create-product-btn">
+      <Link to="/admin/product/add" className="create-product-btn">
         <FaPlus />
       </Link>
     </div>

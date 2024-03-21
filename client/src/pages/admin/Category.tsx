@@ -73,7 +73,7 @@ const Category = () => {
     <div className="admin-container">
       <AdminSidebar />
       <main>{Table}</main>
-      <Link to="/admin/category/new" className="create-product-btn">
+      <Link to="/admin/category/add" className="create-product-btn">
         <FaPlus />
       </Link>
     </div>

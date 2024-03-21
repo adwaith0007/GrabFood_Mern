@@ -7,7 +7,7 @@ import foodimg from "../../../assets/login_food.png";
 import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
 
-const NewCategory = () => {
+const AddCategory = () => {
   const [categoryData, setCategoryData] = useState({
     name: "",
     image: null,
@@ -150,4 +150,4 @@ const NewCategory = () => {
   );
 };
 
-export default NewCategory;
+export default AddCategory;

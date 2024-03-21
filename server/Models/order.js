@@ -9,6 +9,8 @@ const orderSchema = mongoose.Schema({
     required: true,
   },
 
+  
+
   userName: {
     type: String,
     required: true,
@@ -51,6 +53,8 @@ const orderSchema = mongoose.Schema({
         default: "Processing",
       },
 
+     
+
     },
   ],
   address: {
@@ -62,17 +66,14 @@ const orderSchema = mongoose.Schema({
     type: String,
   },
 
-  name: {
+  orderStatus: {
     type: String,
-    // required: true,
+    default: "Processing",
   },
 
-  state: {
-    type: String,
-  },
-  zip: {
-    type: Number,
-  },
+ 
+
+ 
   phone: {
     type: Number,
     required: true,
@@ -107,8 +108,11 @@ const orderSchema = mongoose.Schema({
   razor_signature: {
     type: String,
   },
-  coupon: {
-    type: mongoose.Schema.Types.ObjectId,
+  discountAmount:{
+    type:Number,
+  },
+  couponCode: {
+    type: String,
   },
   createdAt: {
     type: Date,

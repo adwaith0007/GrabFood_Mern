@@ -15,6 +15,9 @@ router.post('/add', (req, res) => {
     couponControllers.applyCoupon(req, res);
   });
 
+  router.delete('/delete/:couponId', (req, res) => {
+    couponControllers.deleteCoupon(req, res);
+  });
 
 
 

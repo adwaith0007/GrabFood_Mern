@@ -93,9 +93,11 @@ exports.getCustomers = async (req, res) => {
   }
 };
 
-/* put: http://localhost:5000/api/admin/customers/:id*/
+/* put: http://localhost:5000/api/admin/customers/?id*/
 exports.updateUserBlock = async (req, res) => {
+
   const customerId = req.query.id;
+ 
   console.log(customerId);
   
   const { isBlocked } = req.body;

@@ -68,12 +68,13 @@ exports.addCoupon = async (req, res) => {
 }
   
   exports.deleteCoupon = async (req, res) => {
-    const { coupon } = req.body;
+    const { couponId } = req.params;
     try {
-      await couponModel.deleteOne({ _id: coupon._id });
-      return res.json({ success: true, message: "coupon deleted" });
+      await couponModel.deleteOne({ _id: couponId });
+      const data = await couponModel.find({});
+      return res.status(200).json({ success: true, message: "coupon deleted", data});
     } catch (error) {
       console.log("error while deleting coupon", error);
-      return res.json({ success: false, message: "Error while deleting coupon" });
+      return res.status(500).json({ success: false, message: "Error while deleting coupon" });
     }
   };

@@ -37,7 +37,8 @@ interface OrderData {
   paymentMethod: string;
   totalPrice: number;
   paymentStatus: boolean;
-  status: string;
+ 
+  orderStatus: string;
   createdAt: string;
 }
 
@@ -119,7 +120,7 @@ const MyOrderPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Processing':
-        return 'red';
+        return ' purple';
       case 'Shipped':
         return 'green';
       case 'Delivered':
@@ -152,12 +153,27 @@ const MyOrderPage = () => {
           </div> ) ,
       totalPrice:(<div className=' flex justify-center' >₹{order.totalPrice}</div> ),
       
-      status: (<div className='flex justify-center ' >{order.status}</div> ) ,
+      
 
-      orderDetails: <Link className='flex justify-center'  to={`/user/order/${order._id}/product`}>View</Link>,
+      status: (
+        <p>
+          <span className={`flex justify-center ${getStatusColor(order.orderStatus)}`}>{order.orderStatus}</span>
+        </p>
+      ),
 
-      // Add invoice button
-      invoice: <button className=" w-full bg-slate-800 py-2 rounded hover:bg-black  text-white btn btn-primary" onClick={() => downloadInvoice(order._id)}>Download </button>,
+      orderDetails: <Link className='flex justify-center'  to={`/user/orders/${order._id}/product`}>View</Link>,
+
+      
+      invoice: 
+      <div className='w-full flex justify-center ' >
+
+    <button className="  bg-slate-700  text-white hover:bg-black  gap-3  font-bold py-2 px-4 rounded inline-flex items-center"
+    onClick={() => downloadInvoice(order._id)}>
+      <span>Download  </span>
+      <svg className="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+    </button>
+      </div>
+      
     }));
 
     setRows(newRows);
