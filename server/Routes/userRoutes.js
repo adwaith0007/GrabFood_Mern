@@ -4,7 +4,7 @@ const UserModel = require("../Models/userModels");
 const NewUser = require("../Models/user");
 
 const userController = require("../Controllers/userControllers");
-
+const walletController = require("../Controllers/walletController");
 
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
@@ -109,7 +109,9 @@ router.get('/user/:userId/addresses', (req, res) => {
 });
 
 
-
+router.get('/user/:userId/wallet', (req, res) => { 
+  walletController.getBalance(req, res);
+});
 
 
 

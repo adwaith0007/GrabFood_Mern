@@ -1,16 +1,18 @@
-const userModel = require("../models/user");
+const { log } = require("handlebars");
+const UserModel = require("../Models/userModels");
 const jwt = require("jsonwebtoken");
+
 exports.addMoney = async (req, res) => {
   const { addWallet: amount, userId } = req.body;
 
   try {
-    const currentAmount = await userModel.find(
+    const currentAmount = await UserModel.find(
       { _id: userId },
       { "wallet.balance": 1, _id: 0 }
     );
     const updatedAmount =
       parseInt(amount) + parseInt(currentAmount[0].wallet.balance);
-    await userModel.updateOne(
+    await UserModel.updateOne(
       { _id: userId },
       { $set: { "wallet.balance": updatedAmount } }
     );
@@ -23,9 +25,14 @@ exports.addMoney = async (req, res) => {
 };
 
 exports.getBalance = async (req, res) => {
-  const { userId } = req.body;
+  // const { userId } = req.body;
+
+  const userId = req.params.userId;
+
+  console.log('user:',userId);
+
   try {
-    const currentAmount = await userModel.find(
+    const currentAmount = await UserModel.find(
       { _id: userId },
       { "wallet.balance": 1, _id: 0 }
     );
@@ -41,7 +48,7 @@ exports.getDeducted = async (req, res) => {
   const { amount, token } = req.body;
   try {
     const user = jwt.verify(token, "my_secret_key");
-    const currentAmount = await userModel.find(
+    const currentAmount = await UserModel.find(
       { _id: user.id },
       { "wallet.balance": 1, _id: 0 }
     );

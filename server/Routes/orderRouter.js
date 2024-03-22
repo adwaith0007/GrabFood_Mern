@@ -44,5 +44,10 @@ router.post('/placeOrder', (req, res) => {
 
   router.put('/order/cancel/:orderId/product/:productId', orderControllers.cancelProduct);
 
+  router.put('/order/cancel/:orderId' , (req, res) => {
+    console.log('hii333');
+
+    orderControllers.cancelOrder(req, res);
+  });
 
 module.exports = router;

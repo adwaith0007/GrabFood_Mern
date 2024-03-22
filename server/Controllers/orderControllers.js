@@ -2,27 +2,29 @@ const orderModel = require("../Models/order");
 
 const UserModel = require("../Models/userModels");
 
-const Razorpay = require("razorpay")
+const Razorpay = require("razorpay");
 
-const crypto =require("crypto");
+const crypto = require("crypto");
 const { log } = require("console");
 
-require('dotenv').config();
-
-
+require("dotenv").config();
 
 const instance = new Razorpay({
   key_id: process.env.RAZORPAY_API_KEY,
   key_secret: process.env.RAZORPAY_API_SECRET,
 });
 
-
-
-
 exports.placeOrder = async (req, res) => {
   try {
-    const { userId, products, address, paymentMethod, orderDate, totalPrice, couponId } =
-      req.body;
+    const {
+      userId,
+      products,
+      address,
+      paymentMethod,
+      orderDate,
+      totalPrice,
+      couponId,
+    } = req.body;
 
     if (
       !userId ||
@@ -34,12 +36,10 @@ exports.placeOrder = async (req, res) => {
       !orderDate ||
       !totalPrice
     ) {
-      return res
-        .status(301)
-        .json({
-          success: false,
-          message: "Please provide valid information for the order.",
-        });
+      return res.status(301).json({
+        success: false,
+        message: "Please provide valid information for the order.",
+      });
     }
 
     const user = await UserModel.findById(userId);
@@ -62,12 +62,10 @@ exports.placeOrder = async (req, res) => {
     res.status(201).json({ success: true, order: savedOrder });
   } catch (error) {
     console.error("Error placing order:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Failed to place order. Please try again later.",
-      });
+    res.status(500).json({
+      success: false,
+      error: "Failed to place order. Please try again later.",
+    });
   }
 };
 
@@ -81,46 +79,12 @@ exports.getUserOrders = async (req, res) => {
     res.status(200).json({ success: true, orders: userOrders });
   } catch (error) {
     console.error("Error fetching user orders:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Failed to fetch user orders. Please try again later.",
-      });
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch user orders. Please try again later.",
+    });
   }
 };
-
-// exports.cancelProduct = async (req, res) => {
-
-//   console.log('hiiiii');
-
-//   const { orderId, productId } = req.params;
-
-//   try {
-//     // Find the order by ID
-//     const order = await orderModel.findById(orderId);
-
-//     // Find the index of the product to be canceled
-//     const productIndex = order.products.findIndex(
-//       (product) => product._id.toString() === productId
-//     );
-
-//     if (productIndex !== -1) {
-//       // Remove the product from the order
-//       order.products.splice(productIndex, 1);
-
-//       // Save the updated order
-//       const updatedOrder = await order.save();
-
-//       res.status(200).json({ success: true, order: updatedOrder });
-//     } else {
-//       res.status(404).json({ success: false, error: 'Product not found in order.' });
-//     }
-//   } catch (error) {
-//     console.error('Error canceling product:', error);
-//     res.status(500).json({ success: false, error: 'Failed to cancel product.' });
-//   }
-// };
 
 exports.cancelProduct = async (req, res) => {
   console.log("hiiii");
@@ -153,22 +117,103 @@ exports.cancelProduct = async (req, res) => {
 
     const updatedOrder = await order.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Product canceled successfully.",
-        canceledProduct,
-        updatedOrder,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Product canceled successfully.",
+      canceledProduct,
+      updatedOrder,
+    });
   } catch (error) {
     console.error("Error canceling product:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Failed to cancel product. Please try again later.",
-      });
+    res.status(500).json({
+      success: false,
+      error: "Failed to cancel product. Please try again later.",
+    });
+  }
+};
+
+// exports.cancelOrder = async (req, res) => {
+
+//   try {
+//     const orderId = req.params.orderId;
+//     const userId = req.body.userId;
+//     console.log(orderId);
+//     console.log('userId',userId);
+
+//     const order = await orderModel.findById(orderId);
+
+//     if (!order) {
+//       return res.status(404).json({ success: false, error: "Order not found." });
+//     }
+
+//     // Update the order status to "Cancel"
+//     const updatedOrder = await orderModel.findByIdAndUpdate(
+//       orderId,
+//       { $set: { orderStatus: "Cancel" } },
+//       { new: true } // This option returns the modified document
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Order canceled successfully.",
+//       updatedOrder: updatedOrder, // Send the updated order back in the response
+//     });
+//   } catch (error) {
+//     console.error("Error canceling order:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Failed to cancel order. Please try again later.",
+//     });
+//   }
+// };
+
+exports.cancelOrder = async (req, res) => {
+  console.log("hiiii");
+
+  try {
+    const orderId = req.params.orderId;
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Order not found." });
+    }
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { $set: { orderStatus: "Cancel" } },
+      { new: true }
+    );
+
+    if (
+      order.paymentMethod === "onlinePayment" &&
+      order.paymentStatus === true
+    ) {
+      const user = await UserModel.findOne({ username: order.userName });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, error: "User not found." });
+      }
+
+      user.wallet.balance += order.totalPrice;
+      await user.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order canceled successfully.",
+      updatedOrder: updatedOrder,
+    });
+  } catch (error) {
+    console.error("Error canceling order:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to cancel order. Please try again later.",
+    });
   }
 };
 
@@ -510,74 +555,70 @@ exports.updateProductStatus = async (req, res) => {
   }
 };
 
-
-exports.checkout= async (req , res)=>{
-
-  const {
-    orderDetails,
-    userId,
-   
-  } = req.body;
+exports.checkout = async (req, res) => {
+  const { orderDetails, userId } = req.body;
 
   const options = {
-    amount: Number(orderDetails.totalPrice*100),
+    amount: Number(orderDetails.totalPrice * 100),
     currency: "INR",
-    receipt: "order_rcptid_11"
+    receipt: "order_rcptid_11",
   };
- const order = await instance.orders.create(options);
-    console.log(order);
+  const order = await instance.orders.create(options);
+  console.log(order);
 
-    const user = await UserModel.findById(userId);
+  const user = await UserModel.findById(userId);
 
-    const orderDoc = new orderModel({
-      userId: orderDetails.userId,
-      products: orderDetails.products.map((product) => ({
-        productId: product.productId,
-        productName: product.productName,
-        productImage: product.productImage,
-        price:product.price,
-        quantity: product.quantity,
-      })),
+  const orderDoc = new orderModel({
+    userId: orderDetails.userId,
+    products: orderDetails.products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      productImage: product.productImage,
+      price: product.price,
+      quantity: product.quantity,
+    })),
 
-      discountAmount:orderDetails.discountAmount,
-      couponCode:orderDetails.couponCode,
-      
-      // coupon: couponId,
-      // shipping,
-      totalPrice:orderDetails.totalPrice,
-      userName:user.username,
-      address:orderDetails.address,
-      orderDate:orderDetails.orderDate,
-      paymentMethod:orderDetails.paymentMethod,
-      
-      phone:user.phone,
-      
-      razor_orderId: order.id,
-    });
-    orderDoc.save();
+    discountAmount: orderDetails.discountAmount,
+    couponCode: orderDetails.couponCode,
 
-    res.status(200).json({
-      success:true,
-      order,
+    // coupon: couponId,
+    // shipping,
+    totalPrice: orderDetails.totalPrice,
+    userName: user.username,
+    address: orderDetails.address,
+    orderDate: orderDetails.orderDate,
+    paymentMethod: orderDetails.paymentMethod,
 
-    })
+    phone: user.phone,
 
-}
+    razor_orderId: order.id,
+  });
+  orderDoc.save();
 
-
+  res.status(200).json({
+    success: true,
+    order,
+  });
+};
 
 exports.paymentverification = async (req, res) => {
   try {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+      req.body;
 
-    console.log('body',razorpay_payment_id, razorpay_order_id, razorpay_signature);
+    console.log(
+      "body",
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature
+    );
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expected_signature = crypto
-      .createHmac("sha256", 'di489bhFwIvJ0YVnd487dJfH')
+      .createHmac("sha256", "di489bhFwIvJ0YVnd487dJfH")
       .update(body.toString())
       .digest("hex");
-    
+
     if (razorpay_signature === expected_signature) {
       await orderModel.updateOne(
         { razor_orderId: razorpay_order_id },
@@ -605,13 +646,14 @@ exports.paymentverification = async (req, res) => {
       return res.json({ success: true });
     } else {
       console.log("Signature validation failed");
-      return res.status(400).json({ success: false, message: "Signature validation failed" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Signature validation failed" });
     }
   } catch (error) {
     console.error("Error in payment verification:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
-
-
-

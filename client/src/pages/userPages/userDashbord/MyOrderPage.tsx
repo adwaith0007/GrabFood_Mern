@@ -101,9 +101,17 @@ const MyOrderPage = () => {
     };
   }, [activeDropdown]);
 
-  const handleCancelProduct = async (orderId: string) => {
+
+
+  const handleCancelOrder = async (orderId: string) => {
     try {
-      const response = await api.put(`/order/cancel/${orderId}`);
+
+      console.log('clicked');
+      
+      console.log(orderId);
+      
+      
+      const response = await api.put(`/order/cancel/${orderId}`,{userId});
       if (response.data.success) {
         console.log("Product canceled:", "from order:", orderId);
 
@@ -151,6 +159,8 @@ const MyOrderPage = () => {
     switch (status) {
       case "Processing":
         return "purple";
+        case "Cancel":
+        return "red";
       case "Shipped":
         return "green";
       case "Delivered":
@@ -188,15 +198,46 @@ const MyOrderPage = () => {
         </p>
       ),
       orderDetails: (
+        
+
         <Link
           className="flex justify-center"
           to={`/user/orders/${order._id}/product`}
-        >
+          >
           View
         </Link>
+       
       ),
       action: (
         <div className="relative w-full inline-block text-left" key={order._id}>
+
+          <div className="flex flex-col" >
+
+          <div className="py-1 flex " role="none">
+                <button
+                  className="flex gap-3 w-full text-left text-black px-2 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  onClick={() => handleCancelOrder(order._id)}
+                >
+                  <TbShoppingCartCancel />
+                  <span>Cancel</span>
+                </button>
+                <button
+                  className=" w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  onClick={() => downloadInvoice(order._id)}
+                >
+                  <svg
+                    className="fill-current w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                  </svg>
+                  <span>Download </span>
+                </button>
+              </div>
+
           <div className="flex justify-center  " >
             <button
               type="button"
@@ -204,9 +245,9 @@ const MyOrderPage = () => {
               onClick={() =>
                 setActiveDropdown(
                   activeDropdown === order._id ? null : order._id
-                )
-              }
-            >
+                  )
+                }
+                >
               Options
               <svg
                 className="-mr-1 ml-2 h-5 w-5"
@@ -214,15 +255,16 @@ const MyOrderPage = () => {
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
-              >
+                >
                 <path
                   fillRule="evenodd"
                   d="M10 12a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 9.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 12z"
                   clipRule="evenodd"
-                />
+                  />
               </svg>
             </button>
           </div>
+                  </div>
 
           {activeDropdown === order._id && (
             <div
@@ -234,7 +276,7 @@ const MyOrderPage = () => {
                 <button
                   className="flex gap-3 w-full text-left text-black px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => handleCancelProduct(order._id)}
+                  onClick={() => handleCancelOrder(order._id)}
                 >
                   <TbShoppingCartCancel />
                   <span>Cancel</span>
