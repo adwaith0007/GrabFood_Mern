@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   AiOutlineClose,
@@ -34,11 +34,7 @@ interface PropsType {
 }
 
 const Navbar = ({ user }: PropsType) => {
-
-  
-
   const [cartItems, setCartItems] = useState([]);
-
 
   // const userId = user._id
 
@@ -51,39 +47,41 @@ const Navbar = ({ user }: PropsType) => {
           setCartItems(response.data.cart);
         }
       } catch (error) {
-        console.error('Error fetching cart items:', error);
+        console.error("Error fetching cart items:", error);
       }
     };
-  
+
     fetchCartItems();
   }, [user]);
-  
-
-  
-
-
-
-
-  
 
   const [nav, setNav] = useState<boolean>(false);
- 
- 
 
   const [showSearch, setShowSearch] = useState(false);
 
-
-
   const [isOpenUser, setIsOpenUser] = useState(false);
+
+  const dropdownRef = useRef(null);
   const isLoggedIn = true; // Replace with your authentication logic
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpenUser(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const toggleDropdown = () => {
     setIsOpenUser(!isOpenUser);
   };
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  
 
   const logoutHandler = async () => {
     try {
@@ -101,7 +99,7 @@ const Navbar = ({ user }: PropsType) => {
 
   return (
     <div className="h-[80px] w-full ">
-      <nav className="bg-white dark:bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
+      <nav className="bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <div onClick={() => setNav(!nav)}>
             <AiOutlineMenu size={30} className="text-white cursor-pointer " />
@@ -112,6 +110,9 @@ const Navbar = ({ user }: PropsType) => {
           >
             <img src={logo} alt=""></img>
           </Link>
+
+
+
           <div className="flex md:order-2 space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
             <div className="relative hidden md:block">
               <button
@@ -127,9 +128,6 @@ const Navbar = ({ user }: PropsType) => {
                 placeholder="Search..."
               />
             </div>
-            
-
-            
 
             <Link className="" to="/cart">
               <div className="relative py-2   ">
@@ -148,12 +146,16 @@ const Navbar = ({ user }: PropsType) => {
                   <FaUser />
                 </button>
 
-                <div className="relative inline-block text-left">
+                <div
+                  className="relative inline-block text-left"
+                  ref={dropdownRef}
+                >
                   <div>
                     <button
-                      onClick={toggleDropdown}
                       type="button"
-                      className="inline-flex justify-center items-center w-full px-4 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+                      className="inline-flex justify-center items-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+                      id="dropdown-button"
+                      onClick={toggleDropdown}
                     >
                       {isLoggedIn ? (
                         <>
@@ -169,37 +171,34 @@ const Navbar = ({ user }: PropsType) => {
                         <>User Logo</>
                       )}
                       <svg
-                        className={`w-5 h-5 ml-2 -mr-1 ${
-                          isOpenUser ? "transform rotate-180" : ""
-                        }`}
+                        className="-mr-1 ml-2 h-5 w-5"
                         xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
                       >
                         <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M19 9l-7 7-7-7"
-                        ></path>
+                          fillRule="evenodd"
+                          d="M10 12a1 1 0 01-.707-.293l-4-4a1 1 0 111.414-1.414L10 9.586l3.293-3.293a1 1 0 111.414 1.414l-4 4A1 1 0 0110 12z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </button>
                   </div>
 
                   {isOpenUser && (
-                    <div className="absolute right-0 mt-2 space-y-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                    <div className="absolute right-0 mt-2 w-36     ring-1 ring-black ring-opacity-5 space-y-2 bg-white border border-gray-300 rounded-md shadow-lg">
                       {isLoggedIn ? (
                         <>
                           <Link
                             to="user/profile"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             Profile
                           </Link>
                           <button
                             onClick={logoutHandler}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="block w-full flex justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             Logout
                           </button>
@@ -223,6 +222,8 @@ const Navbar = ({ user }: PropsType) => {
                     </div>
                   )}
                 </div>
+
+                
 
                 <dialog open={isOpen}>
                   <div>
@@ -268,11 +269,11 @@ const Navbar = ({ user }: PropsType) => {
             className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
             id="navbar-sticky"
           >
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
               <li>
                 <Link
                   to="/"
-                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent "
                   aria-current="page"
                 >
                   Home
@@ -281,7 +282,7 @@ const Navbar = ({ user }: PropsType) => {
               <li>
                 <Link
                   to="/menu"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  className="block py-2 px-3  rounded hover:bg-gray-100 md:hover:bg-transparent text-white  "
                 >
                   Menu
                 </Link>
@@ -289,7 +290,7 @@ const Navbar = ({ user }: PropsType) => {
               <li>
                 <Link
                   to="/services"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  className="block py-2 px-3  rounded  md:hover:bg-transparent text-white "
                 >
                   Services
                 </Link>
@@ -297,7 +298,7 @@ const Navbar = ({ user }: PropsType) => {
               <li>
                 <Link
                   to="/contact"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  className="block py-2 px-3  rounded  md:hover:bg-transparent  text-white "
                 >
                   Contact
                 </Link>
@@ -306,12 +307,10 @@ const Navbar = ({ user }: PropsType) => {
           </div>
         </div>
 
-      
-
         {/* Mobile Menu */}
         {/* Overlay */}
         {nav ? (
-          <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+          <div className="bg-black/80 fixed w-full h-screen z-20 top-0 left-0"></div>
         ) : (
           ""
         )}
@@ -321,8 +320,8 @@ const Navbar = ({ user }: PropsType) => {
         <div
           className={
             nav
-              ? "fixed top-0 left-0 w-[300px] h-screen bg-white z-10 duration-300"
-              : "fixed top-0 left-[-100%] w-[300px] h-screen bg-white z-10 duration-300"
+              ? "fixed top-0 left-0 w-[300px] h-screen bg-white z-30 duration-300"
+              : "fixed top-0 left-[-100%] w-[300px] h-screen bg-white z-30 duration-300"
           }
         >
           <AiOutlineClose
@@ -367,8 +366,6 @@ const Navbar = ({ user }: PropsType) => {
       </nav>
 
       {/* {showSearch && <Search setShowSearch={setShowSearch} />} */}
-
-      
     </div>
   );
 };
