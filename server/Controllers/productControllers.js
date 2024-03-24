@@ -185,33 +185,99 @@ exports.addProduct = async (req, res) => {
 //   }
 // };
 
-exports.listProduct = async (req, res) => {
-  try {
-    console.log('in');
+// exports.listProduct = async (req, res) => {
+//   try {
+//     console.log('in');
 
     
-    if (req.query.category && req.query.category === "All Products") {
+//     if (req.query.category && req.query.category === "All Products") {
       
-      const data = await productModel.find({});
-      res.status(200).json({ success: true, data: data });
-    } else if (req.query.category) {
+//       const data = await productModel.find({});
+//       res.status(200).json({ success: true, data: data });
+//     } else if (req.query.category) {
       
-      const category = req.query.category;
-      console.log(category);
+//       const category = req.query.category;
+//       console.log(category);
       
-      const filteredProducts = await productModel.find({ category });
-      console.log(filteredProducts);
+//       const filteredProducts = await productModel.find({ category });
+//       console.log(filteredProducts);
       
-      res.status(200).json({ success: true, data: filteredProducts });
-    } else {
+//       res.status(200).json({ success: true, data: filteredProducts });
+//     } else {
       
-      const data = await productModel.find({});
-      res.status(200).json({ success: true, data: data });
+//       const data = await productModel.find({});
+//       res.status(200).json({ success: true, data: data });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+
+
+exports.listProduct = async (req, res) => {
+  try {
+    // Set default values for page and limit
+    const page = parseInt(req.query.page) || 1;
+    const limit =  parseInt(req.query.limit) || 10; 
+
+    
+    const skip = (page - 1) * limit;
+    let query = {};
+
+    
+    if (req.query.category && req.query.category !== "All Products") {
+      query.category = req.query.category;
     }
+
+    
+    const totalCount = await productModel.countDocuments(query);
+
+    
+    const products = await productModel
+      .find(query)
+      .skip(skip)
+      .limit(limit);
+
+    
+    const totalPages = Math.ceil(totalCount / limit);
+
+    
+    res.status(200).json({
+      success: true,
+      data: products,
+      totalPages: totalPages,
+      currentPage: page,
+      totalCount: totalCount
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.searchProduct = async (req, res) => {
+
+  try {
+   
+    
+    const query = req.query.q; 
+    console.log(query);
+    
+    const results = await productModel.find({ $text: { $search: query } });
+    if (results.length === 0) {
+      
+      const partialMatchResults = await productModel.find({ productName: { $regex: new RegExp(query, 'i') } });
+      res.status(200).json({ success: true, data: partialMatchResults });
+    } else {
+      res.status(200).json({ success: true, data: results });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+
+}
+
+
 
 exports.getProductDetails = async (req, res) => {
   try {

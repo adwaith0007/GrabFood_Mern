@@ -21,10 +21,10 @@ import { User } from "../../types/types";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import toast from "react-hot-toast";
-
+import { useNavigate } from 'react-router-dom';
 import Cookie from "js-cookie";
 
-import Search from "../Search";
+import Search from "../SearchBar";
 import axios from "axios";
 
 const server = import.meta.env.VITE_SERVER;
@@ -56,12 +56,20 @@ const Navbar = ({ user }: PropsType) => {
 
   const [nav, setNav] = useState<boolean>(false);
 
-  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [isOpenUser, setIsOpenUser] = useState(false);
 
   const dropdownRef = useRef(null);
   const isLoggedIn = true; // Replace with your authentication logic
+
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Navigate to the search results page with the search query
+    navigate(`/menu?q=${searchQuery}`);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -100,7 +108,7 @@ const Navbar = ({ user }: PropsType) => {
   return (
     <div className="h-[80px] w-full ">
       <nav className="bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <div className="max-w-screen-xl flex flex-wrap items-center  justify-between mx-auto p-4">
           <div onClick={() => setNav(!nav)}>
             <AiOutlineMenu size={30} className="text-white cursor-pointer " />
           </div>
@@ -112,9 +120,51 @@ const Navbar = ({ user }: PropsType) => {
           </Link>
 
 
+          <div
+            className="items-center  justify-between hidden w-full md:flex md:w-auto md:order-1"
+            id="navbar-sticky"
+          >
+            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
+              <li>
+                <Link
+                  to="/"
+                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent "
+                  aria-current="page"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/menu"
+                  className="block py-2 px-3  rounded hover:bg-gray-100 md:hover:bg-transparent text-white  "
+                >
+                  Menu
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/services"
+                  className="block py-2 px-3  rounded  md:hover:bg-transparent text-white "
+                >
+                  Services
+                </Link>
+              </li>
+              {/* <li>
+                <Link
+                  to="/contact"
+                  className="block py-2 px-3  rounded  md:hover:bg-transparent  text-white "
+                >
+                  Contact
+                </Link>
+              </li> */}
+            </ul>
+          </div>
 
-          <div className="flex md:order-2 space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
-            <div className="relative hidden md:block">
+
+
+          <div className="flex md:order-2 b space-x-3 gap-10 md:space-x-0 rtl:space-x-reverse">
+            {/* <div className="relative hidden md:block">
               <button
                 className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
                 onClick={() => setShowSearch(false)}
@@ -127,7 +177,26 @@ const Navbar = ({ user }: PropsType) => {
                 className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search..."
               />
+            </div> */}
+
+            <div className="flex justify-center items-center" >
+
+
+
+            <div className="relative text-gray-600">
+              <form onSubmit={handleSearch} >
+      <input type="search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search..." className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none" />
+      <button type="submit" className="absolute right-0 top-0 mt-3 mr-4">
+        <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 56.966 56.966" style={{ enableBackground: "new 0 0 56.966 56.966" }} xmlSpace="preserve" width="512px" height="512px">
+          <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+        </svg>
+      </button>
+              </form>
+    </div>
+
             </div>
+
+            
 
             <Link className="" to="/cart">
               <div className="relative py-2   ">
@@ -142,9 +211,9 @@ const Navbar = ({ user }: PropsType) => {
 
             {user ? (
               <>
-                <button onClick={() => setIsOpen((prev) => !prev)}>
+                {/* <button onClick={() => setIsOpen((prev) => !prev)}>
                   <FaUser />
-                </button>
+                </button> */}
 
                 <div
                   className="relative inline-block text-left"
@@ -265,46 +334,9 @@ const Navbar = ({ user }: PropsType) => {
               </div>
             )}
           </div>
-          <div
-            className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-            id="navbar-sticky"
-          >
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
-              <li>
-                <Link
-                  to="/"
-                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent "
-                  aria-current="page"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu"
-                  className="block py-2 px-3  rounded hover:bg-gray-100 md:hover:bg-transparent text-white  "
-                >
-                  Menu
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/services"
-                  className="block py-2 px-3  rounded  md:hover:bg-transparent text-white "
-                >
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="block py-2 px-3  rounded  md:hover:bg-transparent  text-white "
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
+
+          
+
         </div>
 
         {/* Mobile Menu */}

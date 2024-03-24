@@ -27,14 +27,26 @@ router.post('/placeOrder', (req, res) => {
     orderControllers.getAllOrders(req, res);
   });
 
+  router.get('/orders/products', (req, res) => {
+    orderControllers.getProductOrders(req, res);
+  });
+
   router.get('/orders/:orderId/:productId', (req, res) => {
     orderControllers.getOrderProductDetails(req, res);
+  });
+
+  router.get('/orders/:orderId', (req, res) => {
+    orderControllers.getOrderDetails(req, res);
   });
 
   router.put('/orders/:orderId/product/:productId', (req, res) => {
     orderControllers.updateProductStatus(req, res);
   });
 
+
+  router.put('/orders/:orderId', (req, res) => {
+    orderControllers.updateOrderStatus(req, res);
+  });
 
   router.get("/order/invoice/:orderId" , (req, res) => {
     console.log('hii');
@@ -45,8 +57,6 @@ router.post('/placeOrder', (req, res) => {
   router.put('/order/cancel/:orderId/product/:productId', orderControllers.cancelProduct);
 
   router.put('/order/cancel/:orderId' , (req, res) => {
-    console.log('hii333');
-
     orderControllers.cancelOrder(req, res);
   });
 

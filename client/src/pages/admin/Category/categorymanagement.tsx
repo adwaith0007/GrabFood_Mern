@@ -23,6 +23,7 @@ const CategoryManagement = () => {
   const [categoryDetails, setCategoryDetails] = useState<CategoryDetails>();
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [addOfferBox, setAddOfferBox] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -183,6 +184,33 @@ const CategoryManagement = () => {
               </div>
             </div>
             {photoFile && <img src={URL.createObjectURL(photoFile)} alt="New Image" />}
+
+            <div className="flex w-full " >
+              <div>
+
+              <button type="button" onClick={()=>{setAddOfferBox(!addOfferBox)}}  className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300" >
+                  Add Offer
+              </button>
+              </div>
+
+            {addOfferBox&&(
+              <div  >
+
+                
+
+                
+                <input  className="w-52" placeholder="Offen in percentage.." type="number"  >
+                
+                </input>
+               
+
+
+                
+
+              </div>
+            )}
+            </div>
+
             <button type="submit" disabled={updating}>
               Update
             </button>

@@ -51,7 +51,7 @@ const SignupPage = () => {
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh]    w-full ">
-      <Navbar />
+      
 
       <Toaster position="top-center" reverseOrder={false} ></Toaster>
       <div className="container custom-height flex justify-center items-center mx-auto  ">

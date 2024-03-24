@@ -83,7 +83,7 @@ const Transaction = () => {
 
 
   useEffect(() => {
-        api.get(`/orders`)
+        api.get(`/orders/products`)
           .then((res) => {
             if (res.data.success) {
               setAllOrders(res.data.allOrders);

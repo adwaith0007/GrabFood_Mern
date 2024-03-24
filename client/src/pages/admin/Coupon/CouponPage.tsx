@@ -1,7 +1,7 @@
 import React, {  useEffect, useState } from "react";
-import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
-import api from "../../api";
+import api from "../../../api";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";

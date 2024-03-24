@@ -6,6 +6,11 @@ router.get("/get", (req, res) => {
   productControllers.listProduct(req, res);
 });
 
+router.get("/search", (req, res) => {
+  productControllers.searchProduct(req, res);
+});
+
+
 router.post("/add", (req, res) => {
   productControllers.addProduct(req, res);
 });

@@ -4,9 +4,9 @@ import { ReactElement } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import TableHOC from "../../components/admin/TableHOC";
-import api from '../../api';
+import AdminSidebar from "../../../components/admin/AdminSidebar";
+import TableHOC from "../../../components/admin/TableHOC";
+import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
 
 interface DataType {
