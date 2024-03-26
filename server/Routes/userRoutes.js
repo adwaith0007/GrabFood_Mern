@@ -17,8 +17,8 @@ router.post("/login",  (req, res) => {
   userController.login(req, res);
 });
 
-router.post("/user/edit", isUserLoggedIn, (req, res) => {
-  userController.edit(req, res);
+router.put("/user/edit/:userId",  (req, res) => {
+  userController.editUser(req, res);
 });
 
 
@@ -27,9 +27,18 @@ router.post("/register", (req, res) => {
 });
 
 
+router.post("/user/wishlist/add", (req, res) => {
+  userController.toggleWishlist(req, res);
+});
+
+router.get("/user/wishlist", (req, res) => {
+  
+  
+  userController.getWishlist(req, res);
+});
 
 
-router.get("/users/delete/:id", isAdminLoggedIn, (req, res) => {
+router.get("/users/delete/:id",  (req, res) => {
   userController.delete(req, res);
 });
 
@@ -60,6 +69,14 @@ router.post("/authenticate", (req, res) => {
 // GET Methods
 router.get("/user/:username", userController.getUser); /* user login  */
 
+router.get("/user/get/:userId", (req, res) => {
+
+  console.log('hiii55');
+  
+  
+  userController.getUserById(req, res);
+});
+
 router.get(
   "/generateOTP",
   userController.localVariables,
@@ -82,7 +99,7 @@ router.put("/resetPassword", userController.resetPassword);
 //   userController.getAddress(req, res);
 // });
 
-router.post("/user/getAddress", isUserLoggedIn,  (req, res) => {
+router.post("/user/getAddress",   (req, res) => {
   
   
   userController.getAddress(req, res);

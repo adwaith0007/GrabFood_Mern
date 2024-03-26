@@ -167,49 +167,49 @@ exports.updateCategory = async (req, res) => {
   }
 };
 
-exports.updateProduct = async (req, res) => {
-  try {
-    upload.array("images")(req, res, async (err) => {
-      if (err) {
-        console.error("Error during file upload:", err);
-        return res.status(500).json({
-          success: false,
-          message: "Internal server error in file upload",
-        });
-      }
-      const productId = req.params.productId;
+// exports.updateProduct = async (req, res) => {
+//   try {
+//     upload.array("images")(req, res, async (err) => {
+//       if (err) {
+//         console.error("Error during file upload:", err);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Internal server error in file upload",
+//         });
+//       }
+//       const productId = req.params.productId;
 
-      const { desc, price, category, name } = req.body;
-      const newImages = req.files?.map((file) => file.filename) || [];
+//       const { desc, price, category, name } = req.body;
+//       const newImages = req.files?.map((file) => file.filename) || [];
 
-      const existingProduct = await productModel.findById(productId);
+//       const existingProduct = await productModel.findById(productId);
 
-      const updatedImages = existingProduct.productImage.concat(newImages);
+//       const updatedImages = existingProduct.productImage.concat(newImages);
 
-      const updatedProduct = {
-        _id: productId,
-        productName: name,
-        productImage: updatedImages,
-        price: Number(price),
-        Description: desc,
-        category: category,
-      };
+//       const updatedProduct = {
+//         _id: productId,
+//         productName: name,
+//         productImage: updatedImages,
+//         price: Number(price),
+//         Description: desc,
+//         category: category,
+//       };
 
-      await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
+//       await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
 
-      res.status(201).json({
-        success: true,
-        message: "Product updated",
-        data: { updatedProduct },
-      });
-    });
-  } catch (error) {
-    console.log("Error while updating product:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to update product" });
-  }
-};
+//       res.status(201).json({
+//         success: true,
+//         message: "Product updated",
+//         data: { updatedProduct },
+//       });
+//     });
+//   } catch (error) {
+//     console.log("Error while updating product:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Failed to update product" });
+//   }
+// };
 
 
 

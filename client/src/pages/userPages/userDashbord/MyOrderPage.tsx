@@ -209,13 +209,13 @@ const MyOrderPage = () => {
        
       ),
       action: (
-        <div className="relative w-full inline-block text-left" key={order._id}>
+        <div className="relative w-full inline-block " key={order._id}>
 
           <div className="flex flex-col" >
 
-          <div className="py-1 flex " role="none">
+          <div className="py-1 flex gap-3 " role="none">
                 <button
-                  className="flex gap-3 w-full text-left text-black px-2 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                  className="flex gap-3 w-full  border rounded justify-center text-black px-2 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
                   onClick={() => handleCancelOrder(order._id)}
                 >
@@ -223,7 +223,7 @@ const MyOrderPage = () => {
                   <span>Cancel</span>
                 </button>
                 <button
-                  className=" w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
                   onClick={() => downloadInvoice(order._id)}
                 >
@@ -238,7 +238,7 @@ const MyOrderPage = () => {
                 </button>
               </div>
 
-          <div className="flex justify-center  " >
+          {/* <div className="flex justify-center  " >
             <button
               type="button"
               className="inline-flex justify-center  rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
@@ -263,7 +263,7 @@ const MyOrderPage = () => {
                   />
               </svg>
             </button>
-          </div>
+          </div> */}
                   </div>
 
           {activeDropdown === order._id && (
@@ -309,7 +309,7 @@ const MyOrderPage = () => {
     columns,
     rows,
     "dashboard-product-box",
-    "Orders",
+    (<p className="text-xl font-medium" >Orders</p> ),
     rows.length > 6
   )();
 

@@ -11,6 +11,7 @@ import api from "../../api";
 const server = import.meta.env.VITE_SERVER;
 
 const MenuPage = () => {
+  
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
@@ -26,7 +27,7 @@ const MenuPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const rowsPerPage = 2;
+  const rowsPerPage = 4;
 
   useEffect(() => {
     try {
@@ -168,6 +169,8 @@ const MenuPage = () => {
                       "%20"
                     )}`}
                     onAddToCart={() => addToCart(item)}
+
+                    onAddToWishlist={() => addToWishlist(item)}
                   />
                 </>
               )}

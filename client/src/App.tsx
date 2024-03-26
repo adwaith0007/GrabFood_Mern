@@ -35,6 +35,8 @@ const SignUp = lazy(() => import("./pages/userPages/SignUp"));
 
 const Demo = lazy(() => import("./pages/Demo"));
 
+const LoginPage = lazy(() => import("./pages/adminPages/LoginPage"));
+const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
 
 
 import Cookies from "js-cookie";
@@ -94,7 +96,12 @@ function App() {
             {/* user */}
             
             <Route path="/login" element={<ProtectedRoute isAuthenticated={user ? false : true}redirect="/"><Login setToken={setToken} /></ProtectedRoute>}></Route>
-            <Route element={<ProtectedRoute isAuthenticated={true} adminOnly={true} admin={user?.role === "admin" ? true : false}/>}></Route>
+           
+            <Route element={<ProtectedRoute isAuthenticated={true} adminOnly={true} admin={user?.role === "admin" ? true : false}/>}>
+
+            <Route path="/admin/*" element={<AdminRoutes />} />
+              
+            </Route>
 
 
 
@@ -104,15 +111,19 @@ function App() {
             <Route path="/resetpasswordotp" element={<ResetPasswordOtp />} ></Route>
             <Route path="/forgot_password" element={<ResetPassword />}></Route>
 
+
+            <Route path="/admin/signup" element={<SignupPage />}></Route>
+      <Route path="/admin" element={<LoginPage />}></Route>
+
             
             <Route
               element={<ProtectedRoute isAuthenticated={user ? true : false} />}>
               <Route path="/*" element={<UserRoutes />} />
             </Route>
 
-            <Route>
+            {/* <Route>
               <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route>
+            </Route> */}
 
 
 

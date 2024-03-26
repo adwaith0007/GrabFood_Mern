@@ -390,8 +390,8 @@ const PaymentPage = () => {
 
       {orderSuccess && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-md max-w-sm text-center">
-            <div className="success-animation mb-6">
+          <div className="bg-white p-8 rounded-lg shadow-md max-w-sm  text-center">
+            <div className=" mb-6">
               <svg
                 className="checkmark w-16 h-16 text-green-500"
                 xmlns="http://www.w3.org/2000/svg"
@@ -411,19 +411,27 @@ const PaymentPage = () => {
                 />
               </svg>
             </div>
+            
             <p className="text-lg font-semibold text-gray-800">
               Order Successful!
             </p>
             <p className="text-gray-600 mt-2">
               Thank you for your order. We have received your payment and your order is on its way.
             </p>
+
+
+
+            <div className="mt-3" >
             <Link
               to={"/menu"}
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
-            >
+              className="mt-4 bg-blue-500 text-white  px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
+              >
               Continue Shopping
             </Link>
+                </div>
+
           </div>
+          
         </div>
       )}
 

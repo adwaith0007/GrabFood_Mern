@@ -31,21 +31,22 @@ import AddCategory from "../pages/admin/Category/AddCategory";
 import AddCouponPage from "../pages/admin/Coupon/AddCouponPage";
 import Orders from "../pages/admin/Order/Orders";
 import OrderManagement from "../pages/admin/Order/OrderManagement";
+import SalesReport from "../pages/admin/SalesReport";
 
 const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
-const Customers = lazy(() => import("../pages/admin/Customers"));
 const SignupPage = lazy(() => import("../pages/adminPages/SignupPage"));
+const Customers = lazy(() => import("../pages/admin/Customers"));
 
 
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path="/signup" element={<SignupPage />}></Route>
-      <Route path="/admin" element={<LoginPage />}></Route>
+     
 
       
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/orders" element={<Orders />}></Route>
+      <Route path="/sales" element={<SalesReport />}></Route>
       <Route path="/product" element={<Products />} />
       <Route path="/category" element={<Category />} />
       <Route path="/customer" element={<Customers />} />

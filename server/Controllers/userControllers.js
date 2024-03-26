@@ -3,9 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const otpGenerator= require('otp-generator');
 
+const upload = require("../middlewares/multer");
 
-
-
+const productModel = require("../Models/product");
 
 /* POST: http://localhost:5000/api/login */
 exports.login = async (req, res) => {
@@ -53,6 +53,10 @@ exports.login = async (req, res) => {
         "secretkey",
         { expiresIn: "24h" }
       );
+
+      res.cookie('token', token);
+
+      
 
       return res.status(200).send({
         msg: "Login Successful...!",
@@ -215,6 +219,121 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.getUserById = async (req, res) => {
+  const { userId } = req.params;
+
+  console.log(userId);
+
+  try {
+    if (!userId) {
+      return res.status(400).send({ error: "Invalid userId" });
+    } else {
+      const user = await UserModel.findById(userId);
+
+      console.log('user:', user);
+
+      if (!user) {
+        return res.status(404).send({ error: "Couldn't find the user" });
+      } 
+      res.status(200).json({ success: true, data: user });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: "Internal server error" });
+  }
+};
+
+
+exports.updateCategory = async (req, res) => {
+  try {
+    upload.single("photo")(req, res, async (err) => {
+      if (err) {
+        console.error("Error during file upload:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error in file upload",
+        });
+      }
+
+      const categoryId = req.params.categoryId;
+
+      const { category } = req.body;
+
+      let categoryToUpdate = await categoryModel.findById(categoryId);
+
+      if (!categoryToUpdate) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Category not found" });
+      }
+
+      categoryToUpdate.category = category;
+
+      console.log(req);
+
+      if (req.file) {
+        categoryToUpdate.categoryImage = [req.file.filename];
+      }
+
+      const updatedCategory = await categoryToUpdate.save();
+
+      res.status(200).json({ success: true, data: updatedCategory });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+exports.editUser = async (req, res) => {
+  try {
+    upload.single("profileImage")(req, res, async (err) => {
+      if (err) {
+        console.error("Error during file upload:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error in file upload",
+        });
+      }
+
+      const { userId } = req.params;
+      const { name, email, phoneNumber } = req.body;
+
+      console.log("body:", req.body);
+
+      // Find user by ID
+      let userToUpdate = await UserModel.findById(userId);
+
+      if (!userToUpdate) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
+      
+      // Set profile picture if file uploaded
+      let newProfile = userToUpdate.profilePicture;
+      if (req.file) {
+        newProfile = req.file.filename;
+      }
+
+      // Update user data
+      userToUpdate.username = name;
+      userToUpdate.email = email;
+      userToUpdate.phone = phoneNumber;
+      userToUpdate.profilePicture = newProfile;
+
+      // Save updated user
+      const updatedUser = await userToUpdate.save();
+
+      res.status(200).json({ success: true, data: updatedUser });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 
 
@@ -400,6 +519,82 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 
+
+
+exports.toggleWishlist = async (req, res) => {
+  const { userId, productId } = req.body;
+
+  try {
+    
+    let user = await UserModel.findById(userId);
+
+    let product = await productModel.findById(productId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    
+    const existingProductIndex = user.wishlist.findIndex(item => item.productId === productId);
+
+    if (existingProductIndex !== -1) {
+      
+      user.wishlist.splice(existingProductIndex, 1);
+      await user.save();
+      return res.status(200).json({ success: true, message: "Product removed from the wishlist" });
+    } else {
+     
+      const newWishlistItem = {
+        productId: productId,
+        productName: product.productName,
+      };
+      user.wishlist.push(newWishlistItem);
+      await user.save();
+      return res.status(200).json({ success: true, message: "Product added to the wishlist" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+exports.getWishlist = async (req, res) => {
+  const { userId } = req.body;
+
+  console.log(userId);
+
+  console.log('body:' , req.body);
+
+  try {
+    // Find user by ID
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Get array of productId from user's wishlist
+    const productIds = user.wishlist.map(item => item.productId);
+
+    // Fetch product data for each productId
+    const productsData = await Promise.all(productIds.map(async (productId) => {
+      const product = await ProductModel.findById(productId);
+      return product;
+    }));
+
+    // Return the product data
+    res.status(200).json({ success: true, data: productsData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+
+
 exports.addAddress = async (req, res) => {
   const { userId, address } = req.body;
 
@@ -560,7 +755,6 @@ exports.getUserAddresses = async (req, res) => {
 
 
 exports.logout = async (req, res) => {
-  return res
-    .cookie("token", "", { expires: new Date(0) })
+  return res.cookie("token", "", { expires: new Date(0) })
     .json({ success: true, message: "Logged out" });
 };

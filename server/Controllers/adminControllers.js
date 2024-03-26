@@ -43,11 +43,12 @@ exports.adminLogin = async (req, res) => {
     if (await bcrypt.compare(password, admin.password)) {
       console.log(admin.name);
       // create jwt token
-      const adminToken = jwt.sign(
+      const token = jwt.sign(
         {
           adminId: admin._id,
           email: admin.email,
           name: admin.name,
+          role:"admin",
         },
         "secretkey",
         { expiresIn: "24h" }
@@ -56,7 +57,7 @@ exports.adminLogin = async (req, res) => {
       return res.status(200).send({
         msg: "Login Successful...!",
         name: admin.name,
-        adminToken,
+        token,
       });
     } else {
       return res.status(400).send({ error: "Password does not Match" });

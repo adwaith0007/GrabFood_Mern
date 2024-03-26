@@ -8,7 +8,7 @@ import glogo from '../../assets/googlelogo.png'
 import { ChangeEvent, useState } from "react";
 import { useFormik } from "formik";
 import { adminVerifyPassword } from "../../helper/helper";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 import Cookie from "js-cookie";
 
@@ -33,10 +33,11 @@ const LoginPage = () => {
     });
 
     loginPromise.then(res =>{
-      const {adminToken} = res.data;
-      localStorage.setItem('adminToken',adminToken);
-      Cookie.set("adminToken", adminToken, { sameSite: true });
-      navigate('/home')
+      const {token} = res.data;
+      localStorage.setItem('token',token);
+      Cookie.set("token", token, { sameSite: true });
+      navigate('/admin/dashboard')
+     
     })
 
   }

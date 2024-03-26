@@ -3,9 +3,9 @@ const router = express.Router();
 
 const cartController = require("../Controllers/cartController");
 
+const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 
-
-router.post("/cart/add/:userId",  (req, res) => {
+router.post("/cart/add/:userId",   (req, res) => {
     cartController.add(req, res);
   });
   
@@ -24,7 +24,7 @@ router.post("/cart/add/:userId",  (req, res) => {
     cartController.deleteCartItems(req, res);
   });
   
-  router.get('/cart/:userId', cartController.getCartItems);
+  router.get('/cart/:userId',   cartController.getCartItems);
   
   
   

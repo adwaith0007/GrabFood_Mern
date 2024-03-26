@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
+import api from "../api";
+
 import { useSelector } from "react-redux";
 
 import { UserReducerInitialState } from "../types/reducer-types";
@@ -36,29 +38,38 @@ const ProductCard = ({
 
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleToggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+  const handleToggleFavorite = async () => {
+    
 
-    // try {
-    // Assume you have a way to get the user ID (e.g., from authentication)
-    // const userId = user._id;
+    try {
+    
+    const userId = user._id;
 
-    // Make a POST request to the backend endpoint
-    // await axios.post('http://localhost:5000/api/favorites/add', {
-    // userId,
-    // productId,
-    // });
+    
+    
 
-    // Call the local onAddToFavorites callback if needed
+     const response =  await api.post('/user/wishlist/add', {
+
+
+    userId,
+    productId,
+    
+    });
+
+    if(response.status==200){
+
+      setIsFavorite(!isFavorite);
+    }
+
+    
     onAddToFavorites();
-    // } catch (error) {
-    // console.error(error);
-    // Handle error (e.g., show a toast message)
-    // }
+    } catch (error) {
+    console.error(error);
+    
+    }
   };
 
-  // onAddToFavorites(); // You can pass additional data if needed
-  // };
+ 
 
   return (
     <div className="relative m-10 flex w-full max-w-xs  flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">

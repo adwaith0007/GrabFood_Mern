@@ -74,7 +74,9 @@ const Login = ({ setToken }) => {
 
         dispatch(userExist(user));
 
-        Cookie.set("token", token, { sameSite: true });
+        // Cookie.set("token", token, { sameSite: true });
+
+        Cookie.set("token", token, { path: '/',  sameSite: 'Lax' });
 
         setToken(token);
         navigate("/");

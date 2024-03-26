@@ -3,6 +3,7 @@ const UserModel = require("../Models/userModels");
 const adminModel = require("../Models/admin");
 
 exports.isUserLoggedIn = async (req, res, next) => {
+  console.log('Cookies:', req.cookies);
   const token = req.cookies.token;
 
   console.log('token:', token );
@@ -16,6 +17,11 @@ exports.isUserLoggedIn = async (req, res, next) => {
 
     if (!userExist)
       return res.json({ success: false, message: "user not found" });
+
+      if (userExist.isBlocked) {
+        // Redirect to login page if user is blocked
+        return res.redirect('/login'); // Replace '/login' with the actual URL of your login page
+      }
 
     req.user = userExist;
     return next();

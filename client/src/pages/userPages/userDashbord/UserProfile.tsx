@@ -5,30 +5,60 @@ import axios from 'axios';
 import UserSidebar from "../../../components/user/UserSidebar";
 
 import api from '../../../api';
+import { UserReducerInitialState } from "../../../types/reducer-types";
 const server = import.meta.env.VITE_SERVER;
 
 const UserProfile = () => {
-  const { user } = useSelector((state) => state.userReducer);
+  const { user } = useSelector(
+    (state: { userReducer: UserReducerInitialState }) => state.userReducer
+  );
+
+  const userId = user._id;
+  
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     name: '',
     gender: '',
     email: '',
     phoneNumber: '',
-    profileImage: null,
-    // Add more fields as needed
+    profilePicture: null,
+    
   });
 
   useEffect(() => {
-    // Set initial user data from Redux
-    setUserData({
-      name: user.name,
-      gender: user.gender,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      // Add more fields as needed
-    });
-  }, [user]);
+    
+    const fetchUserData = async () => {
+        try {
+           
+
+            const response = await api.get(`/user/get/${userId}`);
+            
+            console.log( 'data:', response.data);
+            
+
+            // Check if request was successful and response contains data
+            if (response && response.data) {
+                const userDataFromApi = response.data.data;
+
+                // Update state with fetched user data
+                setUserData({
+                    name: userDataFromApi.username,
+                    gender: userDataFromApi.gender,
+                    email: userDataFromApi.email,
+                    phoneNumber: userDataFromApi.phone,
+                    profilePicture:userDataFromApi.profilePicture,
+                    
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            
+        }
+    };
+
+    
+    fetchUserData();
+}, [userId]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -44,16 +74,14 @@ const UserProfile = () => {
       formData.append('profileImage', userData.profileImage);
 
       // Perform save operation using axios to update user data on the server
-      const response = await api.put(`/user/${user.id}`, formData, {
+      const response = await api.put(`/user/edit/${userId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.status === 200) {
-        // If the update is successful, you might want to update the user data in Redux
-        // For example, dispatch an action to update the user data in the Redux store
-        // dispatch(updateUser(response.data));
+        
         console.log('User profile updated successfully');
       } else {
         console.error('Error updating user profile');
@@ -66,14 +94,16 @@ const UserProfile = () => {
   };
 
   const handleInputChange = (field, value) => {
-    // Handle image changes separately
+    
     if (field === 'profileImage') {
       setUserData({ ...userData, [field]: value[0] });
     } else {
-      // Update other user data fields
+      
       setUserData({ ...userData, [field]: value });
     }
   };
+
+  const image = `${server}/${userData?.profilePicture?.replace(/ /g, "%20")}`;
 
   return (
     <div className="admin-container">
@@ -82,7 +112,7 @@ const UserProfile = () => {
         <div className="flex items-center space-x-6">
           <div className="relative w-20 h-20">
             <img
-              src={user.photo || '/default-user-image.jpg'}
+              src={ image || '/default-user-image.jpg'}
               alt="user"
               className="w-full h-full object-cover rounded-full"
             />

@@ -577,3 +577,38 @@ exports.paymentverification = async (req, res) => {
       .json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
+exports.filterDataByDate = async (req, res) => {
+  let { startDate, endDate } = req.body;
+
+  console.log('startDate:', startDate ,'endDate:',endDate );
+  
+
+  if (startDate === endDate)
+    endDate = new Date(new Date(endDate).setHours(28, 59, 59, 999));
+
+  try {
+    const orderData = await orderModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate),
+          },
+        },
+      },
+    ]);
+
+    console.log('orderData:', orderData);
+    
+    return res.status(200).json({ success: true, data: orderData });
+  } catch (error) {
+    console.log("error while getting order details", error);
+    return res.json({
+      success: false,
+      message: "error while getting order filtering",
+    });
+  }
+};

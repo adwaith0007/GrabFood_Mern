@@ -5,6 +5,7 @@ const orderControllers = require("../Controllers/orderControllers");
 const invoiceController = require("../Controllers/invoiceControllers");
 
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
+const { log } = require("handlebars");
 
 router.post('/placeOrder', (req, res) => {
     orderControllers.placeOrder(req, res);
@@ -58,6 +59,11 @@ router.post('/placeOrder', (req, res) => {
 
   router.put('/order/cancel/:orderId' , (req, res) => {
     orderControllers.cancelOrder(req, res);
+  });
+
+
+  router.post("/order/filterDataByDate", (req, res) => {
+    orderControllers.filterDataByDate(req, res);
   });
 
 module.exports = router;
