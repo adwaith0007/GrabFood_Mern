@@ -560,15 +560,17 @@ exports.toggleWishlist = async (req, res) => {
 
 
 exports.getWishlist = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.params;
 
   console.log(userId);
 
-  console.log('body:' , req.body);
+ 
 
   try {
     // Find user by ID
     const user = await UserModel.findById(userId);
+
+
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -579,7 +581,7 @@ exports.getWishlist = async (req, res) => {
 
     // Fetch product data for each productId
     const productsData = await Promise.all(productIds.map(async (productId) => {
-      const product = await ProductModel.findById(productId);
+      const product = await productModel.findById(productId);
       return product;
     }));
 

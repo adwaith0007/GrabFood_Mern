@@ -11,6 +11,8 @@ import UserSidebar from "../../../components/user/UserSidebar";
 import { TbShoppingCartCancel } from "react-icons/tb";
 const server = import.meta.env.VITE_SERVER;
 
+import axios from "axios";
+
 interface Address {
   street: string;
   city: string;
@@ -135,7 +137,11 @@ const FavouritesPage = () => {
 
   const fetchUserOrders = async () => {
     try {
-      const response = await api.get(`/user/wishlist`, { userId } );
+      const response = await api.get(`/user/${userId}/wishlist` );
+
+      
+
+      // const response = await axios.get(`${server}/api/user/wishlist`, {userId} );
       if (response.data.success) {
         setUserOrders(response.data.data);
       } else {

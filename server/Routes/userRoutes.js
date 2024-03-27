@@ -31,7 +31,7 @@ router.post("/user/wishlist/add", (req, res) => {
   userController.toggleWishlist(req, res);
 });
 
-router.get("/user/wishlist", (req, res) => {
+router.get("/user/:userId/wishlist", (req, res) => {
   
   
   userController.getWishlist(req, res);
