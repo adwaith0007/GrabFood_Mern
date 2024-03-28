@@ -7,16 +7,16 @@ const invoiceController = require("../Controllers/invoiceControllers");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 const { log } = require("handlebars");
 
-router.post('/placeOrder', (req, res) => {
-    orderControllers.placeOrder(req, res);
-  });
+// router.post('/placeOrder', (req, res) => {
+//     orderControllers.placeOrder(req, res);
+//   });
 
   router.post('/checkout', (req, res) => {
     orderControllers.checkout(req, res);
   });
 
   router.post('/paymentverification', (req, res) => {
-    console.log("hi")
+   
     orderControllers.paymentverification(req, res);
   });
 
@@ -50,7 +50,7 @@ router.post('/placeOrder', (req, res) => {
   });
 
   router.get("/order/invoice/:orderId" , (req, res) => {
-    console.log('hii');
+   
     
     invoiceController.generateInvoice(req, res);
   });

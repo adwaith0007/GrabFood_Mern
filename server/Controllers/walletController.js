@@ -25,13 +25,8 @@ exports.addMoney = async (req, res) => {
 };
 
 exports.getBalance = async (req, res) => {
-  // const { userId } = req.body;
-
-  const userId = req.params.userId;
-
-  console.log('user:',userId);
-
-  try {
+    const userId = req.params.userId;
+try {
     const currentAmount = await UserModel.find(
       { _id: userId },
       { "wallet.balance": 1, _id: 0 }
@@ -45,19 +40,19 @@ exports.getBalance = async (req, res) => {
 };
 
 exports.getDeducted = async (req, res) => {
-  const { amount, token } = req.body;
+  const { amount, userId } = req.body;
   try {
-    const user = jwt.verify(token, "my_secret_key");
+    
     const currentAmount = await UserModel.find(
-      { _id: user.id },
+      { _id: userId },
       { "wallet.balance": 1, _id: 0 }
     );
     if (amount > parseInt(currentAmount[0].wallet.balance))
       return res.json({ success: false, message: "Insufficient Balance" });
     const newAmount =
       parseInt(currentAmount[0].wallet.balance) - parseInt(amount);
-    await userModel.updateOne(
-      { _id: user.id },
+    await UserModel.updateOne(
+      { _id: userId },
       { $set: { "wallet.balance": newAmount } }
     );
     return res.json({ success: true, message: `${amount} deducted` });

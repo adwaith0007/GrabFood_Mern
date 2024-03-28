@@ -29,6 +29,31 @@ const MenuPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const rowsPerPage = 4;
 
+
+  const [userFavourites, setUserFavourites] = useState([]);
+
+  const fetchingFavourites = async () => {
+    try {
+      const response = await api.get(`/user/${userId}/wishlist` );
+      if (response.data.success) {
+        setUserFavourites(response.data.data);
+      } else {
+        console.error("Failed to fetch user orders:", response.data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+    } 
+  };
+
+  console.log('data:',userFavourites);
+  
+
+ 
+
+  useEffect(() => {
+    fetchingFavourites();
+  }, [userId]);
+
   useEffect(() => {
     try {
       api.get(`/category/get`).then((res) => {
@@ -157,6 +182,13 @@ const MenuPage = () => {
         <div className="grid grid-cols-4 gap-4">
           {productList.map((item) => (
             <div key={item._id}>
+           {/* {
+             if(userFavourites.includes(item._id)){
+
+<>
+           }
+
+            } */}
               {item.productImage && item.productImage[0] && (
                 <>
                   <ProductCard

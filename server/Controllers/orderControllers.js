@@ -14,69 +14,191 @@ const instance = new Razorpay({
   key_secret: process.env.RAZORPAY_API_SECRET,
 });
 
-exports.placeOrder = async (req, res) => {
-  try {
-    const {
-      userId,
-      products,
-      address,
-      paymentMethod,
-      orderDate,
-      totalPrice,
-      couponId,
-    } = req.body;
 
-    if (
-      !userId ||
-      !products ||
-      !Array.isArray(products) ||
-      products.length === 0 ||
-      !address ||
-      !paymentMethod ||
-      !orderDate ||
-      !totalPrice
-    ) {
-      return res.status(301).json({
-        success: false,
-        message: "Please provide valid information for the order.",
-      });
-    }
 
-    const user = await UserModel.findById(userId);
 
-    console.log(req.body);
-    const newOrder = new orderModel({
-      userId,
-      userName: user.username,
-      products,
-      orderStatus,
-      couponId,
-      address,
-      paymentMethod,
-      orderDate,
-      totalPrice,
-    });
 
-    const savedOrder = await newOrder.save();
 
-    res.status(201).json({ success: true, order: savedOrder });
+exports.checkout = async (req, res) => {
+  const { orderDetails, userId } = req.body;
+
+  const options = {
+    amount: Number(orderDetails.totalPrice * 100),
+    currency: "INR",
+    receipt: "order_rcptid_11",
+  };
+  const order = await instance.orders.create(options);
+  console.log(order);
+
+  const user = await UserModel.findById(userId);
+
+  const orderDoc = new orderModel({
+    userId: orderDetails.userId,
+    products: orderDetails.products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      productImage: product.productImage,
+      price: product.price,
+      quantity: product.quantity,
+    })),
+
+    discountAmount: orderDetails.discountAmount,
+    couponCode: orderDetails.couponCode,
+
+    // coupon: couponId,
+    // shipping,
+    totalPrice: orderDetails.totalPrice,
+    userName: user.username,
+    address: orderDetails.address,
+    orderDate: orderDetails.orderDate,
+    paymentMethod: orderDetails.paymentMethod,
+
+    phone: user.phone,
+
+    razor_orderId: order.id,
+  });
+  orderDoc.save();
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+};
+
+
+exports.orderforWallet = async (req, res) => {
+  const { orderDetails, userId } = req.body;
+
+  try{
+
+  const user = await UserModel.findById(userId);
+
+  const orderDoc = new orderModel({
+    userId: orderDetails.userId,
+    products: orderDetails.products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      productImage: product.productImage,
+      price: product.price,
+      quantity: product.quantity,
+    })),
+
+    discountAmount: orderDetails.discountAmount,
+    couponCode: orderDetails.couponCode,
+
+    // coupon: couponId,
+    // shipping,
+    totalPrice: orderDetails.totalPrice,
+    userName: user.username,
+    address: orderDetails.address,
+    orderDate: orderDetails.orderDate,
+    paymentMethod: orderDetails.paymentMethod,
+    paymentStatus:true,
+    phone: user.phone,
+
+    
+  });
+  orderDoc.save();
+
+    await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Your Order is placed" });
   } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to place order. Please try again later.",
-    });
+    console.log("error while adding order for wallet", error);
   }
 };
+
+
+
+
+// exports.placeOrder = async (req, res) => {
+//   try {
+//     const {
+//       userId,
+//       products,
+//       address,
+//       paymentMethod,
+//       orderDate,
+//       totalPrice,
+//       couponId,
+//     } = req.body;
+
+//     if (
+//       !userId ||
+//       !products ||
+//       !Array.isArray(products) ||
+//       products.length === 0 ||
+//       !address ||
+//       !paymentMethod ||
+//       !orderDate ||
+//       !totalPrice
+//     ) {
+//       return res.status(301).json({
+//         success: false,
+//         message: "Please provide valid information for the order.",
+//       });
+//     }
+
+//     const user = await UserModel.findById(userId);
+
+//     console.log(req.body);
+//     const newOrder = new orderModel({
+//       userId,
+//       userName: user.username,
+//       products,
+//       orderStatus,
+//       couponId,
+//       address,
+//       paymentMethod,
+//       orderDate,
+//       totalPrice,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     res.status(201).json({ success: true, order: savedOrder });
+//   } catch (error) {
+//     console.error("Error placing order:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Failed to place order. Please try again later.",
+//     });
+//   }
+// };
+
+// exports.getUserOrders = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+    
+//     const userOrders = await orderModel.find({ userId }).sort({ createdAt: -1 });
+
+    
+
+//     res.status(200).json({ success: true, orders: userOrders });
+//   } catch (error) {
+//     console.error("Error fetching user orders:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Failed to fetch user orders. Please try again later.",
+//     });
+//   }
+// };
+
 
 exports.getUserOrders = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Assuming you want to retrieve orders for a specific user
-    const userOrders = await orderModel.find({ userId });
+    // Check for orders with userId and payment method
+    const userOrders = await orderModel.find({ userId, paymentMethod: "onlinePayment" }).sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, orders: userOrders });
+    // Filter orders based on payment status
+    const filteredOrders = userOrders.filter(order => order.paymentStatus === true || order.paymentMethod === "cashOnDelivery");
+
+    res.status(200).json({ success: true, orders: filteredOrders });
   } catch (error) {
     console.error("Error fetching user orders:", error);
     res.status(500).json({
@@ -219,7 +341,7 @@ exports.cancelOrder = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const result = await orderModel.find({})
+    const result = await orderModel.find({}).sort({ createdAt: -1 }); 
 
     res.status(200).json({ success: true, allOrders: result });
   } catch (error) {
@@ -475,51 +597,8 @@ exports.updateOrderStatus = async (req, res) => {
 
 
 
-exports.checkout = async (req, res) => {
-  const { orderDetails, userId } = req.body;
 
-  const options = {
-    amount: Number(orderDetails.totalPrice * 100),
-    currency: "INR",
-    receipt: "order_rcptid_11",
-  };
-  const order = await instance.orders.create(options);
-  console.log(order);
 
-  const user = await UserModel.findById(userId);
-
-  const orderDoc = new orderModel({
-    userId: orderDetails.userId,
-    products: orderDetails.products.map((product) => ({
-      productId: product.productId,
-      productName: product.productName,
-      productImage: product.productImage,
-      price: product.price,
-      quantity: product.quantity,
-    })),
-
-    discountAmount: orderDetails.discountAmount,
-    couponCode: orderDetails.couponCode,
-
-    // coupon: couponId,
-    // shipping,
-    totalPrice: orderDetails.totalPrice,
-    userName: user.username,
-    address: orderDetails.address,
-    orderDate: orderDetails.orderDate,
-    paymentMethod: orderDetails.paymentMethod,
-
-    phone: user.phone,
-
-    razor_orderId: order.id,
-  });
-  orderDoc.save();
-
-  res.status(200).json({
-    success: true,
-    order,
-  });
-};
 
 exports.paymentverification = async (req, res) => {
   try {

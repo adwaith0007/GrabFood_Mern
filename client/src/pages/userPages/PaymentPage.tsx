@@ -5,7 +5,7 @@ import { UserReducerInitialState } from "../../types/reducer-types";
 import toast from "react-hot-toast"; // Add this line
 import PaymentSection from "../../components/user/PaymentSection";
 import axios from "axios";
-
+import logo from "../../assets/logo-grabfood 1.png";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api";
@@ -38,9 +38,49 @@ const PaymentPage = () => {
     setLoading(false);
   }, []);
 
-  const handlePaymentChange = (event) => {
-    setPaymentMethod(event.target.value);
+  
+  const handleWalletPayment = async (amount) => {
+    try {
+      const response = await api.post("/wallet/deduct", { userId, amount });
+  
+      if (!response.data.success) {
+        return toast.error(response.data.message);
+      }
+
+      const orderDetails ={
+        userId:checkoutData.userId,
+        products: checkoutData.products,
+        address: checkoutData.address,
+        discountAmount:checkoutData.discountAmount,
+        couponCode:checkoutData.couponCode,
+        paymentMethod:'Wallet',
+        orderDate: checkoutData.orderDate,
+        totalPrice :checkoutData.totalPrice,
+      }
+  
+      api
+        .post(`/order/wallet`,
+          {
+            
+            orderDetails,userId
+          },
+          
+        )
+        .then((res) => {
+          if (res.data.success) {
+            // toast.success(res.data.message);
+            // navigate("/home");
+            setOrderSuccess(true);
+          } else {
+            toast.error(res.data.message);
+          }
+        });
+    } catch (error) {
+      console.log("error while processing payment via wallet", error);
+    }
   };
+
+
 
   const handleRazorpayPayment = async () => {
     
@@ -67,13 +107,13 @@ const PaymentPage = () => {
         console.log(order);
 
         const options = {
-            key: "rzp_test_teFGtG1SVP604p", // Replace with your Razorpay API key
+            key: "rzp_test_teFGtG1SVP604p", 
             amount: order.amount,
             currency: "INR",
             order_id: order.id,
             name: "GrabFood",
             description: "Payment for purchase",
-            image: "https://example.com/your_logo",
+            image: {logo},
 
             // callback_url: `${server}/api/paymentverification`,
 
@@ -280,7 +320,7 @@ const PaymentPage = () => {
                       <button
                         className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2"
                         onClick={() => {
-                          // handleWalletPayment(total);
+                          handleWalletPayment(checkoutData.totalPrice);
                         }}
                       >
                         Pay ₹ {checkoutData.totalPrice} via wallet
@@ -330,7 +370,7 @@ const PaymentPage = () => {
       </div>
 
 
-      <p className="mt-8 text-lg font-medium">Payment Methods</p>
+      {/* <p className="mt-8 text-lg font-medium">Payment Methods</p>
           <form className="mt-5 grid gap-6">
             <div className="relative">
               <input
@@ -384,9 +424,9 @@ const PaymentPage = () => {
             </div>
           </form>
 
-      {/* {orderDetails.paymentMethod === "onlinePayment" && ( */}
+      {orderDetails.paymentMethod === "onlinePayment" && (
         <button onClick={handleRazorpayPayment}>Pay with Razorpay</button>
-      {/* )} */}
+      )} */}
 
       {orderSuccess && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">

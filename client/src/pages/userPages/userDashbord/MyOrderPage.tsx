@@ -9,6 +9,9 @@ import { UserReducerInitialState } from "../../../types/reducer-types";
 import api from "../../../api";
 import UserSidebar from "../../../components/user/UserSidebar";
 import { TbShoppingCartCancel } from "react-icons/tb";
+import DeletePopeUp from '../../../components/DeletePopeUp';
+import { BsExclamationSquareFill } from "react-icons/bs";
+
 const server = import.meta.env.VITE_SERVER;
 
 interface Address {
@@ -83,6 +86,8 @@ const MyOrderPage = () => {
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [productDeletePopUp, setProductDeletePopUp] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -102,18 +107,34 @@ const MyOrderPage = () => {
   }, [activeDropdown]);
 
 
+  const handleCancelOrder = (orderId: string, orderStatus ) => {
 
-  const handleCancelOrder = async (orderId: string) => {
+    if(orderStatus== "Delivered" ){
+       window.alert("Order is already delivered");
+    }else if (orderStatus== "Cancel"){
+      window.alert("Order is already canceled");
+    }else{
+
+      
+      setSelectedOrderId(orderId);
+      
+      setProductDeletePopUp(true);
+    }
+  };
+
+  const handlePopUpCancel = () => {
+    setProductDeletePopUp(false);
+    setSelectedOrderId(null);
+    
+  };
+
+  const handlePopUpDelete = async () => {
     try {
 
-      console.log('clicked');
-      
-      console.log(orderId);
-      
-      
-      const response = await api.put(`/order/cancel/${orderId}`,{userId});
+
+      const response = await api.put(`/order/cancel/${selectedOrderId}`,{userId});
       if (response.data.success) {
-        console.log("Product canceled:", "from order:", orderId);
+        console.log("Product canceled:", "from order:", selectedOrderId);
 
         fetchUserOrders();
       } else {
@@ -121,8 +142,34 @@ const MyOrderPage = () => {
       }
     } catch (error) {
       console.error("Error canceling product:", error);
+    } finally {
+      setProductDeletePopUp(false);
+      setSelectedOrderId(null);
+      
     }
+
+
+
+    //   const response = await api.put(
+    //     `/order/cancel/${selectedOrderId}/product/${selectedProductId}`
+    //   );
+    //   if (response.data.success) {
+    //     console.log('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
+    //     fetchUserOrders();
+    //   } else {
+    //     console.error('Failed to cancel product:', response.data.error);
+    //   }
+    // } catch (error) {
+    //   console.error('Error canceling product:', error);
+    // } finally {
+    //   setProductDeletePopUp(false);
+    //   setSelectedOrderId(null);
+    //   setSelectedProductId(null);
+    // }
   };
+
+
+
 
   const downloadInvoice = async (orderId: string) => {
     try {
@@ -214,14 +261,15 @@ const MyOrderPage = () => {
           <div className="flex flex-col" >
 
           <div className="py-1 flex gap-3 " role="none">
+               
                 <button
-                  className="flex gap-3 w-full  border rounded justify-center text-black px-2 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
-                  role="menuitem"
-                  onClick={() => handleCancelOrder(order._id)}
-                >
-                  <TbShoppingCartCancel />
-                  <span>Cancel</span>
-                </button>
+            className='bg-red-500 text-white px-4 py-2 rounded'
+            
+            onClick={() => handleCancelOrder(order._id, order.orderStatus)}
+          >
+            Cancel
+          </button>
+
                 <button
                   className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
@@ -274,7 +322,7 @@ const MyOrderPage = () => {
             >
               <div className="py-1" role="none">
                 <button
-                  className="flex gap-3 w-full text-left text-black px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                  className="flex gap-3 w-full text-left  text-black px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
                   onClick={() => handleCancelOrder(order._id)}
                 >
@@ -317,6 +365,13 @@ const MyOrderPage = () => {
     <div className="admin-container">
       <UserSidebar />
       <main>{Table}</main>
+      {productDeletePopUp && (
+        <DeletePopeUp
+          onClose={handlePopUpCancel}
+          onConfirm={handlePopUpDelete}
+          message="Are you sure you want to cancel this product?"
+        />
+      )}
     </div>
   );
 };

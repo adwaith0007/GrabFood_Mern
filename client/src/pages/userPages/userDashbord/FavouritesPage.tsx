@@ -76,7 +76,7 @@ const FavouritesPage = () => {
   const userId = user._id;
 
   const [rows, setRows] = useState<DataType[]>([]);
-  const [userOrders, setUserOrders] = useState<OrderData[]>([]);
+  const [userFavourites, setUserFavourites] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -110,7 +110,7 @@ const FavouritesPage = () => {
       if (response.data.success) {
         console.log("Product canceled:", "from order:", orderId);
 
-        fetchUserOrders();
+        fetchuserFavourites();
       } else {
         console.error("Failed to cancel product:", response.data.error);
       }
@@ -135,15 +135,11 @@ const FavouritesPage = () => {
     }
   };
 
-  const fetchUserOrders = async () => {
+  const fetchingFavourites = async () => {
     try {
       const response = await api.get(`/user/${userId}/wishlist` );
-
-      
-
-      // const response = await axios.get(`${server}/api/user/wishlist`, {userId} );
       if (response.data.success) {
-        setUserOrders(response.data.data);
+        setUserFavourites(response.data.data);
       } else {
         console.error("Failed to fetch user orders:", response.data.error);
       }
@@ -154,62 +150,58 @@ const FavouritesPage = () => {
     }
   };
 
-  console.log('data:',userOrders);
+  console.log('data:',userFavourites);
   
 
  
 
   useEffect(() => {
-    fetchUserOrders();
+    fetchingFavourites();
   }, [userId]);
 
   useEffect(() => {
-    const newRows = userOrders.map((order, index) => ({
-      item: <div className="flex justify-center ">{index + 1}</div>,
+    const newRows = userFavourites.map((item, index) => ({
+      // item: <div className="flex justify-center ">{index + 1}</div>,
+
+      item: <img className="flex justify-center" src={`${server}/${item.productImage[0]      }`}  ></img>,
       productName: (
         <div className="flex flex-col justify-center gap-1">
-          <div className="flex justify-center">Id: {order._id}</div>
-          <div className="flex justify-center">Date: {order.orderDate}</div>
+          <div className="flex justify-center"> {item.productName}</div>
+         
         </div>
       ),
       unitPrice: (
-        <div className="flex justify-center">₹{order.totalPrice}</div>
+        <div className="flex justify-center">₹{item.price}</div>
       ),
       
       action: (
-        <div className="relative w-full inline-block " key={order._id}>
+        <div className=" flex justify-center  inline-block " key={item._id}>
 
-          <div className="flex flex-col" >
+          <div className="flex justify-center flex-col" >
 
           <div className="py-1 flex gap-3 " role="none">
                 <button
-                  className="flex gap-3 w-full  border rounded justify-center text-black px-2 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
+                  className="flex gap-3  w-36  border rounded justify-center bg-black text-white  py-3 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => handleCancelOrder(order._id)}
+                  onClick={() => handleCancelOrder(item._id)}
                 >
-                  <TbShoppingCartCancel />
-                  <span>Cancel</span>
+                  
+                  <span>Add To Cart</span>
                 </button>
                 <button
-                  className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="  flex border w-36  rounded justify-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => downloadInvoice(order._id)}
+                  onClick={() => downloadInvoice(item._id)}
                 >
-                  <svg
-                    className="fill-current w-4 h-4 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-                  </svg>
-                  <span>Download </span>
+                  
+                  <span>Remove </span>
                 </button>
               </div>
 
          
                   </div>
 
-          {activeDropdown === order._id && (
+          {activeDropdown === item._id && (
             <div
               className={` origin-top-right z-10  absolute left-0 mt-2 w-32 border-2 rounded-md shadow-lg bg-slate-50 ring-1 ring-black ring-opacity-5`}
               role="menu"
@@ -219,7 +211,7 @@ const FavouritesPage = () => {
                 <button
                   className="flex gap-3 w-full text-left text-black px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => handleCancelOrder(order._id)}
+                  onClick={() => handleCancelOrder(item._id)}
                 >
                   <TbShoppingCartCancel />
                   <span>Cancel</span>
@@ -227,7 +219,7 @@ const FavouritesPage = () => {
                 <button
                   className=" w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => downloadInvoice(order._id)}
+                  onClick={() => downloadInvoice(item._id)}
                 >
                   <svg
                     className="fill-current w-4 h-4 mr-2"
@@ -246,7 +238,7 @@ const FavouritesPage = () => {
     }));
 
     setRows(newRows);
-  }, [userOrders, activeDropdown]);
+  }, [userFavourites, activeDropdown]);
 
   const Table = TableHOC<DataType>(
     columns,

@@ -5,6 +5,7 @@ const NewUser = require("../Models/user");
 
 const userController = require("../Controllers/userControllers");
 const walletController = require("../Controllers/walletController");
+const orderControllers = require("../Controllers/orderControllers");
 
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
@@ -126,10 +127,23 @@ router.get('/user/:userId/addresses', (req, res) => {
 });
 
 
+// wallet
+
 router.get('/user/:userId/wallet', (req, res) => { 
   walletController.getBalance(req, res);
 });
 
+
+router.post("/wallet/deduct",  (req, res) => {
+  walletController.getDeducted(req, res);
+});
+
+
+router.post("/order/wallet",  (req, res) => {
+  console.log('order_wallet');
+  
+  orderControllers.orderforWallet(req, res);
+});
 
 
 

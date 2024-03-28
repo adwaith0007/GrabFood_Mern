@@ -1,6 +1,6 @@
 import serverUrl from "../server";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -32,11 +32,38 @@ const ProductCard = ({
   onAddToCart,
   onAddToFavorites,
 }: ProductCardProps) => {
+  
+
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
+  const userId = user._id;
 
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const [userFavourites, setUserFavourites] = useState([]);
+
+  const fetchingFavourites = async () => {
+    try {
+      const response = await api.get(`/user/${userId}/wishlist` );
+      if (response.data.success) {
+        setUserFavourites(response.data.data);
+      } else {
+        console.error("Failed to fetch user orders:", response.data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+    } 
+  };
+
+  console.log('data:',userFavourites);
+  
+
+ 
+
+  useEffect(() => {
+    fetchingFavourites();
+  }, [userId]);
 
   const handleToggleFavorite = async () => {
     

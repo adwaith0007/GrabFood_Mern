@@ -4,12 +4,16 @@ import toast from "react-hot-toast";
 import api from '../../../api';
 import DatePicker from "react-datepicker"; // Import DatePicker component
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
 
 const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const allNumbers = "1234567890";
 const allSymbols = "!@#$%^&*()_+";
 
 const AddCouponPage = () => {
+
+    const navigate = useNavigate();
+
     const [size, setSize] = useState<number>(8);
     const [prefix, setPrefix] = useState<string>("");
     const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
@@ -42,9 +46,25 @@ const AddCouponPage = () => {
             return;
         }
 
+        const couponNameRegex = /^[a-zA-Z0-9\s]*$/;
+        if (!couponNameRegex.test(couponData.couponName)) {
+            toast.error("Coupon name can only contain letters, numbers, and spaces");
+            return;
+        }
+
+        if (couponData.couponName.trim().length < 5) {
+            toast.error("Coupon name should contain at least 5 letters");
+            return;
+        }
+
         const discountValue = parseFloat(couponData.discount);
-        if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
-            toast.error("Discount must be a number between 0 and 100");
+        if (isNaN(discountValue) || discountValue < 0 || discountValue > 70) {
+            toast.error("Discount must be a number between 0 and 70");
+            return;
+        }
+        const today = new Date()
+        if(couponData.expiryDate < today ) {
+            toast.error("Please select a proper expiry date");
             return;
         }
 
@@ -63,27 +83,28 @@ const AddCouponPage = () => {
 
         setCoupon(result);
 
-        // Send coupon data to the backend
+        
         try {
             const response = await api.post('/coupon/add', {
                 couponName: couponData.couponName,
                 description: couponData.description,
                 discount: discountValue,
-                expiryDate: couponData.expiryDate, // Include expiryDate in the request
-                couponCode: result // You may want to send the generated coupon code to the backend
+                expiryDate: couponData.expiryDate, 
+                couponCode: result 
             });
 
             if (response.status === 201) {
                 toast.success('Coupon created successfully');
-                // Handle success, like showing a success message or redirecting
+                navigate("/admin/coupon");
+                
             } else {
                 toast.error('Coupon creation failed');
-                // Handle failure, maybe show an error message to the user
+                
             }
         } catch (error) {
             toast.error('Error creating coupon');
             console.error('Error creating coupon:', error);
-            // Handle any unexpected errors
+            
         }
     };
 
