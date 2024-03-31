@@ -1,51 +1,144 @@
 const categoryModel = require("../Models/category");
 const upload = require("../middlewares/multer");
+const productModel = require("../Models/product");
+
+// exports.addCategory = async (req, res) => {
+//   try {
+//     // Use async/await for file upload handling
+//     await new Promise((resolve, reject) => {
+//       upload.single("file")(req, res, (err) => {
+//         if (err) {
+//           reject(err);
+//         } else {
+//           resolve();
+//         }
+//       });
+//     });
+
+//     const { category } = req.body;
+
+//     if (!category) {
+//       return res.status(400).json({ success: false, message: "Enter the category name" });
+//     }
+
+//     const categoryExist = await categoryModel.findOne({
+//       category: { $regex: new RegExp(`^${category}$`, "i") },
+//     });
+
+//     console.log('C_exist:', categoryExist);
+
+//     if (categoryExist) {
+//       return res.status(400).json({ success: false, message: "Category already exists" });
+//     }
+
+//     const image = req.file;
+
+//     if (!image) {
+//       return res.status(400).json({ success: false, message: "No image uploaded" });
+//     }
+
+//     const categoryDoc = new categoryModel({
+//       category,
+//       categoryImage: image.originalname,
+//     });
+
+//     await categoryDoc.save();
+
+//     res.status(201).json({ success: true, message: "Category added successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
 
 exports.addCategory = async (req, res) => {
   try {
-    upload.single("file")(req, res, async (err) => {
-      if (err) {
-        return res.json({ success: false, message: err.message });
-      }
-
-      const { category } = req.body;
-
-      if (!category) {
-        return res.json({ success: false, message: "Enter the category name" });
-      }
-
-      const categoryExist = await categoryModel.findOne({
-        category: { $regex: new RegExp(`^${category}$`, "i") },
+    // Use async/await for file upload handling
+    await new Promise((resolve, reject) => {
+      upload.single("file")(req, res, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
       });
-
-      if (categoryExist) {
-        return res.json({ success: false, message: "Category already exists" });
-      }
-
-      const image = req.file;
-
-      if (!image) {
-        return res.json({ success: false, message: "No image uploaded" });
-      }
-
-      const categoryDoc = new categoryModel({
-        category,
-        categoryImage: image.originalname,
-      });
-
-      await categoryDoc.save();
-
-      res
-        .status(201)
-        .json({ success: true, message: "Category added successfully" });
     });
+
+    let { category } = req.body;
+
+    if (!category) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Enter the category name backend" });
+    }
+
+    category = category.trim().toUpperCase();
+
+    if (category.length < 3) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Category should be at least 3 characters long",
+        });
+    }
+
+    const categoryLettersRegex = /^[A-Z ]+$/;
+    if (!categoryLettersRegex.test(category)) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Category should contain only letters and spaces",
+        });
+    }
+
+    const categoryStartsWithLetterRegex = /^[A-Z]/;
+    if (!categoryStartsWithLetterRegex.test(category)) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Category should start with a letter",
+        });
+    }
+
+    const categoryExist = await categoryModel.findOne({
+      category: { $regex: new RegExp(`^${category}$`, "i") },
+      
+    });
+
+    console.log("C_exist:", categoryExist);
+
+    if (categoryExist) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category already exists" });
+    }
+
+    const image = req.file;
+
+    if (!image) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No image uploaded" });
+    }
+
+    const categoryDoc = new categoryModel({
+      category,
+      categoryImage: image.originalname,
+    });
+
+    await categoryDoc.save();
+
+    res
+      .status(201)
+      .json({ success: true, message: "Category added successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-
 
 exports.adminListCategory = async (req, res) => {
   try {
@@ -57,8 +150,6 @@ exports.adminListCategory = async (req, res) => {
   }
 };
 
-
-
 exports.listCategory = async (req, res) => {
   try {
     const data = await categoryModel.find({ deleted: false });
@@ -67,8 +158,6 @@ exports.listCategory = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
 
 exports.getcategoryDetails = async (req, res) => {
   try {
@@ -89,42 +178,9 @@ exports.getcategoryDetails = async (req, res) => {
   }
 };
 
-// exports.updateCategory = async (req, res) => {
-//   try {
-//     upload.single("photo")(req, res, async (err) => {
-//       if (err) {
-//         return res.json({ success: false, message: err.message });
-//       }
 
-//       const categoryId = req.params.categoryId;
 
-//       console.log(req.body);
 
-//       console.log(categoryId);
-
-//       const { category } = req.body;
-//       const image = req.file?.filename;
-
-//       await categoryModel.findOneAndUpdate(
-//         { _id: categoryId },
-//         {
-//           $set: {
-//             category: category,
-//           },
-//         }
-//       );
-
-//       await categoryModel.updateOne(
-//         { _id: categoryId },
-//         { $push: { images: image } }
-//       );
-
-//       res.status(201).json({ success: true, message: "Category updated" });
-//     });
-//   } catch (error) {
-//     console.log("error while editing form", error);
-//   }
-// };
 
 exports.updateCategory = async (req, res) => {
   try {
@@ -137,13 +193,52 @@ exports.updateCategory = async (req, res) => {
         });
       }
 
-      const categoryId = req.params.categoryId;
+      console.log("Updating category...");
 
-      const { category } = req.body;
+      const categoryId = req.params.categoryId;
+      let { category , offer } = req.body;
+
+      if (!category) {
+        console.error("Category name is missing");
+        return res
+          .status(400)
+          .json({ success: false, message: "Category name is required" });
+      }
+
+      category = category.trim().toUpperCase();
+
+      console.log("Received category name:", category);
+
+      if (category.length < 3) {
+        console.error("Category name is too short");
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Category should be at least 3 characters long",
+          });
+      }
+
+      
+      const similarCategory = await categoryModel.findOne({
+        category: { $regex: new RegExp(`^${category}$`, "i") },
+        _id: { $ne: categoryId }
+      });
+
+      if (similarCategory) {
+        console.error("A similar category already exists:", similarCategory);
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "A similar category already exists",
+          });
+      }
 
       let categoryToUpdate = await categoryModel.findById(categoryId);
 
       if (!categoryToUpdate) {
+        console.error("Category not found");
         return res
           .status(404)
           .json({ success: false, message: "Category not found" });
@@ -151,7 +246,51 @@ exports.updateCategory = async (req, res) => {
 
       categoryToUpdate.category = category;
 
-      console.log(req);
+      if (offer !== undefined) {
+       
+        if (isNaN(offer) || offer < 0 || offer >= 90) {
+          console.error("Invalid offer value:", offer);
+          return res.status(400).json({
+            success: false,
+            message: "Offer should be a number between 0 and 89",
+          });
+        }
+
+        // await categoryModel.updateOne(
+        //   { _id: _id },
+        //   { $set: { offerInPercentage: discount } }
+        // );
+
+        categoryToUpdate.offerInPercentage = offer;
+
+        const products = await productModel.aggregate([
+          { $match: { category } },
+        ]);
+        console.log(products);
+
+        for (const product of products) {
+          if (!product.productWiseOffer) {
+            console.log("here");
+            await productModel.updateOne(
+              { _id: product?._id },
+              {
+                $set: {
+                  categoryWiseOffer: true,
+                  offerInPercentage:offer,
+                  discountPrice: Math.floor(
+                    product?.price - (product?.price * offer) / 100
+                  ),
+                },
+              }
+            );
+          }
+        }
+        // return res.status(200).json({ success: true, message: "Offer Applied" });
+
+        
+      }
+
+      
 
       if (req.file) {
         categoryToUpdate.categoryImage = [req.file.filename];
@@ -159,13 +298,22 @@ exports.updateCategory = async (req, res) => {
 
       const updatedCategory = await categoryToUpdate.save();
 
-      res.status(200).json({ success: true, data: updatedCategory });
+      console.log("Category updated successfully:", updatedCategory);
+
+      res.status(200).json({
+        success: true,
+        data: updatedCategory,
+        message: "Category updated successfully",
+      });
     });
   } catch (error) {
-    console.error(error);
+    console.error("Internal server error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
 
 // exports.updateProduct = async (req, res) => {
 //   try {
@@ -211,8 +359,6 @@ exports.updateCategory = async (req, res) => {
 //   }
 // };
 
-
-
 exports.deleteCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
 
@@ -249,7 +395,6 @@ exports.softDeleteCategory = async (req, res) => {
         .json({ success: false, message: "Category not found" });
     }
 
-    
     category.deleted = !category.deleted;
 
     await category.save();
@@ -262,4 +407,3 @@ exports.softDeleteCategory = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
-

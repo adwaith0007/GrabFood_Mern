@@ -5,7 +5,7 @@ import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import api from '../../../api';
+import api from "../../../api";
 const server = import.meta.env.VITE_SERVER;
 
 const defaultImg =
@@ -24,6 +24,7 @@ const CategoryManagement = () => {
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
   const [addOfferBox, setAddOfferBox] = useState<boolean>(false);
+  const [offer, setOffer] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -47,7 +48,10 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
-  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g, "%20")}`;
+  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(
+    / /g,
+    "%20"
+  )}`;
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,34 +60,62 @@ const CategoryManagement = () => {
     }
   };
 
-  const submitHandler = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitHandler = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
+    setUpdating(true);
     try {
       const formData = new FormData();
-      formData.append("category", categoryDetails?.category);
+      formData.append("category", categoryDetails?.category || "");
+      formData.append("offer", offer);
       if (photoFile) {
         formData.append("photo", photoFile);
       }
-      const response = await api.put(`/category/update/${categoryDetails?._id}`, formData, { timeout: 10000 });
-      if (response.data.success) {
+
+      const categoryId = categoryDetails?._id;
+
+      console.log("Updating category with ID:", categoryId);
+
+      const response = await api.put(
+        `/category/update/${categoryId}`,
+        formData
+      );
+      const responseData = response.data;
+
+      console.log("Response from backend:", responseData);
+
+      if (responseData.success) {
         toast.success("Category updated successfully!");
-        setCategoryDetails(response.data.data);
+        setCategoryDetails(responseData.data);
       } else {
-        toast.error(response.data.message || "Failed to update Category");
+        toast.error(responseData.message || "Failed to update Category");
       }
     } catch (error) {
-      console.error("Error updating Category", error);
-      setError("Failed to update Category");
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to update Category. Please try again later.");
+      }
     } finally {
-      setUpdating(false);
+      setUpdating(false); // Set updating state to false after request completes
     }
   };
 
   const handleSoftDelete = async (): Promise<void> => {
     try {
-      const response = await api.put(`/category/softDelete/${categoryDetails._id}`);
+      const response = await api.put(
+        `/category/softDelete/${categoryDetails._id}`
+      );
       if (response.data.success) {
-        const updatedCategory = { ...categoryDetails, deleted: !categoryDetails.deleted };
+        const updatedCategory = {
+          ...categoryDetails,
+          deleted: !categoryDetails.deleted,
+        };
         setCategoryDetails(updatedCategory);
         // toast.success(`Category ${updatedCategory.deleted ? 'soft ' : ''}deleted successfully`);
       } else {
@@ -99,7 +131,9 @@ const CategoryManagement = () => {
   };
 
   const deleteHandler = async (): Promise<void> => {
-    const confirmDeletion = window.confirm("Are you sure you want to delete this category?");
+    const confirmDeletion = window.confirm(
+      "Are you sure you want to delete this category?"
+    );
     if (confirmDeletion) {
       try {
         const response = await api.delete(
@@ -135,9 +169,9 @@ const CategoryManagement = () => {
       <AdminSidebar />
       <main className="product-management">
         <section>
-          <strong>ID - {categoryDetails._id}</strong>
+          <strong>ID - {categoryDetails?._id}</strong>
           <img src={image} alt="Category" />
-          <p>{categoryDetails.category}</p>
+          <p>{categoryDetails?.category}</p>
         </section>
         <article>
           <button
@@ -154,7 +188,12 @@ const CategoryManagement = () => {
               <input
                 type="text"
                 value={categoryDetails?.category}
-                onChange={(e) => setCategoryDetails({ ...categoryDetails, category: e.target.value })}
+                onChange={(e) =>
+                  setCategoryDetails({
+                    ...categoryDetails,
+                    category: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="form-group flex gap-2 ">
@@ -176,39 +215,44 @@ const CategoryManagement = () => {
               </div>
               <div className="flex items-center">
                 <button
-                  className={`px-2 py-1 cursor-pointer ${categoryDetails.deleted ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
+                  className={`px-2 py-1 cursor-pointer ${
+                    categoryDetails?.deleted
+                      ? "bg-red-500 text-white"
+                      : "bg-green-500 text-white"
+                  }`}
                   onClick={handleSoftDelete}
                 >
-                  {categoryDetails.deleted ? 'Undo Deleted' : 'Soft Delete'}
+                  {categoryDetails?.deleted ? "Undo Deleted" : "Soft Delete"}
                 </button>
               </div>
             </div>
-            {photoFile && <img src={URL.createObjectURL(photoFile)} alt="New Image" />}
-
-            <div className="flex w-full " >
-              <div>
-
-              <button type="button" onClick={()=>{setAddOfferBox(!addOfferBox)}}  className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300" >
-                  Add Offer
-              </button>
-              </div>
-
-            {addOfferBox&&(
-              <div  >
-
-                
-
-                
-                <input  className="w-52" placeholder="Offen in percentage.." type="number"  >
-                
-                </input>
-               
-
-
-                
-
-              </div>
+            {photoFile && (
+              <img src={URL.createObjectURL(photoFile)} alt="New Image" />
             )}
+
+            <div className="flex w-full ">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddOfferBox(!addOfferBox);
+                  }}
+                  className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                >
+                  Add Offer
+                </button>
+              </div>
+
+              {addOfferBox && (
+                <div>
+                  <input
+                    onChange={(e) => setOffer(parseInt(e.target.value, 10))}
+                    className="w-52"
+                    placeholder="Offen in percentage.."
+                    type="number"
+                  ></input>
+                </div>
+              )}
             </div>
 
             <button type="submit" disabled={updating}>

@@ -10,6 +10,9 @@ const categorySchema = mongoose.Schema({
     type: Array,
     
   },
+  offerInPercentage: {
+    type: Number,
+  },
   deleted: {
     type: Boolean,
     default: false,

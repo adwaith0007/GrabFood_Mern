@@ -89,8 +89,12 @@ const CartSection = ({
           </button>
 
           </div>
-          <span className="text-center w-1/5 font-semibold text-sm">₹{product.price.toFixed(2)}</span>
+
+              
+ 
+                  <span className="text-center w-1/5 font-semibold text-sm">₹{product.price.toFixed(2)}</span>
           <span className="text-center w-1/5 font-semibold text-sm">₹{product.quantity * product.price}</span>
+               
         </div>
 
 

@@ -4,24 +4,127 @@ const jwt = require("jsonwebtoken");
 
 
 
+// exports.add = async (req, res) => {
+//   const { userId } = req.params;
+
+//   let {
+//     product: {
+//       productId,
+//       productName,
+//       productImage,
+//       price,
+//       discountPrice,
+//       offerInPercentage,
+//       Description,
+//       category,
+//     },
+//     quantity,
+//   } = req.body;
+
+//   if(discountPrice){
+//     price=discountPrice
+//   }
+
+//   const maxQuantity = 5; 
+
+//   console.log(productId);
+
+//   const image = productImage[0];
+
+//   const user = await UserModel.findById(userId);
+
+//   if (!user) {
+//     return res.status(404).json({ success: false, message: "User not found" });
+//   }
+
+//   const existingCartItem = user.cart.find((item) => item.productId === productId);
+
+//   const validateQuantity = (existingQuantity, newQuantity) => {
+//     const totalQuantity = existingQuantity + newQuantity;
+//     return totalQuantity <= maxQuantity;
+//   };
+
+//   if (existingCartItem) {
+//     console.log("Item exists in the cart.");
+
+//     try {
+//       const existingQuantity = existingCartItem.quantity;
+
+//       if (!validateQuantity(existingQuantity, 1)) {
+//         return res.status(400).json({
+//           success: false,
+//           message: `Cannot add more than ${maxQuantity} items to the cart`,
+//         });
+//       }
+
+//       await UserModel.updateOne(
+//         { _id: userId, "cart.productId": productId },
+//         { $inc: { "cart.$.quantity": 1 } }
+//       );
+
+//       return res.status(200).json({ success: true, message: "Added to cart" });
+//     } catch (error) {
+//       console.log("Error while incrementing the quantity", error);
+//       return res.json({ success: false, message: "Error while incrementing" });
+//     }
+//   } else {
+//     console.log("Item does not exist in the cart.");
+
+//     if (!validateQuantity(0, quantity)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: `Cannot add more than ${maxQuantity} items to the cart`,
+//       });
+//     }
+
+//     const cartItems = {
+//       userName: user.username,
+//       productId,
+//       productName,
+//       productImage: image,
+//       quantity,
+//       price,
+//     };
+
+//     console.log(cartItems);
+
+//     try {
+//       await UserModel.updateOne({ _id: userId }, { $push: { cart: cartItems } });
+//       return res.status(200).json({ success: true, message: "Added to cart" });
+//     } catch (error) {
+//       console.log(error);
+//       return res.status(500).json({
+//         success: false,
+//         message: "Error while adding to cart collection",
+//       });
+//     }
+//   }
+// };
+
+
 exports.add = async (req, res) => {
   const { userId } = req.params;
 
-  const {
+  let {
     product: {
       productId,
       productName,
       productImage,
       price,
+      discountPrice,
+      offerInPercentage,
       Description,
       category,
     },
     quantity,
   } = req.body;
 
-  const maxQuantity = 5; 
+  // Check if discountPrice is available and update the price accordingly
+  if (discountPrice) {
+    price = discountPrice;
+  }
 
-  console.log(productId);
+  const maxQuantity = 5;
 
   const image = productImage[0];
 
@@ -31,14 +134,27 @@ exports.add = async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
+  // Check if the product exists in the wishlist and remove it
+  const existingWishlistItemIndex = user.wishlist.findIndex(
+    (item) => item.productId === productId
+  );
+
+  if (existingWishlistItemIndex !== -1) {
+    user.wishlist.splice(existingWishlistItemIndex, 1);
+    await user.save();
+  }
+
+  // Check if the product exists in the cart
   const existingCartItem = user.cart.find((item) => item.productId === productId);
 
+  // Function to validate quantity
   const validateQuantity = (existingQuantity, newQuantity) => {
     const totalQuantity = existingQuantity + newQuantity;
     return totalQuantity <= maxQuantity;
   };
 
   if (existingCartItem) {
+    // If the item already exists in the cart, increment the quantity
     console.log("Item exists in the cart.");
 
     try {
@@ -62,6 +178,7 @@ exports.add = async (req, res) => {
       return res.json({ success: false, message: "Error while incrementing" });
     }
   } else {
+    // If the item does not exist in the cart, add it as a new item
     console.log("Item does not exist in the cart.");
 
     if (!validateQuantity(0, quantity)) {
@@ -92,6 +209,47 @@ exports.add = async (req, res) => {
         message: "Error while adding to cart collection",
       });
     }
+  }
+};
+
+exports.addToCartFromWishlist = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { productId } = req.body;
+
+    console.log('Adding product to cart. UserId:', userId, 'ProductId:', productId);
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const productIndex = user.wishlist.findIndex(product => product.productId === productId);
+
+    if (productIndex === -1) {
+      console.log("Product not found in wishlist");
+      return res.status(404).json({ success: false, message: "Product not found in wishlist" });
+    }
+
+    const product = user.wishlist[productIndex];
+
+    
+    user.wishlist.splice(productIndex, 1);
+
+    
+    user.cart.push(product);
+
+    await user.save();
+
+    console.log("Product added to cart");
+
+    
+    return res.status(200).json({ success: true, message: "Product added to cart", data: user.wishlist });
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

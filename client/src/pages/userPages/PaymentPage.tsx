@@ -81,6 +81,45 @@ const PaymentPage = () => {
   };
 
 
+  
+  const handleCOD = async (amount) => {
+    try {
+      
+
+      const orderDetails ={
+        userId:checkoutData.userId,
+        products: checkoutData.products,
+        address: checkoutData.address,
+        discountAmount:checkoutData.discountAmount,
+        couponCode:checkoutData.couponCode,
+        paymentMethod:'COD',
+        orderDate: checkoutData.orderDate,
+        totalPrice :checkoutData.totalPrice,
+      }
+  
+      api
+        .post(`/order/cod`,
+          {
+            
+            orderDetails,userId
+          },
+          
+        )
+        .then((res) => {
+          if (res.data.success) {
+            // toast.success(res.data.message);
+            // navigate("/home");
+            setOrderSuccess(true);
+          } else {
+            toast.error(res.data.message);
+          }
+        });
+    } catch (error) {
+      console.log("error while processing payment via wallet", error);
+    }
+  };
+
+
 
   const handleRazorpayPayment = async () => {
     
@@ -348,7 +387,7 @@ const PaymentPage = () => {
                     <div className="mb-4">
                       <button
                         className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full hover:bg-indigo-500 bg-indigo-600 text-white focus:outline-none focus-visible:ring-2"
-                        // onClick={handleCOD}
+                        onClick={handleCOD}
                       >
                         Pay - ₹ {checkoutData.totalPrice}
                       </button>

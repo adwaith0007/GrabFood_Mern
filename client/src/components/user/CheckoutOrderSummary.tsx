@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import api from '../../api';
+import toast from "react-hot-toast";
 
 const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
   const { user } = useSelector(
@@ -38,10 +39,17 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
 
     try {
       const response = await api.post('/coupon/apply', { couponCode });
-      setPctDiscount(response.data.discount);
+      if (response.data.success) {
+        setPctDiscount(response.data.discount);
+      } else {
+        toast.error(response.data.message)
+      }
+     
+      
     } catch (error) {
+      
       console.error("Error applying coupon:", error);
-      // Add appropriate error handling or feedback to the user
+      
     }
   };
 

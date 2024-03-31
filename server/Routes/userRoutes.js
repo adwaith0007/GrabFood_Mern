@@ -6,11 +6,12 @@ const NewUser = require("../Models/user");
 const userController = require("../Controllers/userControllers");
 const walletController = require("../Controllers/walletController");
 const orderControllers = require("../Controllers/orderControllers");
-
+const cartControllers = require("../Controllers/cartController");
 const { registerMail } = require("../middlewares/mailer");
 const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
 
 const {validateQuantity} = require("../middlewares/Cart");
+const { log } = require("handlebars");
 
 
 
@@ -33,9 +34,19 @@ router.post("/user/wishlist/add", (req, res) => {
 });
 
 router.get("/user/:userId/wishlist", (req, res) => {
-  
-  
   userController.getWishlist(req, res);
+});
+
+
+router.put("/wishlist/remove/:userId", (req, res) => {
+  console.log('hi');
+  
+  userController.removeFromWishlist(req, res);
+});
+
+
+router.put("/cart/add/wishlist/:userId", (req, res) => { 
+  cartControllers.addToCartFromWishlist(req, res);
 });
 
 
@@ -145,6 +156,10 @@ router.post("/order/wallet",  (req, res) => {
   orderControllers.orderforWallet(req, res);
 });
 
+
+router.post("/order/cod",  (req, res) => {
+   orderControllers.orderCOD(req, res);
+});
 
 
 router.post("/user/v1/new", async (req, res, next) => {

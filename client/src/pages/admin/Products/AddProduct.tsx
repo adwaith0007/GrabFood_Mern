@@ -36,7 +36,7 @@ const AddProduct = () => {
 
     await setProduct((prevProduct) => ({
       ...prevProduct,
-      images: [...prevProduct.images, ...newImages], // Update images array correctly
+      images: [...prevProduct.images, ...newImages], 
     }));
 
     // Log selected images and updated product state
@@ -78,7 +78,9 @@ const AddProduct = () => {
       formData.append("price", product.price);
       // product.images.forEach((file) => formData.append("images", file));
 
-      product.images.forEach((file, index) =>{ formData.append(`image_${index}`, file); console.log("Appended file:", file)});
+      // product.images.forEach((file, index) =>{ formData.append(`image_${index}`, file); console.log("Appended file:", file)});
+
+      product.images.forEach((file) =>{ formData.append(`images`, file); console.log("Appended file:", file)});
 
       // product.images.forEach((file) => {
       //   formData.append("images", file);
@@ -105,7 +107,8 @@ const AddProduct = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(error.response.data.message);
+      // toast.error(`Error: ${error.message}`);
     }
   };
 

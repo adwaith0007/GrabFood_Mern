@@ -36,7 +36,7 @@ const CouponCard = () => {
                         
                         <div className="bg-gradient-to-br mb-5 from-purple-600 to-indigo-600 text-white text-center py-7 px-20 rounded-lg shadow-md relative">
                             <h3 className="text-xl font-semibold mb-4">
-                                {coupon.couponName} 
+                            {coupon.discount}%   {coupon.couponName} 
                             </h3>
                             <div className="flex items-center space-x-2 mb-6">
                                 <span

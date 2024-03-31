@@ -1,7 +1,7 @@
 const productModel = require("../Models/product");
-// const  {upload}  = require("../middlewares/multer");
+const upload = require("../middlewares/multer");
 
-const multer = require("multer");
+// const multer = require("multer");
 
 // exports.addProduct = async (req, res) => {
 //   try {
@@ -58,16 +58,16 @@ const multer = require("multer");
 // };
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Specify the destination directory for file uploads
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname); // Use the original file name for storing
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/"); // Specify the destination directory for file uploads
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname); // Use the original file name for storing
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 exports.addProduct = async (req, res) => {
   try {
@@ -90,11 +90,38 @@ exports.addProduct = async (req, res) => {
 
       const filenames = images.map((file) => file.filename);
 
-      const { name, price, desc, category } = req.body;
+      let { name, price, desc, category } = req.body;
       if (!name || !price || !desc || !category) {
         return res
           .status(400)
           .json({ success: false, message: "Please add all fields" });
+      }
+
+      name = name.trim();
+
+      if (name.length < 3) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Product name should be at least 3 characters long",
+          });
+      }
+
+      const nameRegex = /^[A-Za-z\s]+$/;
+      if (!nameRegex.test(name)) {
+        return res.status(400).json({
+          success: false,
+          message: "Product name should contain only letters and spaces",
+        });
+      }
+
+      price = parseFloat(price);
+      if (isNaN(price) || price <= 5) {
+        return res.status(400).json({
+          success: false,
+          message: "Price should be a number greater than 5",
+        });
       }
 
       try {
@@ -125,93 +152,7 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-// exports.addProduct = async (req, res) => {
-//   try {
-//     upload.array("images")(req, res, async (err) => {
-//       if (err) {
-//         console.error("Error during file upload:", err);
-//         return res
-//           .status(500)
-//           .json({
-//             success: false,
-//             message: "Internal server error in file upload",
-//           });
-//       }
 
-//       const images = req.files;
-//       if (!images || images.length === 0) {
-//         return res.status(400).json({ success: false, message: 'No images uploaded' });
-//       }
-//       const filenames = images?.map((file) => file.filename);
-
-//       const { name, price, desc, category } = req.body;
-//       if (!name || !price || !desc || !category) {
-//         return res
-//           .status(400)
-//           .json({ success: false, message: "Please add all fields" });
-//       }
-
-//       try {
-//         const productDoc = new productModel({
-//           productName: name,
-//           Description: desc,
-//           price,
-//           category,
-//           productImage: filenames,
-//         });
-
-//         productDoc.productId = productDoc._id;
-
-//         console.log(productDoc);
-
-//         await productDoc.save();
-
-//         res
-//           .status(201)
-//           .json({ success: true, message: "Product added successfully" });
-//       } catch (error) {
-//         console.error(error);
-//         res
-//           .status(500)
-//           .json({
-//             success: false,
-//             message: "Internal server error in saving product",
-//           });
-//       }
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
-
-// exports.listProduct = async (req, res) => {
-//   try {
-//     console.log('in');
-
-    
-//     if (req.query.category && req.query.category === "All Products") {
-      
-//       const data = await productModel.find({});
-//       res.status(200).json({ success: true, data: data });
-//     } else if (req.query.category) {
-      
-//       const category = req.query.category;
-//       console.log(category);
-      
-//       const filteredProducts = await productModel.find({ category });
-//       console.log(filteredProducts);
-      
-//       res.status(200).json({ success: true, data: filteredProducts });
-//     } else {
-      
-//       const data = await productModel.find({});
-//       res.status(200).json({ success: true, data: data });
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ success: false, message: error.message });
-//   }
-// };
 
 
 
@@ -298,127 +239,138 @@ exports.getProductDetails = async (req, res) => {
   }
 };
 
-// exports.updateProduct = async (req, res) => {
-//   try {
-//     const productId = req.params.id;
-//     const { name, price, category } = req.body;
 
-//     console.log(productId);
-
-//     console.log(name);
-
-//     // Update other fields as needed
-//     // ...
-
-//     // Update the product image if a new one is provided
-//     if (req.file) {
-//       const photoPath = req.file.path; // Assuming 'path' is a field added by multer
-//       // Update the product image path in the database
-//       // ...
-//     }
-
-//     // Update the product in the database
-//     const updatedProduct = await productModel.findByIdAndUpdate(
-//       productId,
-//       { name, price, category, productImage: photoPath },
-//       { new: true }
-//     );
-
-//     // Send a success response
-//     res.status(200).json({ success: true, message: 'Product updated successfully', data: updatedProduct });
-//   } catch (error) {
-//     console.error('Error updating product', error);
-//     res.status(500).json({ success: false, message: 'Failed to update product' });
-//   }
-// };
 
 // exports.updateProduct = async (req, res) => {
 //   try {
-//     upload.single("photo")(req, res, async (err) => {
+//     upload.array("images")(req, res, async (err) => {
 //       if (err) {
-//         return res.json({ success: false, message: err.message });
+//         console.error("Error during file upload:", err);
+//         return res
+//           .status(500)
+//           .json({
+//             success: false,
+//             message: "Internal server error in file upload",
+            
+//           });
 //       }
-
 //       const productId = req.params.productId;
 
+//       console.log(req.file);
+
 //       console.log(req.body);
+      
+      
 
-//       console.log(productId);
+//       let { desc, price, category, name, offer } = req.body;
+//       const newImages = req.files?.map((file) => file.filename) || [];
 
-//       const { desc, price, category, name } = req.body;
-//       const image = req.file?.filename;
+//       name = name.trim();
 
-//       await productModel.findOneAndUpdate(
-//         { _id: productId },
-//         {
-//           $set: {
-//             Description: desc,
+//       if (name.length < 3) {
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "Product name should be at least 3 characters long",
+//           });
+//       }
 
-//             price: price,
-//             category: category,
-//             productName: name,
-//           },
+//       const nameRegex = /^[A-Za-z\s]+$/;
+//       if (!nameRegex.test(name)) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Product name should contain only letters and spaces",
+//         });
+//       }
+
+//       price = parseFloat(price);
+//       if (isNaN(price) || price <= 5) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Price should be a number greater than 5",
+//         });
+//       }
+
+//       const productExist = await productModel.findOne({
+//         productName: { $regex: new RegExp(`^${name}$`, "i") },
+//         _id: { $ne: productId }
+//       });
+  
+//       console.log("C_exist:", productExist);
+  
+//       if (productExist) {
+//         return res
+//           .status(400)
+//           .json({ success: false, message: "Product already exists" });
+//       }
+
+//       const existingProduct = await productModel.findById(productId);
+
+//       const updatedImages = existingProduct.productImage.concat(newImages);
+
+//       if (offer !== undefined) {
+       
+//         if (isNaN(offer) || offer < 0 || offer >= 90) {
+//           console.error("Invalid offer value:", offer);
+//           return res.status(400).json({
+//             success: false,
+//             message: "Offer should be a number between 0 and 89",
+//           });
 //         }
-//       );
 
-//       await productModel.updateOne(
-//         { _id: productId },
-//         { $push: { images: image } }
-//       );
+//         // await categoryModel.updateOne(
+//         //   { _id: _id },
+//         //   { $set: { offerInPercentage: discount } }
+//         // );
 
-//       res.status(201).json({ success: true, message: "Product updated" });
-//     });
-//   } catch (error) {
-//     console.log("error while editing form", error);
-//   }
-// };
+//         // productToUpdate.offerInPercentage = offer;
 
-// now
+//         const product = await productModel.findById(productId);
 
-// exports.updateProduct = async (req, res) => {
-//   try {
-//     upload.single("photo")(req, res, async (err) => {
-//       if (err) {
-//         return res.json({ success: false, message: err.message });
+        
+//             await productModel.updateOne(
+//               { _id: productId },
+//               {
+//                 $set: {
+//                   productWiseOffer: true,
+//                   offerInPercentage:offer,
+//                   discountPrice: Math.floor(
+//                     product?.price - (product?.price * offer) / 100
+//                   ),
+//                 },
+//               }
+//             );
+          
+//         // return res.status(200).json({ success: true, message: "Offer Applied" });
+
+        
 //       }
 
-//       const productId = req.params.productId;
-
-//       console.log(req.body);
-
-//       console.log(productId);
-
-//       const { desc, price, category, name } = req.body;
-//       const image = req.file?.filename;
 
 //       const updatedProduct = {
+//         _id:productId,
+//         productName: name,
+//         productImage: updatedImages,
+//         price: Number(price),
 //         Description: desc,
 //         category: category,
-//         productName: name,
 //       };
 
-//       if (category !== undefined) {
-//         updatedProduct.category = category;
-//       }
+//       await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
 
-//       // Check if price is a valid number before updating
-//       if (!isNaN(Number(price))) {
-//         updatedProduct.price = Number(price);
-//       }
-
-//       if (image) {
-//         updatedProduct.images = [image];
-//       }
-
-//       await productModel.findOneAndUpdate({ _id: productId }, { $set: updatedProduct });
-
-//       res.status(201).json({ success: true, message: "Product updated" });
+//       res.status(201).json({ success: true, message: "Product updated", data:{updatedProduct} });
 //     });
 //   } catch (error) {
-//     console.log("error while editing form", error);
-//     res.status(500).json({ success: false, message: "Failed to update product" });
+//     console.log("Error while updating product:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Failed to update product" });
 //   }
 // };
+
+
+
 
 exports.updateProduct = async (req, res) => {
   try {
@@ -441,14 +393,54 @@ exports.updateProduct = async (req, res) => {
       
       
 
-      const { desc, price, category, name } = req.body;
+      let { desc, price, category, name, offer } = req.body;
       const newImages = req.files?.map((file) => file.filename) || [];
+
+      name = name.trim();
+
+      if (name.length < 3) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Product name should be at least 3 characters long",
+          });
+      }
+
+      const nameRegex = /^[A-Za-z\s]+$/;
+      if (!nameRegex.test(name)) {
+        return res.status(400).json({
+          success: false,
+          message: "Product name should contain only letters and spaces",
+        });
+      }
+
+      price = parseFloat(price);
+      if (isNaN(price) || price <= 5) {
+        return res.status(400).json({
+          success: false,
+          message: "Price should be a number greater than 5",
+        });
+      }
+
+      const productExist = await productModel.findOne({
+        productName: { $regex: new RegExp(`^${name}$`, "i") },
+        _id: { $ne: productId }
+      });
+  
+      console.log("C_exist:", productExist);
+  
+      if (productExist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Product already exists" });
+      }
 
       const existingProduct = await productModel.findById(productId);
 
       const updatedImages = existingProduct.productImage.concat(newImages);
 
-      const updatedProduct = {
+      const productToUpdate = {
         _id:productId,
         productName: name,
         productImage: updatedImages,
@@ -457,9 +449,34 @@ exports.updateProduct = async (req, res) => {
         category: category,
       };
 
-      await productModel.findByIdAndUpdate(productId, { $set: updatedProduct });
 
-      res.status(201).json({ success: true, message: "Product updated", data:{updatedProduct} });
+      if (offer !== undefined) {
+        const parsedOffer = parseFloat(offer);
+        if (isNaN(parsedOffer) || parsedOffer < 0 || parsedOffer >= 90) {
+          return res.status(400).json({
+            success: false,
+            message: "Offer should be a number between 0 and 89",
+          });
+        }
+
+        productToUpdate.productWiseOffer = true;
+        productToUpdate.offerInPercentage = parsedOffer;
+        
+          productToUpdate.discountPrice= Math.floor( price - (price * offer) / 100)
+
+
+      }
+
+      await productModel.findByIdAndUpdate(productId, { $set: productToUpdate });
+
+      res.status(201).json({
+        success: true,
+        message: "Product updated",
+        data: { updatedProduct: productToUpdate },
+      });
+     
+
+     
     });
   } catch (error) {
     console.log("Error while updating product:", error);
@@ -468,6 +485,13 @@ exports.updateProduct = async (req, res) => {
       .json({ success: false, message: "Failed to update product" });
   }
 };
+
+
+
+
+
+
+
 
 exports.deleteImage = async (req, res) => {
   try {

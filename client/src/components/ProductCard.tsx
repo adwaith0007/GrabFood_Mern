@@ -15,7 +15,8 @@ type ProductCardProps = {
   productId: string;
   name: string;
   imageUrl: string;
-
+  discountPrice:number;
+  offerInPercentage:number;
   description: string;
   price: number;
   onAddToCart: () => void;
@@ -26,11 +27,13 @@ const ProductCard = ({
   productId,
   price,
   name,
-
+  discountPrice,
+  
+offerInPercentage,
   description,
   imageUrl,
   onAddToCart,
-  onAddToFavorites,
+  // onAddToFavorites,
 }: ProductCardProps) => {
   
 
@@ -39,9 +42,11 @@ const ProductCard = ({
   );
   const userId = user._id;
 
-  const [isFavorite, setIsFavorite] = useState(false);
+ 
 
   const [userFavourites, setUserFavourites] = useState([]);
+
+  
 
   const fetchingFavourites = async () => {
     try {
@@ -54,6 +59,9 @@ const ProductCard = ({
     } catch (error) {
       console.error("Error fetching user orders:", error);
     } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   console.log('data:',userFavourites);
@@ -83,13 +91,15 @@ const ProductCard = ({
     
     });
 
-    if(response.status==200){
+    if(response.data.success){
 
-      setIsFavorite(!isFavorite);
+      fetchingFavourites();
+
+      
     }
 
     
-    onAddToFavorites();
+    // onAddToFavorites();
     } catch (error) {
     console.error(error);
     
@@ -105,26 +115,55 @@ const ProductCard = ({
         to={`/product/${productId}`}
       >
         <img className="object-cover" src={imageUrl} alt="product image" />
-        <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
-          39% OFF
+
+        {offerInPercentage &&(
+
+          
+          
+          <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
+          
+
+          {offerInPercentage}% OFF
         </span>
+            )
+        }
       </Link>
 
       <button
         onClick={handleToggleFavorite}
         className=" absolute z-10 top-0 right-0 mt-4 mr-6 rounded-full bg-black px-2 border focus:outline-none"
       >
-        <FontAwesomeIcon icon={faHeart} color={isFavorite ? "red" : "white"} />
+        {/* <FontAwesomeIcon icon={faHeart} color={isFavorite ? "red" : "white"} /> */}
+
+        {/* <FontAwesomeIcon icon={faHeart} color={  userFavourites.some((item)=>item.productId == productId  ) ? "red" : "white"} /> */}
+
+        <FontAwesomeIcon
+  icon={faHeart}
+  color={userFavourites.some((item) => item.productId === productId) ? "red" : "white"}
+/>
+
       </button>
       <div className="mt-4 px-5 pb-5">
         <a href="#">
           <h5 className="text-xl tracking-tight text-slate-900 line-clamp-1 ">{name}</h5>
         </a>
         <div className="mt-2 mb-2 flex items-center justify-between">
+
+          {discountPrice ? 
           <p>
+          <span className="text-3xl font-bold text-slate-900">₹{discountPrice}</span>
+          <span className="text-sm text-slate-900 line-through">₹{price}</span>
+        </p> 
+        :
+        <p>
             <span className="text-3xl font-bold text-slate-900">₹{price}</span>
-            <span className="text-sm text-slate-900 line-through">₹699</span>
+            {/* <span className="text-sm text-slate-900 line-through">₹{price}</span> */}
           </p>
+
+          }
+   
+
+         
           <div className="flex items-center">
             <svg
               aria-hidden="true"

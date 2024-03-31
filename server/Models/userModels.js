@@ -106,6 +106,15 @@ const UserSchema = new mongoose.Schema({
         type: String,
       },
 
+      productImage: {
+        type: String,
+      },
+
+      price: {
+        type: Number,
+      },
+
+
     }
   ]
 

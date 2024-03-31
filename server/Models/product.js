@@ -33,6 +33,25 @@ const productSchema = new mongoose.Schema({
     type: String,
     
   },
+
+  discountPrice: {
+    type: Number,
+    default: 0,
+  },
+
+  offerInPercentage: {
+    type: Number,
+  },
+
+  productWiseOffer:{
+    type: Boolean,
+    default: false,
+  },
+  categoryWiseOffer:{
+    type: Boolean,
+    default: false,
+  }
+
 });
 
 productSchema.index({ productName: 'text', Description: 'text' });

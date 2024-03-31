@@ -12,6 +12,7 @@ import { TbShoppingCartCancel } from "react-icons/tb";
 const server = import.meta.env.VITE_SERVER;
 
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface Address {
   street: string;
@@ -97,43 +98,37 @@ const FavouritesPage = () => {
   }, [activeDropdown]);
 
 
-
-  const handleCancelOrder = async (orderId: string) => {
-    try {
-
-      console.log('clicked');
-      
-      console.log(orderId);
-      
-      
-      const response = await api.put(`/order/cancel/${orderId}`,{userId});
-      if (response.data.success) {
-        console.log("Product canceled:", "from order:", orderId);
-
-        fetchuserFavourites();
-      } else {
-        console.error("Failed to cancel product:", response.data.error);
-      }
-    } catch (error) {
-      console.error("Error canceling product:", error);
-    }
-  };
-
-  const downloadInvoice = async (orderId: string) => {
-    try {
-      const response = await api.get(`/order/invoice/${orderId}`, {
-        responseType: "blob",
+  
+  const handleAddToCart = (productId) => {
+    api
+      .put(`/cart/add/wishlist/${userId}`, { productId, quantity: 1 })
+      .then((response) => {
+        console.log("Product added to cart:", response.data);
+        toast.success("Product added to cart successfully");
+        setUserFavourites(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error adding to cart:", error);
+        toast.error("Failed to add product to cart. Please try again later.");
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `invoice_${orderId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-    } catch (error) {
-      console.error("Error fetching invoice:", error);
-    }
   };
+
+
+  const handleRemove = (productId) => {
+    api
+      .put(`/wishlist/remove/${userId}`, { productId, quantity: 1 })
+      .then((response) => {
+        console.log("Product removed from Favorites:", response.data);
+        toast.success("Product removed from Favorites successfully");
+        setUserFavourites(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error removing from Favorites:", error);
+        toast.error("Failed to remove product from Favorites. Please try again later.");
+      });
+  };
+
+
 
   const fetchingFavourites = async () => {
     try {
@@ -163,15 +158,18 @@ const FavouritesPage = () => {
     const newRows = userFavourites.map((item, index) => ({
       // item: <div className="flex justify-center ">{index + 1}</div>,
 
-      item: <img className="flex justify-center" src={`${server}/${item.productImage[0]      }`}  ></img>,
+      item: <img className="flex justify-center" src={`${server}/${item?.productImage     }`}  ></img>,
       productName: (
         <div className="flex flex-col justify-center gap-1">
-          <div className="flex justify-center"> {item.productName}</div>
+          <div className="flex justify-center"> {item?.productName}</div>
          
         </div>
       ),
       unitPrice: (
-        <div className="flex justify-center">₹{item.price}</div>
+
+        
+
+          <div className="flex justify-center">₹{item?.discountPrice ? item.discountPrice : item.price}</div>
       ),
       
       action: (
@@ -183,7 +181,7 @@ const FavouritesPage = () => {
                 <button
                   className="flex gap-3  w-36  border rounded justify-center bg-black text-white  py-3 text-sm hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => handleCancelOrder(item._id)}
+                  onClick={() => handleAddToCart(item.productId)}
                 >
                   
                   <span>Add To Cart</span>
@@ -191,7 +189,7 @@ const FavouritesPage = () => {
                 <button
                   className="  flex border w-36  rounded justify-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"
-                  onClick={() => downloadInvoice(item._id)}
+                  onClick={() => handleRemove(item.productId)}
                 >
                   
                   <span>Remove </span>

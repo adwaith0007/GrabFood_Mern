@@ -152,6 +152,9 @@ const MenuPage = () => {
     toast.success(`${product.productName} added to cart!`);
   };
 
+  
+
+
   const selectedCategoryHandler = (name) => {
     setSelectedCategory(name);
     setCurrentPage(1); // Reset to the first page when category changes
@@ -196,13 +199,16 @@ const MenuPage = () => {
                     price={item.price}
                     description={item.Description}
                     name={item.productName}
+                    discountPrice={item.discountPrice}
+  
+                    offerInPercentage={item.offerInPercentage}
                     imageUrl={`${server}/${item.productImage[0].replace(
                       / /g,
                       "%20"
                     )}`}
                     onAddToCart={() => addToCart(item)}
 
-                    onAddToWishlist={() => addToWishlist(item)}
+                    // onAddToFavorites={() => addToWishlist(item)}
                   />
                 </>
               )}

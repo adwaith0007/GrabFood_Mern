@@ -11,6 +11,7 @@ import UserSidebar from "../../../components/user/UserSidebar";
 import { TbShoppingCartCancel } from "react-icons/tb";
 import DeletePopeUp from '../../../components/DeletePopeUp';
 import { BsExclamationSquareFill } from "react-icons/bs";
+import toast from "react-hot-toast";
 
 const server = import.meta.env.VITE_SERVER;
 
@@ -109,17 +110,17 @@ const MyOrderPage = () => {
 
   const handleCancelOrder = (orderId: string, orderStatus ) => {
 
-    if(orderStatus== "Delivered" ){
-       window.alert("Order is already delivered");
-    }else if (orderStatus== "Cancel"){
-      window.alert("Order is already canceled");
-    }else{
+    // if(orderStatus== "Delivered" ){
+    //    window.alert("Order is already delivered");
+    // }else if (orderStatus== "Cancel"){
+    //   window.alert("Order is already canceled");
+    // }else{
 
       
       setSelectedOrderId(orderId);
       
       setProductDeletePopUp(true);
-    }
+    // }
   };
 
   const handlePopUpCancel = () => {
@@ -141,6 +142,7 @@ const MyOrderPage = () => {
         console.error("Failed to cancel product:", response.data.error);
       }
     } catch (error) {
+      toast.error(error.response.data.message)
       console.error("Error canceling product:", error);
     } finally {
       setProductDeletePopUp(false);
@@ -206,7 +208,7 @@ const MyOrderPage = () => {
     switch (status) {
       case "Processing":
         return "purple";
-        case "Cancel":
+        case "Cancelled":
         return "red";
       case "Shipped":
         return "green";
@@ -227,6 +229,7 @@ const MyOrderPage = () => {
       order: (
         <div className="flex flex-col justify-center gap-1">
           <div className="flex justify-center">Id: {order._id}</div>
+          <div className="flex justify-center">{order.paymentMethod}</div>
           <div className="flex justify-center">Date: {order.orderDate}</div>
         </div>
       ),

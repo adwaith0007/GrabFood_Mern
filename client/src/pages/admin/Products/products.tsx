@@ -70,7 +70,7 @@ const Products = () => {
         />
       ),
       name: item.productName,
-      price: item.price,
+      price: `₹${item.price}`,
       category: item.category,
       action: <Link to={`/admin/product/${item._id}`}>Manage</Link>,
     }));

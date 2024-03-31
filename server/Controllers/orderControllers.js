@@ -112,6 +112,52 @@ exports.orderforWallet = async (req, res) => {
 
 
 
+exports.orderCOD = async (req, res) => {
+  const { orderDetails, userId } = req.body;
+
+  try{
+
+  const user = await UserModel.findById(userId);
+
+  const orderDoc = new orderModel({
+    userId: orderDetails.userId,
+    products: orderDetails.products.map((product) => ({
+      productId: product.productId,
+      productName: product.productName,
+      productImage: product.productImage,
+      price: product.price,
+      quantity: product.quantity,
+    })),
+
+    discountAmount: orderDetails.discountAmount,
+    couponCode: orderDetails.couponCode,
+
+    // coupon: couponId,
+    // shipping,
+    totalPrice: orderDetails.totalPrice,
+    userName: user.username,
+    address: orderDetails.address,
+    orderDate: orderDetails.orderDate,
+    paymentMethod: orderDetails.paymentMethod,
+    paymentStatus:false,
+    phone: user.phone,
+
+    
+  });
+  orderDoc.save();
+
+    await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Your Order is placed" });
+  } catch (error) {
+    console.log("error while adding order for wallet", error);
+  }
+};
+
+
+
 
 // exports.placeOrder = async (req, res) => {
 //   try {
@@ -192,11 +238,11 @@ exports.getUserOrders = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Check for orders with userId and payment method
-    const userOrders = await orderModel.find({ userId, paymentMethod: "onlinePayment" }).sort({ createdAt: -1 });
+    
+    const userOrders = await orderModel.find({ userId}).sort({ createdAt: -1 });
 
-    // Filter orders based on payment status
-    const filteredOrders = userOrders.filter(order => order.paymentStatus === true || order.paymentMethod === "cashOnDelivery");
+   
+    const filteredOrders = userOrders.filter(order => order.paymentStatus === true || order.paymentMethod === "COD");
 
     res.status(200).json({ success: true, orders: filteredOrders });
   } catch (error) {
@@ -289,6 +335,57 @@ exports.cancelProduct = async (req, res) => {
 //   }
 // };
 
+// exports.cancelOrder = async (req, res) => {
+//   console.log("hiiii");
+
+//   try {
+//     const orderId = req.params.orderId;
+
+//     const order = await orderModel.findById(orderId);
+
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, error: "Order not found." });
+//     }
+
+//     const updatedOrder = await orderModel.findByIdAndUpdate(
+//       orderId,
+//       { $set: { orderStatus: "Cancel" } },
+//       { new: true }
+//     );
+
+//     if (
+//       order.paymentMethod === "onlinePayment" &&
+//       order.paymentStatus === true
+//     ) {
+//       const user = await UserModel.findOne({ username: order.userName });
+
+//       if (!user) {
+//         return res
+//           .status(404)
+//           .json({ success: false, error: "User not found." });
+//       }
+
+//       user.wallet.balance += order.totalPrice;
+//       await user.save();
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Order canceled successfully.",
+//       updatedOrder: updatedOrder,
+//     });
+//   } catch (error) {
+//     console.error("Error canceling order:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Failed to cancel order. Please try again later.",
+//     });
+//   }
+// };
+
+
 exports.cancelOrder = async (req, res) => {
   console.log("hiiii");
 
@@ -303,35 +400,61 @@ exports.cancelOrder = async (req, res) => {
         .json({ success: false, error: "Order not found." });
     }
 
-    const updatedOrder = await orderModel.findByIdAndUpdate(
-      orderId,
-      { $set: { orderStatus: "Cancel" } },
-      { new: true }
-    );
-
-    if (
-      order.paymentMethod === "onlinePayment" &&
-      order.paymentStatus === true
-    ) {
-      const user = await UserModel.findOne({ username: order.userName });
-
-      if (!user) {
-        return res
-          .status(404)
-          .json({ success: false, error: "User not found." });
-      }
-
-      user.wallet.balance += order.totalPrice;
-      await user.save();
+    // Check if order is already cancelled
+    if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Order is already cancelled.",
+      });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Order canceled successfully.",
-      updatedOrder: updatedOrder,
-    });
+    // Check if order is delivered
+    if (order.orderStatus === "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "Order is already delivered and cannot be cancelled.",
+      });
+    }
+
+    // Allow cancellation only if order is in "Processing" state
+    if (order.orderStatus === "Processing") {
+      const updatedOrder = await orderModel.findByIdAndUpdate(
+        orderId,
+        { $set: { orderStatus: "Cancelled" } },
+        { new: true }
+      );
+
+      if (
+        order.paymentMethod === "onlinePayment" &&
+        order.paymentStatus === true
+      ) {
+        const user = await UserModel.findOne({ username: order.userName });
+
+        if (!user) {
+          return res
+            .status(404)
+            .json({ success: false, error: "User not found." });
+        }
+
+        user.wallet.balance += order.totalPrice;
+        await user.save();
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Order cancelled successfully.",
+        updatedOrder: updatedOrder,
+      });
+    } else {
+      // Order status is not "Processing", cannot cancel
+      return res.status(400).json({
+        success: false,
+        message:
+          "Order can only be cancelled if it is in 'Processing' state.",
+      });
+    }
   } catch (error) {
-    console.error("Error canceling order:", error);
+    console.error("Error cancelling order:", error);
     res.status(500).json({
       success: false,
       error: "Failed to cancel order. Please try again later.",

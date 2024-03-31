@@ -55,13 +55,7 @@ const AddCategory = () => {
     try {
       const response = await api.post(`/category/add`,formData);
 
-      // const response = await api.post(`/category/upload`,formData);
       
-      // const response = await axios.post(`http://localhost:5000/api/category/upload`,formData);                                                                     
-      
-      // const response = await axios.post(`http://localhost:5000/api/category/add`,formData);
-      
-      // const response = await axios.post(`http://localhost:7000/upload`,formData);
       if (response.data.success) {
         toast.success("Category added");
       } else {
