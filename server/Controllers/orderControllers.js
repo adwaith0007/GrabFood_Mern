@@ -96,11 +96,28 @@ exports.orderforWallet = async (req, res) => {
     paymentStatus:true,
     phone: user.phone,
 
+    // preOrderId:orderDetails?._id,
+    // preOrderStatus:orderDetails?.orderStatus
+
     
   });
   orderDoc.save();
 
-    await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
+    if(orderDetails.preOrderId){
+
+      console.log('good');
+      
+      
+      await orderModel.deleteOne({_id:orderDetails.preOrderId})
+
+    }else{
+
+      await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
+
+    }
+
+
+
 
     return res
       .status(200)
@@ -263,7 +280,7 @@ exports.cancelProduct = async (req, res) => {
 
     const order = await orderModel.findById(orderId);
 
-    // console.log(order);
+    
 
     if (!order) {
       return res
@@ -300,90 +317,7 @@ exports.cancelProduct = async (req, res) => {
   }
 };
 
-// exports.cancelOrder = async (req, res) => {
 
-//   try {
-//     const orderId = req.params.orderId;
-//     const userId = req.body.userId;
-//     console.log(orderId);
-//     console.log('userId',userId);
-
-//     const order = await orderModel.findById(orderId);
-
-//     if (!order) {
-//       return res.status(404).json({ success: false, error: "Order not found." });
-//     }
-
-//     // Update the order status to "Cancel"
-//     const updatedOrder = await orderModel.findByIdAndUpdate(
-//       orderId,
-//       { $set: { orderStatus: "Cancel" } },
-//       { new: true } // This option returns the modified document
-//     );
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Order canceled successfully.",
-//       updatedOrder: updatedOrder, // Send the updated order back in the response
-//     });
-//   } catch (error) {
-//     console.error("Error canceling order:", error);
-//     res.status(500).json({
-//       success: false,
-//       error: "Failed to cancel order. Please try again later.",
-//     });
-//   }
-// };
-
-// exports.cancelOrder = async (req, res) => {
-//   console.log("hiiii");
-
-//   try {
-//     const orderId = req.params.orderId;
-
-//     const order = await orderModel.findById(orderId);
-
-//     if (!order) {
-//       return res
-//         .status(404)
-//         .json({ success: false, error: "Order not found." });
-//     }
-
-//     const updatedOrder = await orderModel.findByIdAndUpdate(
-//       orderId,
-//       { $set: { orderStatus: "Cancel" } },
-//       { new: true }
-//     );
-
-//     if (
-//       order.paymentMethod === "onlinePayment" &&
-//       order.paymentStatus === true
-//     ) {
-//       const user = await UserModel.findOne({ username: order.userName });
-
-//       if (!user) {
-//         return res
-//           .status(404)
-//           .json({ success: false, error: "User not found." });
-//       }
-
-//       user.wallet.balance += order.totalPrice;
-//       await user.save();
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Order canceled successfully.",
-//       updatedOrder: updatedOrder,
-//     });
-//   } catch (error) {
-//     console.error("Error canceling order:", error);
-//     res.status(500).json({
-//       success: false,
-//       error: "Failed to cancel order. Please try again later.",
-//     });
-//   }
-// };
 
 
 exports.cancelOrder = async (req, res) => {
@@ -400,7 +334,7 @@ exports.cancelOrder = async (req, res) => {
         .json({ success: false, error: "Order not found." });
     }
 
-    // Check if order is already cancelled
+  
     if (order.orderStatus === "Cancelled") {
       return res.status(400).json({
         success: false,
@@ -408,7 +342,7 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    // Check if order is delivered
+
     if (order.orderStatus === "Delivered") {
       return res.status(400).json({
         success: false,
@@ -416,7 +350,7 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    // Allow cancellation only if order is in "Processing" state
+    
     if (order.orderStatus === "Processing") {
       const updatedOrder = await orderModel.findByIdAndUpdate(
         orderId,
@@ -425,7 +359,7 @@ exports.cancelOrder = async (req, res) => {
       );
 
       if (
-        order.paymentMethod === "onlinePayment" &&
+       ( order.paymentMethod === "onlinePayment" || order.paymentMethod === "Wallet" ) &&
         order.paymentStatus === true
       ) {
         const user = await UserModel.findOne({ username: order.userName });
@@ -446,7 +380,7 @@ exports.cancelOrder = async (req, res) => {
         updatedOrder: updatedOrder,
       });
     } else {
-      // Order status is not "Processing", cannot cancel
+      
       return res.status(400).json({
         success: false,
         message:
@@ -607,7 +541,7 @@ exports.getOrderProductDetails = async (req, res) => {
 };
 
 
-exports.getOrderDetails = async (req, res) => {
+exports.getOrderDetailsAdmin = async (req, res) => {
   const { orderId } = req.params;
 
   try {
@@ -662,6 +596,29 @@ paymentStatus
 
 
 
+exports.getOrderDetails = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    
+    const order = await orderModel.findOne({
+      _id: orderId
+    });
+
+    console.log(order);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 
 exports.updateProductStatus = async (req, res) => {
   const { orderId, productId } = req.params;
@@ -696,30 +653,76 @@ exports.updateProductStatus = async (req, res) => {
 
 
 
+
+
+
 exports.updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
+  // Validate the status field
+  if (!status || typeof status !== "string") {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
+
   try {
     const order = await orderModel.findById(orderId);
 
+   
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    order.orderStatus = status;
+   
+    if (order.orderStatus === "Processing" && status === "Delivered") {
+      order.orderStatus = status;
+    } else if (
+      order.orderStatus === "Delivered" &&
+      (status === "Delivered" || status === "Cancelled")
+    ) {
+      return res.json({ success: false, message: "Order already delivered" });
+    } else if (
+      order.orderStatus === "Processing" &&
+      status === "Cancelled" &&
+      (order.paymentMethod === "onlinePayment" ||
+        order.paymentMethod === "Wallet")
+    ) {
+      const user = await UserModel.findById(order.userId);
 
+     
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, error: "User not found." });
+      }
+
+      
+      user.wallet.balance += order.totalPrice;
+      await user.save();
+
+      order.orderStatus = status;
+    } else {
+     
+      return res.status(400).json({
+        success: false,
+        message: "Invalid combination of order status and status",
+      });
+    }
+
+    
     const updatedOrder = await order.save();
 
-    res.json(updatedOrder);
+   
+    res.status(200).json({
+      success: true,
+      data: updatedOrder,
+      message: "Order status updated",
+    });
   } catch (error) {
     console.error("Error updating Order status:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
 
 
 
@@ -812,5 +815,194 @@ exports.filterDataByDate = async (req, res) => {
       success: false,
       message: "error while getting order filtering",
     });
+  }
+};
+
+
+
+// exports.calculateMonthlyStats = async (req, res) => {
+//   // Assuming orders are fetched from a database or another data source
+//   // const orders = req.orders; // Orders fetched from somewhere, e.g., database
+//   const orders = await orderModel.find({})
+//   // Initialize the Order model with the orders data
+//   // const orderModel = new orderModel(orders);
+
+//   // Get current month and year
+//   const currentDate = new Date();
+//   const currentYear = currentDate.getFullYear();
+//   const currentMonth = currentDate.getMonth() + 1; // January is 0, so we add 1
+
+//   // Calculate stats from January to current month
+//   const monthlyStats = {};
+
+//   orders.forEach(order => {
+//     const orderDate = new Date(order.orderDate);
+//     const orderMonth = orderDate.getMonth() + 1;
+//     const orderYear = orderDate.getFullYear();
+//     const monthYear = `${orderYear}-${orderMonth < 10 ? '0' + orderMonth : orderMonth}`;
+
+//     if (!monthlyStats[monthYear]) {
+//       monthlyStats[monthYear] = {
+//         revenue: 0,
+//         transactions: 0
+//       };
+//     }
+
+//     // Check if order is delivered to count as revenue
+//     if (order.orderStatus === 'Delivered') {
+//       monthlyStats[monthYear].revenue += order.totalPrice;
+//     }
+
+//     // Count all orders as transactions
+//     monthlyStats[monthYear].transactions++;
+//   });
+
+//   // Filter stats from January to the current month
+//   const filteredMonthlyStats = {};
+//   for (let year = 2024; year <= currentYear; year++) {
+//     for (let month = 1; month <= (year === currentYear ? currentMonth : 12); month++) {
+//       const monthKey = `${year}-${month < 10 ? '0' + month : month}`;
+//       filteredMonthlyStats[monthKey] = monthlyStats[monthKey] || { revenue: 0, transactions: 0 };
+//     }
+//   }
+
+//   console.log("hi")
+
+//   // Send the monthly stats as JSON response
+//   res.json({ monthlyStats: filteredMonthlyStats });
+// };
+
+
+// exports.calculateMonthlyStats = async (req, res) => {
+//   try {
+//     const orders = await orderModel.find(); // Assuming OrderModel is your Mongoose model for orders
+
+//     const monthlyRevenue = new Array(12).fill(0);
+//     const monthlyTransactions = new Array(12).fill(0);
+
+//     orders.forEach(order => {
+//       const createdAt = new Date(order.createdAt);
+//       const month = createdAt.getMonth();
+//       const totalPrice = order.totalPrice;
+
+//       if (order.orderStatus === 'Delivered') {
+//         monthlyRevenue[month] += totalPrice;
+//       }
+
+//       monthlyTransactions[month]++;
+//     });
+
+//     res.json({ monthlyRevenue, monthlyTransactions });
+//   } catch (error) {
+//     console.error('Error calculating monthly stats:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
+
+// exports.calculateMonthlyStats = async (req, res) => {
+//   try {
+//     const orders = await orderModel.find(); // Assuming OrderModel is your Mongoose model for orders
+
+//     const currentDate = new Date();
+//     const currentMonth = currentDate.getMonth();
+//     const currentYear = currentDate.getFullYear();
+
+//     const monthlyRevenue = new Array(currentMonth + 1).fill(0);
+//     const monthlyTransactions = new Array(currentMonth + 1).fill(0);
+
+//     orders.forEach(order => {
+//       const createdAt = new Date(order.createdAt);
+//       const orderMonth = createdAt.getMonth();
+//       const orderYear = createdAt.getFullYear();
+//       const totalPrice = order.totalPrice;
+
+//       if (orderYear === currentYear && orderMonth <= currentMonth) {
+//         if (order.orderStatus === 'Delivered') {
+//           monthlyRevenue[orderMonth] += totalPrice;
+//         }
+
+//         monthlyTransactions[orderMonth]++;
+//       }
+//     });
+
+//     res.json({ monthlyRevenue, monthlyTransactions });
+//   } catch (error) {
+//     console.error('Error calculating monthly stats:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
+
+
+
+// exports.calculateMonthlyStats = async (req, res) => {
+//   try {
+//     const orders = await orderModel.find(); // Assuming OrderModel is your Mongoose model for orders
+
+//     const currentDate = new Date();
+//     const currentMonth = currentDate.getMonth();
+//     const currentYear = currentDate.getFullYear();
+
+//     const monthlyRevenue = new Array(currentMonth + 1).fill(0);
+//     const monthlyTransactions = new Array(currentMonth + 1).fill(0);
+//     let successfulOrders = 0;
+
+//     orders.forEach(order => {
+//       const createdAt = new Date(order.createdAt);
+//       const orderMonth = createdAt.getMonth();
+//       const orderYear = createdAt.getFullYear();
+//       const totalPrice = order.totalPrice;
+
+//       if (orderYear === currentYear && orderMonth <= currentMonth) {
+//         if (order.orderStatus === 'Delivered') {
+//           monthlyRevenue[orderMonth] += totalPrice;
+//           successfulOrders++;
+//         }
+
+//         monthlyTransactions[orderMonth]++;
+//       }
+//     });
+
+//     res.json({ monthlyRevenue, monthlyTransactions, successfulOrders });
+//   } catch (error) {
+//     console.error('Error calculating monthly stats:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
+
+
+exports.calculateMonthlyStats = async (req, res) => {
+  try {
+    const orders = await orderModel.find(); // Assuming OrderModel is your Mongoose model for orders
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    const monthlyRevenue = new Array(currentMonth + 1).fill(0);
+    const noMonthlyTransactions = new Array(currentMonth + 1).fill(0);
+    const noMonthlySuccessfulOrders = new Array(currentMonth + 1).fill(0);
+
+    orders.forEach(order => {
+      const createdAt = new Date(order.createdAt);
+      const orderMonth = createdAt.getMonth();
+      const orderYear = createdAt.getFullYear();
+      const totalPrice = order.totalPrice;
+
+      if (orderYear === currentYear && orderMonth <= currentMonth) {
+        if (order.orderStatus === 'Delivered') {
+          monthlyRevenue[orderMonth] += totalPrice;
+          noMonthlySuccessfulOrders[orderMonth]++;
+        }
+
+        noMonthlyTransactions[orderMonth]++;
+      }
+    });
+
+    res.json({ monthlyRevenue, noMonthlyTransactions, noMonthlySuccessfulOrders });
+  } catch (error) {
+    console.error('Error calculating monthly stats:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };

@@ -35,28 +35,68 @@ const OrderManagement = () => {
     }
   }, [orderId]);
 
-  const updateHandler = async () => {
+  const approveHandler = async () => {
    
     try {
 
-      if(userOrderDetails?.orderStatus=="Cancel"){
+      if(userOrderDetails?.orderStatus=="Cancelled"){
 
-       toast.error("Order is Canceled")
+       toast.error("Canceled order can't be approved ")
 
       }else{
 
         
-        await api.put(`/orders/${orderId}`, {
+        const response = await api.put(`/orders/status/${orderId}`, {
           status: "Delivered",
         });
+
+        if(response.data.success){
+
+          toast.success(response.data.message)
+          
+          setUserOrderDetails((prev) => ({
+            ...prev,
+            orderStatus: "Delivered",
+          }));
+        }else{
+          toast.error(response.data.message)
+        }
         
-        
-        setUserOrderDetails((prev) => ({
-          ...prev,
-          orderStatus: "Delivered",
-        }));
       }
     } catch (error) {
+      console.error('Error updating order status:', error.response ? error.response.data : error.message);
+    }
+  };
+
+
+  const cancelHandler = async () => {
+   
+    try {
+
+      if(userOrderDetails?.orderStatus=="Cancelled"){
+
+       toast.error("Order is already Cancelled")
+
+      }else{
+
+        
+       const response = await api.put(`/orders/status/${orderId}`, {
+          status: "Cancelled",});
+
+          if(response.data.success){
+
+            toast.success(response.data.message)
+            
+            setUserOrderDetails((prev) => ({
+              ...prev,
+              orderStatus: "Cancelled",
+            }));
+          }else{
+            toast.error(response.data.message)
+          }
+        }
+      } catch (error) {
+      toast.error(error.response.data.message)
       console.error('Error updating order status:', error.response ? error.response.data : error.message);
     }
   };
@@ -108,9 +148,18 @@ const OrderManagement = () => {
               {userOrderDetails?.orderStatus}
             </span>
           </p>
-          <button className="shipping-btn" onClick={updateHandler}>
-            Process Status
+
+              <div className="flex m-auto justify-between mt-5 " >
+
+
+          <button className="bg-blue-600 text-white w-[160px]  py-3 rounded" onClick={approveHandler}>
+            Approve
           </button>
+
+          <button className="bg-red-600 text-white w-[160px]  py-3 rounded" onClick={cancelHandler}>
+            Cancel
+          </button>
+              </div>
         </article>
       </main>
     </div>

@@ -34,6 +34,13 @@ const PaymentPage = () => {
   const location = useLocation();
   const checkoutData = location.state && location.state.checkoutData;
 
+  const reorderData = location.state && location.state.reorderData;
+
+  console.log("reOrderId:", reorderData)
+
+
+  const currentOrder =  checkoutData || reorderData
+
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -48,14 +55,16 @@ const PaymentPage = () => {
       }
 
       const orderDetails ={
-        userId:checkoutData.userId,
-        products: checkoutData.products,
-        address: checkoutData.address,
-        discountAmount:checkoutData.discountAmount,
-        couponCode:checkoutData.couponCode,
+        userId:currentOrder.userId,
+        products: currentOrder.products,
+        address: currentOrder.address,
+        discountAmount:currentOrder.discountAmount,
+        couponCode:currentOrder.couponCode,
         paymentMethod:'Wallet',
-        orderDate: checkoutData.orderDate,
-        totalPrice :checkoutData.totalPrice,
+        orderDate: currentOrder.orderDate,
+        totalPrice :currentOrder.totalPrice,
+        preOrderId:currentOrder?._id,
+        preOrderStatus:currentOrder?.orderStatus
       }
   
       api
@@ -359,10 +368,10 @@ const PaymentPage = () => {
                       <button
                         className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2"
                         onClick={() => {
-                          handleWalletPayment(checkoutData.totalPrice);
+                          handleWalletPayment(currentOrder.totalPrice);
                         }}
                       >
-                        Pay ₹ {checkoutData.totalPrice} via wallet
+                        Pay ₹ {currentOrder.totalPrice} via wallet
                       </button>
                     </div>
                   </div>
@@ -374,7 +383,7 @@ const PaymentPage = () => {
 
                         onClick={handleRazorpayPayment}
                       >
-                        Pay ₹ {checkoutData.totalPrice} via Razorpay
+                        Pay ₹ {currentOrder.totalPrice} via Razorpay
                       </button>
                     </div>
                     <div className="text-xs text-gray-500 italic text-center">
@@ -389,7 +398,7 @@ const PaymentPage = () => {
                         className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full hover:bg-indigo-500 bg-indigo-600 text-white focus:outline-none focus-visible:ring-2"
                         onClick={handleCOD}
                       >
-                        Pay - ₹ {checkoutData.totalPrice}
+                        Pay - ₹ {currentOrder.totalPrice}
                       </button>
                     </div>
                     <div className="text-xs text-gray-500 italic text-center">

@@ -102,13 +102,6 @@ const SalesReport = () => {
     try {
 
       api.post('/order/filterDataByDate', { startDate, endDate })
-
-      // axios
-      //   .post(
-      //     `${serverUrl}/order/filterDataByDate`,
-      //     { startDate, endDate },
-      //     { withCredentials: true }
-      //   )
         .then((res) => {
           if (res.data.success) {
             setUserOrders(res.data.data);
@@ -125,7 +118,7 @@ const SalesReport = () => {
     const pdf = new jsPDF();
 
     const deliveredOrders = userOrders.filter(
-      (order) => order.status === "Delivered"
+      (order) => order.orderStatus === "Delivered"
     );
     //calculating total value
     const totalValue = deliveredOrders.reduce(

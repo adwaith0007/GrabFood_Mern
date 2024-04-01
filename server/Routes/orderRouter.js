@@ -37,6 +37,10 @@ const { log } = require("handlebars");
   });
 
   router.get('/orders/:orderId', (req, res) => {
+    orderControllers.getOrderDetailsAdmin(req, res);
+  });
+
+  router.get('/order/:orderId/reorder', (req, res) => {
     orderControllers.getOrderDetails(req, res);
   });
 
@@ -45,7 +49,7 @@ const { log } = require("handlebars");
   });
 
 
-  router.put('/orders/:orderId', (req, res) => {
+  router.put('/orders/status/:orderId', (req, res) => {
     orderControllers.updateOrderStatus(req, res);
   });
 
@@ -65,5 +69,8 @@ const { log } = require("handlebars");
   router.post("/order/filterDataByDate", (req, res) => {
     orderControllers.filterDataByDate(req, res);
   });
+
+
+  router.get('/order/monthlyStats', orderControllers.calculateMonthlyStats);
 
 module.exports = router;

@@ -6,11 +6,40 @@ import AdminSidebar from "../../components/admin/AdminSidebar";
 import { BarChart, DoughnutChart } from "../../components/admin/Charts";
 import Table from "../../components/admin/DashboardTable";
 import data from "../../assets/data.json"
+import { useEffect, useState } from "react";
+import api from "../../api"
 
 const userImg =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
 
 const Dashboard = () => {
+
+  const [monthlyRevenue , setmonthlyRevenue ]=useState()
+
+  useEffect(()=>{
+
+    try {
+      api.get("/order/monthlyStats")
+      .then((res)=>{
+        setmonthlyRevenue(res.data.monthlyRevenue)
+      })
+      
+    } catch (error) {
+      console.error(error)
+    }
+
+
+
+  },[])
+
+  console.log(monthlyRevenue);
+  
+
+  const thisMonthRevenue = monthlyRevenue?.pop()
+
+  // const lastMonthRevenue = monthlyRevenue[monthlyRevenue.length - 3];
+
+
   return (
     <div className="admin-container">
       <AdminSidebar />
@@ -26,7 +55,7 @@ const Dashboard = () => {
           <WidgetItem
             percent={40}
             amount={true}
-            value={340000}
+            value={thisMonthRevenue}
             heading="Revenue"
             color="rgb(0, 115, 255)"
           />
@@ -52,11 +81,23 @@ const Dashboard = () => {
         </section>
 
         <section className="graph-container">
-          <div className="revenue-chart">
+          {/* <div className="revenue-chart">
             <h2>Revenue & Transaction</h2>
             <BarChart
-              data_2={[300, 144, 433, 655, 237, 755, 190]}
-              data_1={[200, 444, 343, 556, 778, 455, 990]}
+              data_2={[300, 144, 433, 655, 237, 755 ]}
+              data_1={[200, 444, 343, 556, 778, 455]}
+              title_1="Revenue"
+              title_2="Transaction"
+              bgColor_1="rgb(0, 115, 255)"
+              bgColor_2="rgba(53, 162, 235, 0.8)"
+            />
+          </div> */}
+
+<div className="revenue-chart">
+            <h2>Revenue & Transaction</h2>
+            <BarChart
+              data_2={monthlyRevenue}
+              data_1={[200, 444, 343, 556, 778, 455]}
               title_1="Revenue"
               title_2="Transaction"
               bgColor_1="rgb(0, 115, 255)"
@@ -81,7 +122,7 @@ const Dashboard = () => {
         </section>
 
         <section className="transaction-container">
-          <div className="gender-chart">
+          {/* <div className="gender-chart">
             <h2>Gender Ratio</h2>
             <DoughnutChart
               labels={["Female", "Male"]}
@@ -95,9 +136,11 @@ const Dashboard = () => {
             <p>
               <BiMaleFemale />
             </p>
-          </div>
+          </div> */}
           <Table data={data.transaction} />
         </section>
+
+        
       </main>
     </div>
   );

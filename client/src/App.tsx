@@ -92,8 +92,11 @@ function App() {
         <Navbar user={user} />
 
         <Suspense fallback={<Loader />}>
-          <Routes>
-            {/* user */}
+
+
+          
+          {/* <Routes>
+           
             
             <Route path="/login" element={<ProtectedRoute isAuthenticated={user ? false : true}redirect="/"><Login setToken={setToken} /></ProtectedRoute>}></Route>
            
@@ -121,9 +124,6 @@ function App() {
               <Route path="/*" element={<UserRoutes />} />
             </Route>
 
-            {/* <Route>
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route> */}
 
 
 
@@ -131,7 +131,64 @@ function App() {
             <Route path="/demo" element={<Demo />}></Route>
            
             
-          </Routes>
+          </Routes> */}
+
+
+            {/* <Route>
+              <Route path="/admin/*" element={<AdminRoutes />} />
+            </Route> */}
+
+
+
+
+
+<Routes>
+           
+            
+           <Route path="/login" element={<ProtectedRoute isAuthenticated={user ? false : true}redirect="/"><Login setToken={setToken} /></ProtectedRoute>}></Route>
+          
+           <Route element={<ProtectedRoute isAuthenticated={true} adminOnly={true} admin={user?.role === "admin" ? true : false}/>}>
+
+           <Route path="/admin/*" element={<AdminRoutes />} />
+             
+           </Route>
+
+
+
+           <Route path="/" element={<Home />}></Route>
+           <Route path="/signup" element={<SignUp />}></Route>
+           <Route path="/otp" element={<Otp />}></Route>
+           <Route path="/resetpasswordotp" element={<ResetPasswordOtp />} ></Route>
+           <Route path="/forgot_password" element={<ResetPassword />}></Route>
+
+
+           <Route path="/admin/signup" element={<SignupPage />}></Route>
+     <Route path="/admin" element={<LoginPage />}></Route>
+
+           
+           <Route
+             element={<ProtectedRoute isAuthenticated={user ? true : false} />}>
+             <Route path="/*" element={<UserRoutes />} />
+           </Route>
+
+
+
+
+    
+           <Route path="/demo" element={<Demo />}></Route>
+          
+           
+         </Routes>
+
+
+
+
+
+
+
+
+
+          
         </Suspense>
 
         <Toaster position="top-center" />

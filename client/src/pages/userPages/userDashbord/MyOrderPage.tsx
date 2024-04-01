@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ReactElement } from "react";
 import { FaPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../../components/admin/TableHOC";
 import { useSelector } from "react-redux";
@@ -9,11 +9,13 @@ import { UserReducerInitialState } from "../../../types/reducer-types";
 import api from "../../../api";
 import UserSidebar from "../../../components/user/UserSidebar";
 import { TbShoppingCartCancel } from "react-icons/tb";
-import DeletePopeUp from '../../../components/DeletePopeUp';
+import DeletePopeUp from "../../../components/DeletePopeUp";
 import { BsExclamationSquareFill } from "react-icons/bs";
 import toast from "react-hot-toast";
 
 const server = import.meta.env.VITE_SERVER;
+
+
 
 interface Address {
   street: string;
@@ -84,11 +86,15 @@ const MyOrderPage = () => {
   );
   const userId = user._id;
 
+  const navigate = useNavigate();
+
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [productDeletePopUp, setProductDeletePopUp] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -107,33 +113,29 @@ const MyOrderPage = () => {
     };
   }, [activeDropdown]);
 
-
-  const handleCancelOrder = (orderId: string, orderStatus ) => {
-
+  const handleCancelOrder = (orderId: string, orderStatus) => {
     // if(orderStatus== "Delivered" ){
     //    window.alert("Order is already delivered");
     // }else if (orderStatus== "Cancel"){
     //   window.alert("Order is already canceled");
     // }else{
 
-      
-      setSelectedOrderId(orderId);
-      
-      setProductDeletePopUp(true);
+    setSelectedOrderId(orderId);
+
+    setProductDeletePopUp(true);
     // }
   };
 
   const handlePopUpCancel = () => {
     setProductDeletePopUp(false);
     setSelectedOrderId(null);
-    
   };
 
   const handlePopUpDelete = async () => {
     try {
-
-
-      const response = await api.put(`/order/cancel/${selectedOrderId}`,{userId});
+      const response = await api.put(`/order/cancel/${selectedOrderId}`, {
+        userId,
+      });
       if (response.data.success) {
         console.log("Product canceled:", "from order:", selectedOrderId);
 
@@ -142,15 +144,12 @@ const MyOrderPage = () => {
         console.error("Failed to cancel product:", response.data.error);
       }
     } catch (error) {
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message);
       console.error("Error canceling product:", error);
     } finally {
       setProductDeletePopUp(false);
       setSelectedOrderId(null);
-      
     }
-
-
 
     //   const response = await api.put(
     //     `/order/cancel/${selectedOrderId}/product/${selectedProductId}`
@@ -171,7 +170,28 @@ const MyOrderPage = () => {
   };
 
 
+  const handleReorder = async (orderId)=>{
 
+    console.log("handleReorder", orderId);
+
+
+
+    try {
+      const response = await api.get(`/order/${orderId}/reorder`);
+      if (response.data.success) {
+        
+        navigate("/payment", { state: { reorderData : response.data.data } });
+      } else {
+        console.error("Failed to fetch order:", response.data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching  order:", error);
+    }
+
+
+    
+
+  }
 
   const downloadInvoice = async (orderId: string) => {
     try {
@@ -208,7 +228,7 @@ const MyOrderPage = () => {
     switch (status) {
       case "Processing":
         return "purple";
-        case "Cancelled":
+      case "Cancelled":
         return "red";
       case "Shipped":
         return "green";
@@ -248,48 +268,64 @@ const MyOrderPage = () => {
         </p>
       ),
       orderDetails: (
-        
-
         <Link
           className="flex justify-center"
           to={`/user/orders/${order._id}/product`}
-          >
+        >
           View
         </Link>
-       
       ),
       action: (
         <div className="relative w-full inline-block " key={order._id}>
+          <div className="flex flex-col">
 
-          <div className="flex flex-col" >
+            {order.orderStatus !== "Cancelled" ?
 
-          <div className="py-1 flex gap-3 " role="none">
-               
-                <button
-            className='bg-red-500 text-white px-4 py-2 rounded'
             
-            onClick={() => handleCancelOrder(order._id, order.orderStatus)}
-          >
-            Cancel
-          </button>
 
-                <button
-                  className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  role="menuitem"
-                  onClick={() => downloadInvoice(order._id)}
+            <div className="py-1 flex gap-3 " role="none">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => handleCancelOrder(order._id, order.orderStatus)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem"
+                onClick={() => downloadInvoice(order._id)}
+              >
+                <svg
+                  className="fill-current w-4 h-4 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
                 >
-                  <svg
-                    className="fill-current w-4 h-4 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-                  </svg>
-                  <span>Download </span>
-                </button>
-              </div>
+                  <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                </svg>
+                <span>Download </span>
+              </button>
+            </div>
 
-          {/* <div className="flex justify-center  " >
+            :
+
+            <div className="w-full flex justify-center" >
+
+
+            <button
+                className=" w-[220px] flex border rounded justify-center px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700"
+                role="menuitem"
+                onClick={() => handleReorder(order._id)}
+                >
+                
+                <span>Reorder </span>
+              </button>
+            
+                </div>
+
+}
+
+            {/* <div className="flex justify-center  " >
             <button
               type="button"
               className="inline-flex justify-center  rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
@@ -315,7 +351,7 @@ const MyOrderPage = () => {
               </svg>
             </button>
           </div> */}
-                  </div>
+          </div>
 
           {activeDropdown === order._id && (
             <div
@@ -360,7 +396,7 @@ const MyOrderPage = () => {
     columns,
     rows,
     "dashboard-product-box",
-    (<p className="text-xl font-medium" >Orders</p> ),
+    <p className="text-xl font-medium">Orders</p>,
     rows.length > 6
   )();
 
@@ -380,4 +416,3 @@ const MyOrderPage = () => {
 };
 
 export default MyOrderPage;
-
