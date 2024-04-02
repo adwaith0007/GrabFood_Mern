@@ -10,6 +10,10 @@ const couponSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
+  formattedDateTime: {
+    type: String,
+    required: true,
+  },
   couponCode: {
     type: String,
     required: true,

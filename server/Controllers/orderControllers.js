@@ -93,6 +93,7 @@ exports.orderforWallet = async (req, res) => {
     address: orderDetails.address,
     orderDate: orderDetails.orderDate,
     paymentMethod: orderDetails.paymentMethod,
+    orderStatus:"Processing",
     paymentStatus:true,
     phone: user.phone,
 
@@ -259,9 +260,9 @@ exports.getUserOrders = async (req, res) => {
     const userOrders = await orderModel.find({ userId}).sort({ createdAt: -1 });
 
    
-    const filteredOrders = userOrders.filter(order => order.paymentStatus === true || order.paymentMethod === "COD");
+    // const filteredOrders = userOrders.filter(order => order.paymentStatus === true || order.paymentMethod === "COD");
 
-    res.status(200).json({ success: true, orders: filteredOrders });
+    res.status(200).json({ success: true, orders: userOrders });
   } catch (error) {
     console.error("Error fetching user orders:", error);
     res.status(500).json({
@@ -728,7 +729,7 @@ exports.updateOrderStatus = async (req, res) => {
 
 exports.paymentverification = async (req, res) => {
   try {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderDetails } =
       req.body;
 
     console.log(
@@ -749,6 +750,8 @@ exports.paymentverification = async (req, res) => {
         { razor_orderId: razorpay_order_id },
         {
           $set: {
+            
+            orderStatus : "Processing",
             paymentStatus: true,
             razor_paymentId: razorpay_payment_id,
             razor_signature: razorpay_signature,
@@ -760,6 +763,13 @@ exports.paymentverification = async (req, res) => {
         { razor_orderId: razorpay_order_id },
         { userId: 1 }
       );
+
+      if(orderDetails.preOrderId){
+
+        await orderModel.deleteOne({_id:orderDetails.preOrderId})
+
+    
+      }
 
       if (user) {
         await UserModel.updateOne({ _id: user.userId }, { $set: { cart: [] } });

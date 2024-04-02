@@ -122,7 +122,7 @@ const CheckoutPage = () => {
         discountAmount,
         couponCode,
         // paymentMethod,
-        orderDate: getCurrentDateTime(),
+        // orderDate: getCurrentDateTime(),
         totalPrice :totalAmount,
       };
 

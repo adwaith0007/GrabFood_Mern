@@ -13,6 +13,10 @@ const categorySchema = mongoose.Schema({
   offerInPercentage: {
     type: Number,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+  },
   deleted: {
     type: Boolean,
     default: false,

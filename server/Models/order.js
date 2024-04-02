@@ -68,7 +68,7 @@ const orderSchema = mongoose.Schema({
 
   orderStatus: {
     type: String,
-    default: "Processing",
+    default: "payment pending",
   },
 
  
@@ -114,6 +114,9 @@ const orderSchema = mongoose.Schema({
   couponCode: {
     type: String,
   },
+
+  
+
   createdAt: {
     type: Date,
     default: Date.now,

@@ -42,6 +42,10 @@ const productSchema = new mongoose.Schema({
   offerInPercentage: {
     type: Number,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+  },
 
   productWiseOffer:{
     type: Boolean,

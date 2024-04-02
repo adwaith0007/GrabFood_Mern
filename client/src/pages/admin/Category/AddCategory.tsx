@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import foodimg from "../../../assets/login_food.png";
@@ -14,6 +15,8 @@ const AddCategory = () => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -58,6 +61,9 @@ const AddCategory = () => {
       
       if (response.data.success) {
         toast.success("Category added");
+
+        navigate("/admin/category");
+
       } else {
         toast.error(response.data.message);
       }

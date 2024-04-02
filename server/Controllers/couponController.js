@@ -2,7 +2,7 @@ const couponModel = require("../Models/coupon");
 
 exports.addCoupon = async (req, res) => {
   try {
-    const { couponName, description, discount, couponCode, expiryDate } =
+    const { couponName, description, discount, couponCode, expiryDate , formattedDateTime } =
       req.body;
 
     
@@ -40,6 +40,7 @@ exports.addCoupon = async (req, res) => {
       couponCode,
       discount,
       expiryDate: expiryDateObj,
+      formattedDateTime
     });
     await couponDoc.save();
 

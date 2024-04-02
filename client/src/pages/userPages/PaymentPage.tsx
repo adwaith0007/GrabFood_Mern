@@ -45,6 +45,24 @@ const PaymentPage = () => {
     setLoading(false);
   }, []);
 
+
+  const getCurrentDateTime = () => {
+    const currentDate = new Date();
+
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
+    let hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+
+    return formattedDateTime;
+  };
+
   
   const handleWalletPayment = async (amount) => {
     try {
@@ -61,8 +79,9 @@ const PaymentPage = () => {
         discountAmount:currentOrder.discountAmount,
         couponCode:currentOrder.couponCode,
         paymentMethod:'Wallet',
-        orderDate: currentOrder.orderDate,
+        orderDate: getCurrentDateTime(),
         totalPrice :currentOrder.totalPrice,
+        
         preOrderId:currentOrder?._id,
         preOrderStatus:currentOrder?.orderStatus
       }
@@ -93,17 +112,23 @@ const PaymentPage = () => {
   
   const handleCOD = async (amount) => {
     try {
+
+      if(currentOrder.totalPrice>1000){
+        return toast.error("COD should be less than Rs 1000");
+      }
       
 
       const orderDetails ={
-        userId:checkoutData.userId,
-        products: checkoutData.products,
-        address: checkoutData.address,
-        discountAmount:checkoutData.discountAmount,
-        couponCode:checkoutData.couponCode,
+        userId:currentOrder.userId,
+        products: currentOrder.products,
+        address: currentOrder.address,
+        discountAmount:currentOrder.discountAmount,
+        couponCode:currentOrder.couponCode,
         paymentMethod:'COD',
-        orderDate: checkoutData.orderDate,
-        totalPrice :checkoutData.totalPrice,
+        orderDate: getCurrentDateTime(),
+        totalPrice :currentOrder.totalPrice,
+
+        preOrderId:currentOrder?._id,
       }
   
       api
@@ -133,14 +158,15 @@ const PaymentPage = () => {
   const handleRazorpayPayment = async () => {
     
     const orderDetails ={
-      userId:checkoutData.userId,
-      products: checkoutData.products,
-      address: checkoutData.address,
-      discountAmount:checkoutData.discountAmount,
-      couponCode:checkoutData.couponCode,
+      userId:currentOrder.userId,
+      products: currentOrder.products,
+      address: currentOrder.address,
+      discountAmount:currentOrder.discountAmount,
+      couponCode:currentOrder.couponCode,
       paymentMethod:'onlinePayment',
-      orderDate: checkoutData.orderDate,
-      totalPrice :checkoutData.totalPrice,
+      orderDate: getCurrentDateTime(),
+      totalPrice :currentOrder.totalPrice,
+      preOrderId:currentOrder?._id,
     }
     console.log('orderDetails',orderDetails);
     
@@ -169,7 +195,7 @@ const PaymentPage = () => {
               console.log('Response data:', response);
                 try {
                     const verificationResponse = await axios.post(
-                        `${server}/api/paymentverification`,{ ...response });
+                        `${server}/api/paymentverification`,{ ...response , orderDetails });
                     if (verificationResponse.data.success) {
                          setOrderSuccess(true);
                         // navigate("/home");

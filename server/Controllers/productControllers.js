@@ -131,6 +131,7 @@ exports.addProduct = async (req, res) => {
           price,
           category,
           productImage: filenames,
+          createdAt:new Date()
         });
 
         productDoc.productId = productDoc._id;
@@ -177,8 +178,9 @@ exports.listProduct = async (req, res) => {
     
     const products = await productModel
       .find(query)
+      .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
 
     
     const totalPages = Math.ceil(totalCount / limit);
@@ -447,6 +449,7 @@ exports.updateProduct = async (req, res) => {
         price: Number(price),
         Description: desc,
         category: category,
+        createdAt:new Date()
       };
 
 

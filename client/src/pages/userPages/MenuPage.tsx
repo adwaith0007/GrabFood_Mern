@@ -182,6 +182,8 @@ const MenuPage = () => {
           ))}
         </div>
 
+        
+
         <div className="grid grid-cols-4 gap-4">
           {productList.map((item) => (
             <div key={item._id}>
@@ -216,6 +218,8 @@ const MenuPage = () => {
           ))}
         </div>
       </div>
+
+      
 
     
 

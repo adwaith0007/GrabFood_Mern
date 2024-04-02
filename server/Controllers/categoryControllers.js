@@ -127,6 +127,7 @@ exports.addCategory = async (req, res) => {
     const categoryDoc = new categoryModel({
       category,
       categoryImage: image.originalname,
+      createdAt:new Date ()
     });
 
     await categoryDoc.save();
@@ -142,7 +143,7 @@ exports.addCategory = async (req, res) => {
 
 exports.adminListCategory = async (req, res) => {
   try {
-    const data = await categoryModel.find({});
+    const data = await categoryModel.find({}).sort({ createdAt: -1 }); 
 
     res.status(200).json({ success: true, data: data });
   } catch (error) {

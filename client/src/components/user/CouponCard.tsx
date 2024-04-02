@@ -57,7 +57,7 @@ const CouponCard = () => {
                                     {copiedIndex === index ? 'Copied' : 'Copy Code'}
                                 </span>
                             </div>
-                            <p className="text-sm">Valid Till: {coupon.expiryDate}</p>
+                            <p className="text-sm">Valid Till: {coupon.formattedDateTime}</p>
                             <div className="w-12 h-12 bg-white rounded-full absolute top-1/2 transform -translate-y-1/2 left-0 -ml-6"></div>
                             <div className="w-12 h-12 bg-white rounded-full absolute top-1/2 transform -translate-y-1/2 right-0 -mr-6"></div>
                         </div>

@@ -11,6 +11,10 @@ router.post('/add', (req, res) => {
     couponControllers.getCoupons(req, res);
   });
 
+  router.get('/admin/get', (req, res) => {
+    couponControllers.adminGetCoupons(req, res);
+  });
+
   router.post('/apply', (req, res) => {
     couponControllers.applyCoupon(req, res);
   });
