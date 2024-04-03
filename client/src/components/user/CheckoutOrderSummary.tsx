@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
-import api from '../../api';
+import api from "../../api";
 import toast from "react-hot-toast";
 
 const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
@@ -38,32 +38,28 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
     e.preventDefault();
 
     try {
-      const response = await api.post('/coupon/apply', { couponCode });
+      const response = await api.post("/coupon/apply", { couponCode });
       if (response.data.success) {
         setPctDiscount(response.data.discount);
       } else {
-        toast.error(response.data.message)
+        toast.error(response.data.message);
       }
-     
-      
     } catch (error) {
-      
       console.error("Error applying coupon:", error);
-      
     }
   };
 
-  useEffect(()=>{
-
-    
-    
-    
+  useEffect(() => {
     if (pctDiscount !== undefined && pctDiscount !== null) {
       const discountPercentage = parseFloat(pctDiscount);
       if (!isNaN(discountPercentage)) {
-        const  totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        const totalAmount = cartItems.reduce(
+          (acc, item) => acc + item.price * item.quantity,
+          0
+        );
         // const discountAmount = (totalAmount * discountPercentage) / 100;
-        const calculatedDiscountAmount = (totalAmount * discountPercentage) / 100;
+        const calculatedDiscountAmount =
+          (totalAmount * discountPercentage) / 100;
         setDiscountAmount(calculatedDiscountAmount);
         // totalAmount -= discountAmount;
       } else {
@@ -73,9 +69,18 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
       // totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
       setDiscountAmount(0);
     }
-  },[pctDiscount])
-    
-    const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) - discountAmount;
+  }, [pctDiscount]);
+
+  const amount =
+    cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) - discountAmount;
+
+    const taxAmount = (amount * 0.02).toFixed(2);
+
+  const deliveryAmount = 15;
+
+ 
+
+  const totalAmount = (parseFloat(amount) + parseFloat(taxAmount) + parseFloat(deliveryAmount)).toFixed(2);
 
   return (
     <div className="px-4 pt-8 relative ">
@@ -95,7 +100,10 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
             >
               <img
                 className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-                src={`http://localhost:5000/${product.productImage[0]?.replace(/ /g, "%20")}`}
+                src={`http://localhost:5000/${product.productImage[0]?.replace(
+                  / /g,
+                  "%20"
+                )}`}
                 alt={product.name}
               />
               <div className="flex w-full flex-col px-4 py-4">
@@ -132,20 +140,47 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
           >
             Apply
           </button>
-
         </div>
       </form>
 
-      { pctDiscount &&(
+      <div className="w-full  flex flex-col items-end " >
+        {pctDiscount && (
+           <div className="w-[200px] flex   ">
 
-        
-        <div className="flex font-semibold justify-end gap-3 text-sm uppercase">
-          <span>discount</span>
-          <span>{pctDiscount}%</span>
+<div className="flex font-semibold w-full justify-between  gap-3 text-sm uppercase">
+            <span>discount</span>
+            <div className="flex w-1/3 justify-start " >
+
+            <span>₹{discountAmount}-</span>
+            </div>
+          </div>
+           </div>
+        )}
+
+        <div className="w-[200px] flex   ">
+
+        <div className="flex font-semibold w-full justify-between  gap-3 text-sm uppercase">
+          <span>Delivery</span>
+          <div className="flex w-1/3 justify-start " >
+
+          <span>₹{deliveryAmount}+</span>
+          </div>
         </div>
-          )
-      }
+        </div>
 
+        <div className="w-[200px] flex   ">
+
+
+        <div className="flex font-semibold w-full justify-between gap-3 text-sm uppercase">
+          <span>Tax</span>
+          <div className="flex w-1/3 justify-start " >
+
+          <span>₹{taxAmount}+</span>
+          </div>
+        
+        </div>
+      </div>
+        </div>
 
       <div className="border-t mt-3">
         <div className="flex font-semibold justify-between py-6 text-sm uppercase">
@@ -155,8 +190,8 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
       </div>
 
       <button
-        onClick={() => onPlaceOrder(totalAmount, discountAmount,couponCode )}
-        className=" absolute  bottom-0  w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
+        onClick={() => onPlaceOrder(totalAmount, discountAmount, couponCode)}
+        className="   bottom-0  w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
       >
         Place Order
       </button>
