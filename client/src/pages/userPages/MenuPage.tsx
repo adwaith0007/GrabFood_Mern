@@ -1,6 +1,4 @@
-
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef  } from "react";
 import CategoryCards from "../../components/CategoryCards";
 import ProductCard from "../../components/ProductCard";
 import toast from "react-hot-toast";
@@ -11,7 +9,6 @@ import api from "../../api";
 const server = import.meta.env.VITE_SERVER;
 
 const MenuPage = () => {
-  
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
@@ -19,7 +16,7 @@ const MenuPage = () => {
   const userId = user._id;
   const navigate = useNavigate();
   const location = useLocation();
-  const searchQuery = new URLSearchParams(location.search).get('q');
+  const searchQuery = new URLSearchParams(location.search).get("q");
 
   const [categoryList, setCategoryList] = useState([]);
   const [productList, setProductList] = useState([]);
@@ -27,14 +24,18 @@ const MenuPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const rowsPerPage = 4;
 
+  const [sortBtn, setSortBtn] = useState(false);
+  const [bestProductBtn, setBestProductBtn] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const rowsPerPage = 4;
 
   const [userFavourites, setUserFavourites] = useState([]);
 
   const fetchingFavourites = async () => {
     try {
-      const response = await api.get(`/user/${userId}/wishlist` );
+      const response = await api.get(`/user/${userId}/wishlist`);
       if (response.data.success) {
         setUserFavourites(response.data.data);
       } else {
@@ -42,13 +43,10 @@ const MenuPage = () => {
       }
     } catch (error) {
       console.error("Error fetching user orders:", error);
-    } 
+    }
   };
 
-  console.log('data:',userFavourites);
-  
-
- 
+  console.log("data:", userFavourites);
 
   useEffect(() => {
     fetchingFavourites();
@@ -67,6 +65,7 @@ const MenuPage = () => {
     }
   }, []);
 
+
   useEffect(() => {
     if (searchQuery) {
       // If search query is present, fetch products based on search query
@@ -80,6 +79,21 @@ const MenuPage = () => {
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, currentPage]);
+
+
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSortBtn(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const fetchProducts = () => {
     try {
@@ -98,6 +112,27 @@ const MenuPage = () => {
       console.log(error);
     }
   };
+
+  const HandleBestProduct =()=>{
+
+    try {
+      api
+        .get(
+          `/product/get_best?category=${selectedCategory}&page=${currentPage}&limit=${rowsPerPage}`
+        )
+        .then((res) => {
+          if (res.data.success) {
+            setProductList(res.data.data);
+            setTotalPages(res.data.totalPages);
+          }
+        });
+    } catch (error) {
+      toast.error("Error while loading products");
+      console.log(error);
+    }
+
+
+  }
 
   const searchProducts = (query) => {
     try {
@@ -152,9 +187,6 @@ const MenuPage = () => {
     toast.success(`${product.productName} added to cart!`);
   };
 
-  
-
-
   const selectedCategoryHandler = (name) => {
     setSelectedCategory(name);
     setCurrentPage(1); // Reset to the first page when category changes
@@ -182,18 +214,96 @@ const MenuPage = () => {
           ))}
         </div>
 
-        
+        <div className="w-full border-t mt-5 border-[#9a9b9e] flex justify-between ">
+          <div className="relative inline-block text-left" ref={dropdownRef} >
+            <div>
+              <button
+                onClick={() => setSortBtn(!sortBtn)}
+                type="button"
+                className="inline-flex w-full justify-center gap-x-1.5 mt-2  px-3 py-2 text-sm font-semibold text-gray-900  "
+                id="menu-button"
+                aria-expanded="true"
+                aria-haspopup="true"
+              >
+                Sort
+                <svg
+                  className="-mr-1 h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            { sortBtn &&(
+
+              <div
+              className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+              tabindex="-1"
+              >
+              <div className="py-1" role="none">
+                <button
+                  // onClick={()=>{setBestProductBtn(true)}}
+                  onClick={()=>{HandleBestProduct()}}
+                  className="text-gray-700 block px-4 py-2 text-sm"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-0"
+                  >
+                  Best selling product
+                </button>
+                <a
+                  href="#"
+                  className="text-gray-700 block px-4 py-2 text-sm"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-1"
+                  >
+                  Support
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-700 block px-4 py-2 text-sm"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-2"
+                  >
+                  License
+                </a>
+                <form method="POST" action="#" role="none">
+                  <button
+                    type="submit"
+                    className="text-gray-700 block w-full px-4 py-2 text-left text-sm"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="menu-item-3"
+                    >
+                    Sign out
+                  </button>
+                </form>
+              </div>
+            </div>
+              )
+              }
+
+          </div>
+        </div>
 
         <div className="grid grid-cols-4 gap-4">
+
+          
           {productList.map((item) => (
             <div key={item._id}>
-           {/* {
-             if(userFavourites.includes(item._id)){
-
-<>
-           }
-
-            } */}
+              
               {item.productImage && item.productImage[0] && (
                 <>
                   <ProductCard
@@ -202,7 +312,6 @@ const MenuPage = () => {
                     description={item.Description}
                     name={item.productName}
                     discountPrice={item.discountPrice}
-  
                     offerInPercentage={item.offerInPercentage}
                     imageUrl={`${server}/${item.productImage[0].replace(
                       / /g,
@@ -218,10 +327,6 @@ const MenuPage = () => {
           ))}
         </div>
       </div>
-
-      
-
-    
 
       <div className="flex justify-center pt-2 pb-10 ">
         <nav aria-label="Page navigation example">
@@ -273,8 +378,6 @@ const MenuPage = () => {
           </ul>
         </nav>
       </div>
-
-      
     </div>
   );
 };

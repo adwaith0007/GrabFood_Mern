@@ -6,6 +6,12 @@ router.get("/get", (req, res) => {
   productControllers.listProduct(req, res);
 });
 
+router.get("/get_best", (req, res) => {
+  console.log('inn');
+  
+  productControllers.listBestProduct(req, res);
+});
+
 router.get("/search", (req, res) => {
   productControllers.searchProduct(req, res);
 });

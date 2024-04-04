@@ -1,5 +1,6 @@
 const productModel = require("../Models/product");
 const upload = require("../middlewares/multer");
+const orderModel = require("../Models/order");
 
 // const multer = require("multer");
 
@@ -197,6 +198,46 @@ exports.listProduct = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+exports.listBestProduct = async (req, res) => {
+
+
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Aggregate pipeline to find top 10 best-selling products
+    const topProducts = await orderModel.aggregate([
+      { $match: { paymentStatus: true } }, // Filter orders with paymentStatus true
+      { $unwind: "$products" }, // Split the products array into separate documents
+      {
+        $group: {
+          _id: "$products.productId", // Group by product ID
+          productName: { $first: "$products.name" }, // Get the product name
+          totalQuantitySold: { $sum: "$products.quantity" } // Sum the quantity sold
+        }
+      },
+      { $sort: { totalQuantitySold: -1 } }, // Sort by total quantity sold in descending order
+      { $limit: 10 } // Get only the top 10 best-selling products
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: topProducts,
+      totalPages: 1, // Since we're not implementing pagination for best-selling products
+      currentPage: 1, // Since we're not implementing pagination for best-selling products
+      totalCount: topProducts.length // Length of topProducts array
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+
+
+}
+
+
 
 exports.searchProduct = async (req, res) => {
 
