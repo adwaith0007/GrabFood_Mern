@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 
 import otpimg from "../../assets/otp.png";
-import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastOptions }  from "react-hot-toast";
-import { useFormik } from "formik";
+import {  useNavigate } from "react-router-dom";
+import { toast }  from "react-hot-toast";
+// import { useFormik } from "formik";
 
 import { useSelector } from 'react-redux';
 

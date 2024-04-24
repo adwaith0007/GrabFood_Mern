@@ -24,6 +24,8 @@ function TableHOC<T extends Object>(
       initialState: {
         pageSize: 6,
       },
+
+      
     };
 
     const {

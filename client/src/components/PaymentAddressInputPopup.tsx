@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import AddressInput from "./AddressInput";
 import CartItem from "./CartItem";
@@ -6,7 +6,7 @@ import { AiOutlineClose } from "react-icons/ai";
 
 
 
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 
 const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);

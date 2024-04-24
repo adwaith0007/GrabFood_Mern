@@ -1,9 +1,9 @@
-import serverUrl from "../server";
+// import serverUrl from "../server";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
+
 
 import api from "../api";
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 // import ProceedToPaymentPopup from "../components/ProceedToPaymentPopup";
@@ -77,7 +77,7 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease,  
     // Fetch cart items when the component mounts
     axios.get(`http://localhost:5000/api/cart/${user_id}`) // Replace with actual userId
       .then((response) => {
-        setCartItems(response.data);
+        // setCartItems(response.data);
         console.log(`data: ${response.data}`);
         
       })

@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 
 import {
   AiOutlineClose,
   AiOutlineMenu,
-  AiOutlineMinus,
-  AiOutlinePlus,
+  // AiOutlineMinus,
+  // AiOutlinePlus,
 } from "react-icons/ai";
 import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
-import { FaSignOutAlt, FaUser, FaWallet } from "react-icons/fa";
+import { FaSignOutAlt,  FaWallet } from "react-icons/fa";
 
-import AddToCart from "../../pages/userPages/AddToCart";
+// import AddToCart from "../../pages/userPages/AddToCart";
 
 import logo from "../../assets/logo-grabfood 1.png";
 import { Link } from "react-router-dom";
@@ -23,12 +23,12 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
 
-import Search from "../SearchBar";
-import axios from "axios";
+// import Search from "../SearchBar";
+// import axios from "axios";
 
 import api from "../../api";
 
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 interface PropsType {
   user: User | null;
@@ -203,7 +203,7 @@ const Navbar = ({ user }: PropsType) => {
                       x="0px"
                       y="0px"
                       viewBox="0 0 56.966 56.966"
-                      style={{ enableBackground: "new 0 0 56.966 56.966" }}
+                      
                       xmlSpace="preserve"
                       width="512px"
                       height="512px"

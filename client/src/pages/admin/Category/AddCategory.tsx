@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
-import foodimg from "../../../assets/login_food.png";
+// import axios from "axios";
+// import foodimg from "../../../assets/login_food.png";
 
 import api from '../../../api';
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 const AddCategory = () => {
   const [categoryData, setCategoryData] = useState({

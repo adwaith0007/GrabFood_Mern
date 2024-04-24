@@ -2,12 +2,12 @@
 
 // import axios from "axios";
 
-import  Navbar  from "../../components/Layout/Navbar";
+
 import '../../index.css'
 import foodimg from "../../assets/login_food.png";
 import { Link,useNavigate } from "react-router-dom";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useFormik } from "formik";
 
 import { registerValidation } from '../../helper/validate'

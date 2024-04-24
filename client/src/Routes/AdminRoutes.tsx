@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import  { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 const Dashboard = lazy(() => import("../pages/admin/dashboard"));
 const Products = lazy(() => import("../pages/admin/Products/products"));
@@ -9,8 +9,8 @@ const Linecharts = lazy(() => import("../pages/admin/charts/linecharts"));
 
 const Stopwatch = lazy(() => import("../pages/admin/apps/stopwatch"));
 const Toss = lazy(() => import("../pages/admin/apps/toss"));
-const NewProduct = lazy(() => import("../pages/admin/Products/AddProduct"));
-const NewCategory = lazy(() => import("../pages/admin/Category/AddCategory"));
+// const NewProduct = lazy(() => import("../pages/admin/Products/AddProduct"));
+// const NewCategory = lazy(() => import("../pages/admin/Category/AddCategory"));
 const ProductManagement = lazy(
   () => import("../pages/admin/Products/productmanagement")
 );
@@ -23,7 +23,7 @@ const TransactionManagement = lazy(
 import Category from "../pages/admin/Category/Category";
 
 import CustomersOrder from "../pages/admin/management/CustomersOrder";
-import Home from "../pages/userPages/Home";
+// import Home from "../pages/userPages/Home";
 import CustomersProducts from "../pages/admin/management/CustomersProducts";
 import CouponPage from "../pages/admin/Coupon/CouponPage";
 import AddProduct from "../pages/admin/Products/AddProduct";
@@ -34,8 +34,8 @@ import OrderManagement from "../pages/admin/Order/OrderManagement";
 import SalesReport from "../pages/admin/SalesReport";
 import PrivateRoutes from "./PrivateRoutes";
 
-const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
-const SignupPage = lazy(() => import("../pages/adminPages/SignupPage"));
+// const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
+// const SignupPage = lazy(() => import("../pages/adminPages/SignupPage"));
 const Customers = lazy(() => import("../pages/admin/Customers"));
 
 const AdminRoutes = () => {

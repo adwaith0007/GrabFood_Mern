@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import  { useEffect, useState} from "react";
 import { ReactElement } from "react";
-import { FaPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+// import { FaPlus } from "react-icons/fa";
+// import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../../components/admin/TableHOC";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../../types/reducer-types";
 import api from "../../../api";
 import UserSidebar from "../../../components/user/UserSidebar";
-import { TbShoppingCartCancel } from "react-icons/tb";
+// import { TbShoppingCartCancel } from "react-icons/tb";
 const server = import.meta.env.VITE_SERVER;
 
-import axios from "axios";
+// import axios from "axios";
 import toast from "react-hot-toast";
 
 interface Address {

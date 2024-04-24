@@ -1,25 +1,25 @@
-import React from "react";
-import Navbar from "../../components/Layout/Navbar";
+
+
 import "../../index.css";
-import axios from "axios";
+
 import foodimg from "../../assets/login_food.png";
-import { Link, useNavigate } from "react-router-dom";
-import glogo from "../../assets/googlelogo.png";
-import { ChangeEvent, useState } from "react";
+import {  useNavigate } from "react-router-dom";
+
+
 import { useFormik } from "formik";
 import { resetPassword } from "../../helper/helper";
-import toast, { Toaster } from "react-hot-toast";
-import { GoogleAuthProvider } from "firebase/auth";
-import { signInWithPopup } from "firebase/auth";
-import { auth } from "../../firebase";
-import { useLoginMutation } from "../../redux/api/userAPI";
+import toast from "react-hot-toast";
+// import { GoogleAuthProvider } from "firebase/auth";
+// import { signInWithPopup } from "firebase/auth";
+// import { auth } from "../../firebase";
+// import { useLoginMutation } from "../../redux/api/userAPI";
 
-import { useSelector } from 'react-redux';
-import { selectUser } from './../../redux/userSlice';
-import { useDispatch } from 'react-redux';
-import { setUser } from './../../redux/userSlice';
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
-import { MessageResponse } from "../../types/api-types";
+// import { useSelector } from 'react-redux';
+// import { selectUser } from './../../redux/userSlice';
+// import { useDispatch } from 'react-redux';
+// import { setUser } from './../../redux/userSlice';
+// import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+// import { MessageResponse } from "../../types/api-types";
 
 const ResetPassword = () => {
  

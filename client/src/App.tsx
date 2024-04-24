@@ -1,10 +1,10 @@
 import "./App.scss";
 
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   Routes,
   Route,
-  redirect,
+  
 } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
 import { useEffect } from "react";

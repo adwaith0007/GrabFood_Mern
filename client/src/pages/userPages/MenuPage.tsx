@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef  } from "react";
+import  { useEffect, useState, useRef  } from "react";
 import CategoryCards from "../../components/CategoryCards";
 import ProductCard from "../../components/ProductCard";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import api from "../../api";
 const server = import.meta.env.VITE_SERVER;
@@ -14,7 +14,7 @@ const MenuPage = () => {
   );
 
   const userId = user._id;
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get("q");
 
@@ -26,7 +26,7 @@ const MenuPage = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [sortBtn, setSortBtn] = useState(false);
-  const [bestProductBtn, setBestProductBtn] = useState(false);
+  // const [bestProductBtn, setBestProductBtn] = useState(false);
   const dropdownRef = useRef(null);
 
   const rowsPerPage = 4;

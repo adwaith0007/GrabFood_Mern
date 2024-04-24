@@ -2,7 +2,7 @@
 
 // import axios from "axios";
 
-import  Navbar  from "../../components/Layout/Navbar";
+
 import '../../index.css'
 import foodimg from "../../assets/login_food.png";
 import { Link,useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import { Link,useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 
-import { adminRegisterValidation } from '../../helper/validate'
+// import { adminRegisterValidation } from '../../helper/validate'
     
 import {  registerAdmin } from "../../helper/helper";
 

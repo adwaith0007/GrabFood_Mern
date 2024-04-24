@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, } from "react";
 import { ReactElement } from "react";
-import { FaPlus } from "react-icons/fa";
+// import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../components/admin/TableHOC";
-import { useSelector } from "react-redux";
-import { UserReducerInitialState } from "../../types/reducer-types";
+// import { useSelector } from "react-redux";
+// import { UserReducerInitialState } from "../../types/reducer-types";
 import api from "../../api";
-import UserSidebar from "../../components/user/UserSidebar";
-import { TbShoppingCartCancel } from "react-icons/tb";
+// import UserSidebar from "../../components/user/UserSidebar";
+// import { TbShoppingCartCancel } from "react-icons/tb";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 
 import jsPDF from "jspdf";
@@ -16,7 +16,7 @@ import "jspdf-autotable";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 interface Address {
   street: string;
@@ -83,10 +83,10 @@ const columns: Column<DataType>[] = [
   },
 ];
 const SalesReport = () => {
-  const { user } = useSelector(
-    (state: { userReducer: UserReducerInitialState }) => state.userReducer
-  );
-  const userId = user._id;
+  // const { user } = useSelector(
+  //   (state: { userReducer: UserReducerInitialState }) => state.userReducer
+  // );
+  // const userId = user._id;
 
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);

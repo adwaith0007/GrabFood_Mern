@@ -1,7 +1,7 @@
-import React from "react";
+
 import { Link } from "react-router-dom";
 
-const OrderSummarySection = ({ products, Amount }) => {
+const OrderSummarySection = ({  Amount }) => {
   return (
     <div id="summary" className="w-1/4 relative px-8 py-10">
       <h1 className="font-semibold text-2xl border-b pb-8">Order Summary</h1>

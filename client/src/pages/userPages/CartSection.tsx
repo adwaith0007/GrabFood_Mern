@@ -1,7 +1,7 @@
-import React from "react";
-import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
-import api from '../../api';
+// import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+
+// import api from '../../api';
 const server = import.meta.env.VITE_SERVER;
 
 const CartSection = ({

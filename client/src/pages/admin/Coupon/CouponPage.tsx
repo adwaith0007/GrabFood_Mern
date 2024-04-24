@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import api from "../../../api";

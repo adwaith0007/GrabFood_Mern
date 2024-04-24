@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import CartSection from "./CartSection";
-import OrderSummarySection from "./OrderSummarySection";
-import axios from "axios";
+// import OrderSummarySection from "./OrderSummarySection";
+// import axios from "axios";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import api from "../../api";
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 const CartPage = () => {
   const { user } = useSelector(

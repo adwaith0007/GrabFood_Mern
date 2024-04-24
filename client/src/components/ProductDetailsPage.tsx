@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import ImageGallery from 'react-image-gallery';
@@ -20,6 +20,7 @@ const ProductDetailsPage = () => {
       })
       .catch((error) => {
         // Handle error
+        console.log(error)
       });
   }, [productId]);
 
@@ -39,7 +40,7 @@ const ProductDetailsPage = () => {
           {/* Product Images Slider */}
           <div className="flex-shrink-0 w-full lg:w-1/2">
             <ImageGallery
-              items={productDetails.productImage.map((image, index) => ({
+              items={productDetails.productImage.map((image) => ({
                 original: `http://localhost:5000/${image}`,
                 thumbnail: `http://localhost:5000/${image}`,
               }))}

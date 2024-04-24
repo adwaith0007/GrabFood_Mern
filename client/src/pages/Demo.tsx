@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { AiOutlineClose } from "react-icons/ai";
+import  { useState, useEffect, useRef } from "react";
+// import { AiOutlineClose } from "react-icons/ai";
 
 const Demo = () => {
   const [isOpen, setIsOpen] = useState(false);

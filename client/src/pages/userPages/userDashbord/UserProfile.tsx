@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { MdEdit, MdSave } from "react-icons/md";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+
 import UserSidebar from "../../../components/user/UserSidebar";
 
 import api from '../../../api';

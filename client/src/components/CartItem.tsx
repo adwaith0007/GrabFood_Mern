@@ -1,4 +1,4 @@
-import React from "react";
+
 import { AiOutlineClose, AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 
 const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {

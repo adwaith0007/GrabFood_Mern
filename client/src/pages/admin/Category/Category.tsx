@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import  { useEffect, useState } from "react";
+
 import { ReactElement } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ interface DataType {
   action: ReactElement;
 }
 
-const columns: Column<DataType>[] = [
+const columns = [
   {
     Header: "Photo",
     accessor: "photo",

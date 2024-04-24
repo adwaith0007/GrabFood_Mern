@@ -1,4 +1,5 @@
 import jwtDecode from 'jwt-decode';
+import Cookie from 'js-cookie';
 
 const setToken = (token) => {
   // Set token in a secure HTTP-only cookie

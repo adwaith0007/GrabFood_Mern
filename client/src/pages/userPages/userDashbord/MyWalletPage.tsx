@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import UserSidebar from '../../../components/user/UserSidebar';
 import api from '../../../api';
 import { useSelector } from 'react-redux';

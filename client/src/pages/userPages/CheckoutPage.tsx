@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import CheckoutOrderSummary from "../../components/user/CheckoutOrderSummary";
-import PaymentSection from "../../components/user/PaymentSection";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { faLight, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import {  faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import AddressInput from "../../components/AddressInput";
-import axios from "axios";
+// import axios from "axios";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import ChooseAddress from "../../components/user/ChooseAddress";
@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 import api from "../../api";
 import CouponCard from "../../components/user/CouponCard";
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -87,22 +87,22 @@ const CheckoutPage = () => {
     setCartItems(item);
   };
 
-  const getCurrentDateTime = () => {
-    const currentDate = new Date();
+  // const getCurrentDateTime = () => {
+  //   const currentDate = new Date();
 
-    const month = currentDate.getMonth() + 1;
-    const day = currentDate.getDate();
-    const year = currentDate.getFullYear();
-    let hours = currentDate.getHours();
-    const minutes = currentDate.getMinutes();
+  //   const month = currentDate.getMonth() + 1;
+  //   const day = currentDate.getDate();
+  //   const year = currentDate.getFullYear();
+  //   let hours = currentDate.getHours();
+  //   const minutes = currentDate.getMinutes();
 
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
+  //   const ampm = hours >= 12 ? "PM" : "AM";
+  //   hours = hours % 12 || 12;
 
-    const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+  //   const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
 
-    return formattedDateTime;
-  };
+  //   return formattedDateTime;
+  // };
 
   const handleOnPlaceOrder = async (totalAmount,discountAmount,couponCode) => {
     console.log( 'total', totalAmount);
@@ -433,7 +433,7 @@ const CheckoutPage = () => {
           orderCartItem={handleOrderCartItem}
         />
 
-        {/* <PaymentSection /> */}
+       
       </div>
     </div>
   );

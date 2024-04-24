@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import  { useState } from "react";
+// import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
 import api from '../api'
 

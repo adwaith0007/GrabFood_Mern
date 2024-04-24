@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import  { FormEvent, useEffect, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import api from "../../../api";

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import  { useEffect, useState } from "react";
 import { ReactElement } from "react";
-import { FaPlus } from "react-icons/fa";
+// import { FaPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../../components/admin/TableHOC";
@@ -10,10 +10,10 @@ import api from "../../../api";
 import UserSidebar from "../../../components/user/UserSidebar";
 import { TbShoppingCartCancel } from "react-icons/tb";
 import DeletePopeUp from "../../../components/DeletePopeUp";
-import { BsExclamationSquareFill } from "react-icons/bs";
+// import { BsExclamationSquareFill } from "react-icons/bs";
 import toast from "react-hot-toast";
 
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 interface Address {
   street: string;

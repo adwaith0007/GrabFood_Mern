@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { ReactElement } from 'react';
+import  { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import { ReactElement } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
-import { useSelector } from 'react-redux';
-import { UserReducerInitialState } from '../../../types/reducer-types';
+// import { useSelector } from 'react-redux';
+// import { UserReducerInitialState } from '../../../types/reducer-types';
 import DeletePopeUp from '../../../components/DeletePopeUp';
-import UserSidebar from '../../../components/user/UserSidebar';
+// import UserSidebar from '../../../components/user/UserSidebar';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 
 import api from '../../../api';

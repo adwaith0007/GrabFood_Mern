@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import UserSidebar from '../../../components/user/UserSidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLight, faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
+import {  faLocationDot } from "@fortawesome/free-solid-svg-icons";
+// import axios from "axios";
 import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../types/reducer-types';
 import AddressInput from '../../../components/AddressInput';
@@ -10,7 +10,7 @@ import UpdateAddressInput from '../../../components/user/UpdateAddressInput';
 import ChooseAddress from '../../../components/user/ChooseAddress';
 
 import api from '../../../api';
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 const ManageAddressPage = () => {
 

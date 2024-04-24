@@ -4,7 +4,7 @@ import Cookie from "js-cookie";
 import axios from "axios";
 import server from "../server";
 import { useEffect } from "react";
-import api from "../api"
+// import api from "../api"
 
 // eslint-disable-next-line react/prop-types
 export default function PrivateRoutes({ role }) {

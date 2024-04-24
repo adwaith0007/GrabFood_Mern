@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import {  useParams } from "react-router-dom";
+// import axios from "axios";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-import { Link } from "react-router-dom";
-import { OrderItem } from "../../../models/types";
+// import { Link } from "react-router-dom";
+// import { OrderItem } from "../../../models/types";
 import { useNavigate } from "react-router-dom";
 
 const server = import.meta.env.VITE_SERVER;
 import api from "../../../api";
 
 const OrderManagement = () => {
-  const { orderId, productId } = useParams();
+  const { orderId } = useParams();
   const [userOrderDetails, setUserOrderDetails] = useState(null);
   const navigate = useNavigate();
 
@@ -175,10 +175,11 @@ const OrderManagement = () => {
   );
 };
 
-const ProductCard = ({ name, photo, price, quantity }: OrderItem) => (
+const ProductCard = ({ name, photo, price, quantity }) => (
   <div className="transaction-product-card">
     <img src={photo} alt={name} />
     {/* <Link to={`/product/${productId}`}>{name}</Link> */}
+    
     <span>
       ₹{price} X {quantity} = ₹{price * quantity}
     </span>

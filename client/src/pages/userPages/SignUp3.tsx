@@ -1,8 +1,8 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import  { ChangeEvent, FormEvent, useState } from "react";
 
 import Axios from "axios";
 // import { userDataProps } from "../../types";
-import  Navbar  from "../../components/Layout/Navbar";
+// import  Navbar  from "../../components/Layout/Navbar";
 import '../../index.css'
 import foodimg from "../../assets/login_food.png";
 import { Link } from "react-router-dom";

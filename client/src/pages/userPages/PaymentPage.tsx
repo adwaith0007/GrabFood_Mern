@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import toast from "react-hot-toast"; // Add this line
-import PaymentSection from "../../components/user/PaymentSection";
+// import PaymentSection from "../../components/user/PaymentSection";
 import axios from "axios";
 import logo from "../../assets/logo-grabfood 1.png";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api";
-import OrderSuccess from "./OrderSuccess";
+// import OrderSuccess from "./OrderSuccess";
 const server = import.meta.env.VITE_SERVER;
 
 const PaymentPage = () => {
@@ -17,7 +17,7 @@ const PaymentPage = () => {
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
     );
 
-    const [paymentMethod, setPaymentMethod] = useState("");
+    // const [paymentMethod, setPaymentMethod] = useState("");
 
     const [orderSuccess, setOrderSuccess ] = useState(false);
     

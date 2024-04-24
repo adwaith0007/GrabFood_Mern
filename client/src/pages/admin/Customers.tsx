@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useTable } from 'react-table';
-import { getCustomers } from '../../helper/helper';
-import axios from 'axios';
+import  { useEffect, useState } from 'react';
+// import { useTable } from 'react-table';
+// import { getCustomers } from '../../helper/helper';
+// import axios from 'axios';
 
 import toast from "react-hot-toast";
 import TableHOC from '../../components/admin/TableHOC';
@@ -9,7 +9,7 @@ import AdminSidebar from '../../components/admin/AdminSidebar';
 import { Link } from 'react-router-dom';
 
 import api from '../../api';
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 
 // interface DataType {

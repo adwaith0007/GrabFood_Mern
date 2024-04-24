@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
+import  { useEffect, useState } from "react";
 import { ReactElement } from "react";
-import { FaPlus } from "react-icons/fa";
+// import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../../components/admin/TableHOC";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../../types/reducer-types";
 import api from "../../../api";
-import UserSidebar from "../../../components/user/UserSidebar";
-import { TbShoppingCartCancel } from "react-icons/tb";
+// import UserSidebar from "../../../components/user/UserSidebar";
+// import { TbShoppingCartCancel } from "react-icons/tb";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 interface Address {
   street: string;

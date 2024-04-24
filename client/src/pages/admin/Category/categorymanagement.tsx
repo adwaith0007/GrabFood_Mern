@@ -1,15 +1,15 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import  { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api";
 const server = import.meta.env.VITE_SERVER;
 
-const defaultImg =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
+// const defaultImg =
+//   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 interface CategoryDetails {
   _id: string;
