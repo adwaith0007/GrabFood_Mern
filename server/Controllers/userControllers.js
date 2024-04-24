@@ -56,6 +56,15 @@ exports.login = async (req, res) => {
 
       res.cookie('token', token);
 
+      // res.cookie(String(user._id),token,{
+      //   path:'/',
+      //   expires: new Date(Date.now()+ 1000 * 30),
+      //   httpOnly:true,
+      //   sameSite:'lax'
+      // })
+
+
+
       
 
       return res.status(200).send({

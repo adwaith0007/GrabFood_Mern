@@ -32,61 +32,61 @@ import AddCouponPage from "../pages/admin/Coupon/AddCouponPage";
 import Orders from "../pages/admin/Order/Orders";
 import OrderManagement from "../pages/admin/Order/OrderManagement";
 import SalesReport from "../pages/admin/SalesReport";
+import PrivateRoutes from "./PrivateRoutes";
 
 const LoginPage = lazy(() => import("../pages/adminPages/LoginPage"));
 const SignupPage = lazy(() => import("../pages/adminPages/SignupPage"));
 const Customers = lazy(() => import("../pages/admin/Customers"));
 
-
 const AdminRoutes = () => {
   return (
     <Routes>
-     
+      <Route element={<PrivateRoutes role={"admin"} />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/orders" element={<Orders />}></Route>
+        <Route path="/sales" element={<SalesReport />}></Route>
+        <Route path="/product" element={<Products />} />
+        <Route path="/category" element={<Category />} />
+        <Route path="/customer" element={<Customers />} />
+        <Route path="/transaction" element={<Transaction />} />
+        <Route
+          path="customer/:customerId/products"
+          element={<CustomersOrder />}
+        />
+        <Route path="/coupon" element={<CouponPage />} />
+        <Route path="/coupon/add" element={<AddCouponPage />} />
 
-      
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/orders" element={<Orders />}></Route>
-      <Route path="/sales" element={<SalesReport />}></Route>
-      <Route path="/product" element={<Products />} />
-      <Route path="/category" element={<Category />} />
-      <Route path="/customer" element={<Customers />} />
-      <Route path="/transaction" element={<Transaction />} />
-      <Route path="customer/:customerId/products" element={ <CustomersOrder /> } />  
-      <Route path="/coupon" element={<CouponPage />} />
-      <Route path="/coupon/add" element={<AddCouponPage />} />
+        {/* Charts */}
+        <Route path="/chart/bar" element={<Barcharts />} />
+        <Route path="/chart/pie" element={<Piecharts />} />
+        <Route path="/chart/line" element={<Linecharts />} />
+        {/* Apps */}
 
+        <Route path="/app/stopwatch" element={<Stopwatch />} />
+        <Route path="/app/toss" element={<Toss />} />
 
-      {/* Charts */}
-      <Route path="/chart/bar" element={<Barcharts />} />
-      <Route path="/chart/pie" element={<Piecharts />} />
-      <Route path="/chart/line" element={<Linecharts />} />
-      {/* Apps */}
-      
-      <Route path="/app/stopwatch" element={<Stopwatch />} />
-      <Route path="/app/toss" element={<Toss />} />
+        {/* Management */}
+        <Route path="/product/add" element={<AddProduct />} />
 
-      {/* Management */}
-      <Route path="/product/add" element={<AddProduct />} />
+        <Route path="/category/add" element={<AddCategory />} />
 
-      <Route path="/category/add" element={<AddCategory />} />
+        <Route path="/product/:id" element={<ProductManagement />} />
 
-      <Route path="/product/:id" element={<ProductManagement />} />
+        <Route path="/category/:id" element={<CategoryManagement />} />
 
-      <Route path="/category/:id" element={<CategoryManagement />} />
+        <Route
+          path="/customer/:userId/order/:orderId/product"
+          element={<CustomersProducts />}
+        />
 
-      <Route path="/customer/:userId/order/:orderId/product" element={<CustomersProducts />} />
+        <Route
+          path="/customer/:orderId/:productId/manage"
+          element={<TransactionManagement />}
+        />
 
-      <Route
-        path="/customer/:orderId/:productId/manage" element={<TransactionManagement />}/>
-
-
-<Route
-        path="/orders/:orderId" element={<OrderManagement />}/>
-
+        <Route path="/orders/:orderId" element={<OrderManagement />} />
+      </Route>
     </Routes>
-
-
-
   );
 };
 

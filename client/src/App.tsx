@@ -10,6 +10,7 @@ import { lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { AuthorizeUser } from "./middleware/auth";
 import { Toaster } from "react-hot-toast";
+import PrivateRoute from './Routes/PrivateRoute';
 
 import Loader from "./components/loader";
 import Navbar from "./components/Layout/Navbar";
@@ -38,7 +39,6 @@ const Demo = lazy(() => import("./pages/Demo"));
 const LoginPage = lazy(() => import("./pages/adminPages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
 
-
 import Cookies from "js-cookie";
 
 import { jwtDecode } from "jwt-decode";
@@ -47,6 +47,7 @@ import JwtPayload from "./types/types";
 
 import AdminRoutes from "./Routes/AdminRoutes";
 import UserRoutes from "./Routes/UserRoutes";
+import UserLayout from "./components/Layout/UserLayout";
 
 function App() {
   const { user, loading } = useSelector(
@@ -54,6 +55,7 @@ function App() {
   );
 
   const [token, setToken] = useState(Cookies.get("token") || "");
+  const [role, setRole] = useState('');
 
   const dispatch = useDispatch();
 
@@ -64,6 +66,8 @@ function App() {
       const user = jwtDecode(token);
 
       console.log(user);
+
+      setRole(user.role)
 
       console.log("Logged In");
       dispatch(userExist(user));
@@ -88,13 +92,73 @@ function App() {
     <Loader />
   ) : (
     <>
-      <Router>
+      {/* <Router> */}
         <Navbar user={user} />
 
         <Suspense fallback={<Loader />}>
 
+          <Routes>
 
-          
+
+        
+
+
+
+
+
+
+        <Route path="/" element={<Home />}></Route>
+
+          <Route path="/signup" element={<SignUp />}></Route>
+            <Route path="/otp" element={<Otp />}></Route>
+            <Route
+              path="/resetpasswordotp"
+              element={<ResetPasswordOtp />}
+              ></Route>
+            <Route path="/forgot_password" element={<ResetPassword />}></Route>
+
+            <Route path="/admin/signup" element={<SignupPage />}></Route>
+            <Route path="/admin" element={<LoginPage />}></Route>
+
+
+
+
+
+               <Route
+              element={
+                <ProtectedRoute
+                  isAuthenticated={true}
+                  adminOnly={true}
+                  admin={user?.role === "admin" ? true : false}
+                />
+              }
+            >
+              <Route path="/admin/*" element={<AdminRoutes />} />
+            </Route>
+
+
+
+              <Route
+              element={<ProtectedRoute isAuthenticated={user ? true : false} />}
+            >
+              <Route path="/*" element={<UserRoutes />} />
+            </Route>
+
+
+
+
+
+
+              </Routes>
+
+
+
+
+
+        {/* {role === 'user' && <UserRoutes/>} */}
+
+  
+
           {/* <Routes>
            
             
@@ -116,7 +180,7 @@ function App() {
 
 
             <Route path="/admin/signup" element={<SignupPage />}></Route>
-      <Route path="/admin" element={<LoginPage />}></Route>
+           <Route path="/admin" element={<LoginPage />}></Route>
 
             
             <Route
@@ -133,66 +197,117 @@ function App() {
             
           </Routes> */}
 
-
-            {/* <Route>
+          {/* <Route>
               <Route path="/admin/*" element={<AdminRoutes />} />
             </Route> */}
 
 
 
+            {/* now  ********** */}
+
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user ? false : true}
+                  redirect="/"
+                >
+                  <Login setToken={setToken} />
+                </ProtectedRoute>
+              }
+            ></Route>
+
+            {/* <Route
+              element={
+                <ProtectedRoute
+                  isAuthenticated={true}
+                  adminOnly={true}
+                  admin={user?.role === "admin" ? true : false}
+                />
+              }
+            >
+              <Route path="/admin/*" element={<AdminRoutes />} />
+            </Route> */}
 
 
-<Routes>
-           
+{/* <Route path="/product/*" element={<ProductRoutes />} /> */}
+
+        {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
+        {/* <Route path="/*" element={<UserRoutes />} /> */}
+
             
-           <Route path="/login" element={<ProtectedRoute isAuthenticated={user ? false : true}redirect="/"><Login setToken={setToken} /></ProtectedRoute>}></Route>
-          
-           <Route element={<ProtectedRoute isAuthenticated={true} adminOnly={true} admin={user?.role === "admin" ? true : false}/>}>
+{/* <Route  element={<PrivateRoute roles={['admin']} />} >
 
-           <Route path="/admin/*" element={<AdminRoutes />} />
-             
-           </Route>
+<Route path="/admin/*" element={<AdminRoutes />} />
+</Route> */}
 
+{/* <Route path="/admin/*" element={<PrivateRoute roles={['admin']} element={<AdminRoutes />} />} /> */}
 
 
-           <Route path="/" element={<Home />}></Route>
-           <Route path="/signup" element={<SignUp />}></Route>
-           <Route path="/otp" element={<Otp />}></Route>
-           <Route path="/resetpasswordotp" element={<ResetPasswordOtp />} ></Route>
-           <Route path="/forgot_password" element={<ResetPassword />}></Route>
+          {/* <Route 
+              element={
+                <PrivateRoute
+
+                roles={['admin']}
+                  
+                />
+              }
+            >
+              <Route path="/admin/*" element={<AdminRoutes />} />
+            </Route> */}
 
 
-           <Route path="/admin/signup" element={<SignupPage />}></Route>
-     <Route path="/admin" element={<LoginPage />}></Route>
+            {/* <Route path="/" element={<UserLayout/>}>
 
+            <Route path="/" element={<Home />}></Route>
+
+            </Route> */}
+   
            
-           <Route
-             element={<ProtectedRoute isAuthenticated={user ? true : false} />}>
-             <Route path="/*" element={<UserRoutes />} />
-           </Route>
 
-
-
-
-    
-           <Route path="/demo" element={<Demo />}></Route>
+            {/* <Route path="/" element={<Home />}></Route> */}
           
-           
-         </Routes>
 
+            {/* <Route
+              element={<ProtectedRoute isAuthenticated={user ? true : false} />}
+            >
+              <Route path="/*" element={<UserRoutes />} />
+            </Route> */}
 
-
-
-
-
-
-
-
-          
+            <Route path="/demo" element={<Demo />}></Route>
+          </Routes>
         </Suspense>
 
         <Toaster position="top-center" />
-      </Router>
+      {/* </Router> */}
+
+
+
+
+
+
+
+
+
+
+ {/* <Router>
+
+
+<Routes>
+
+<Route path="/" element={<Layout />}>
+
+
+
+<Route path="/" element={<Home />}></Route>
+</Route>
+</Routes>
+
+</Router>  */}
+
+
+
     </>
   );
 }

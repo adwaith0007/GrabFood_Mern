@@ -19,8 +19,13 @@ const ProfileUpdate = lazy(() => import("../pages/userPages/(logged-in)/ProfileU
 
 const UserRoutes = () => {
   return (
+    <>
+      
     <Routes>
-      <Route path="/menu" element={<MenuPage />}></Route>
+     
+
+        <Route path="/menu" element={<MenuPage />}></Route>
+     
       <Route path="/cart" element={<CartPage />}></Route>
       <Route path="/checkout" element={<CheckoutPage />}></Route>
       <Route path="user/profile" element={<UserProfile />}></Route>
@@ -36,6 +41,7 @@ const UserRoutes = () => {
       <Route path="/profile/Update" element={<ProfileUpdate />}></Route>
       <Route path="/product/:productId" element={<ProductDetailsPage />} />
     </Routes>
+    </>
   );
 };
 

@@ -15,7 +15,7 @@ const categorySchema = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    required: true,
+    // required: true,
   },
   deleted: {
     type: Boolean,

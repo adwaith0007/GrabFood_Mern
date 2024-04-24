@@ -6,13 +6,15 @@ import { FaTrash } from "react-icons/fa";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { Link } from "react-router-dom";
 import { OrderItem } from "../../../models/types";
+import { useNavigate } from "react-router-dom";
 
 const server = import.meta.env.VITE_SERVER;
-import api from '../../../api';
+import api from "../../../api";
 
 const OrderManagement = () => {
   const { orderId, productId } = useParams();
   const [userOrderDetails, setUserOrderDetails] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -22,82 +24,78 @@ const OrderManagement = () => {
         setUserOrderDetails(orderDetails);
         console.log(orderDetails);
       } catch (error) {
-        console.error('Error fetching order details:', error.response ? error.response.data : error.message);
+        console.error(
+          "Error fetching order details:",
+          error.response ? error.response.data : error.message
+        );
       }
     };
 
     console.log(userOrderDetails);
-    
 
-    
-    if (orderId ) {
+    if (orderId) {
       fetchOrderDetails();
     }
   }, [orderId]);
 
   const approveHandler = async () => {
-   
     try {
-
-      if(userOrderDetails?.orderStatus=="Cancelled"){
-
-       toast.error("Canceled order can't be approved ")
-
-      }else{
-
-        
+      if (userOrderDetails?.orderStatus == "Cancelled") {
+        toast.error("Canceled order can't be approved ");
+      } else {
         const response = await api.put(`/orders/status/${orderId}`, {
           status: "Delivered",
         });
 
-        if(response.data.success){
+        if (response.data.success) {
+          toast.success(response.data.message);
 
-          toast.success(response.data.message)
-          
           setUserOrderDetails((prev) => ({
             ...prev,
             orderStatus: "Delivered",
           }));
-        }else{
-          toast.error(response.data.message)
+
+         
+        navigate("/admin/ordersl,");
+
+        } else {
+          toast.error(response.data.message);
         }
-        
       }
     } catch (error) {
-      console.error('Error updating order status:', error.response ? error.response.data : error.message);
+      console.error(
+        "Error updating order status:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
-
   const cancelHandler = async () => {
-   
     try {
+      if (userOrderDetails?.orderStatus == "Cancelled") {
+        toast.error("Order is already Cancelled");
+      } else {
+        const response = await api.put(`/orders/status/${orderId}`, {
+          status: "Cancelled",
+        });
 
-      if(userOrderDetails?.orderStatus=="Cancelled"){
+        if (response.data.success) {
+          toast.success(response.data.message);
 
-       toast.error("Order is already Cancelled")
-
-      }else{
-
-        
-       const response = await api.put(`/orders/status/${orderId}`, {
-          status: "Cancelled",});
-
-          if(response.data.success){
-
-            toast.success(response.data.message)
-            
-            setUserOrderDetails((prev) => ({
-              ...prev,
-              orderStatus: "Cancelled",
-            }));
-          }else{
-            toast.error(response.data.message)
-          }
+          setUserOrderDetails((prev) => ({
+            ...prev,
+            orderStatus: "Cancelled",
+          }));
+        } else {
+          toast.error(response.data.message);
         }
-      } catch (error) {
-      toast.error(error.response.data.message)
-      console.error('Error updating order status:', error.response ? error.response.data : error.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.error(
+        "Error updating order status:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -109,14 +107,14 @@ const OrderManagement = () => {
           <h2>Order Items</h2>
           <p>Id:{orderId}</p>
           {userOrderDetails?.products.map((product) => (
-  <ProductCard
-    key={product._id} // Assuming '_id' is a unique identifier for each product
-    name={product.productName}
-    photo={`${server}/${product.productImage[0]}`} // Accessing the first image URL
-    quantity={product.quantity}
-    price={product.price}
-  />
-))}
+            <ProductCard
+              key={product._id} // Assuming '_id' is a unique identifier for each product
+              name={product.productName}
+              photo={`${server}/${product.productImage[0]}`} // Accessing the first image URL
+              quantity={product.quantity}
+              price={product.price}
+            />
+          ))}
         </section>
 
         <article className="shipping-info-card">
@@ -149,17 +147,28 @@ const OrderManagement = () => {
             </span>
           </p>
 
-              <div className="flex m-auto justify-between mt-5 " >
+          {
+            userOrderDetails?.orderStatus === "Processing" ? 
+            
+            <div className="flex m-auto justify-between mt-5 ">
+            <button
+              className="bg-blue-600 text-white w-[160px]  py-3 rounded"
+              onClick={approveHandler}
+              >
+              Approve
+            </button>
 
+            <button
+              className="bg-red-600 text-white w-[160px]  py-3 rounded"
+              onClick={cancelHandler}
+              >
+              Cancel
+            </button>
+          </div>
 
-          <button className="bg-blue-600 text-white w-[160px]  py-3 rounded" onClick={approveHandler}>
-            Approve
-          </button>
-
-          <button className="bg-red-600 text-white w-[160px]  py-3 rounded" onClick={cancelHandler}>
-            Cancel
-          </button>
-              </div>
+          :
+          <></>
+            }
         </article>
       </main>
     </div>

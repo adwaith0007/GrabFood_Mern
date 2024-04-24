@@ -236,9 +236,9 @@ const MyOrderPage = () => {
       no: <div className="flex justify-center ">{index + 1}</div>,
       order: (
         <div className="flex flex-col justify-center gap-1">
-          <div className="flex justify-center">Id: {order._id}</div>
-          <div className="flex justify-center">{order.paymentMethod}</div>
+          {/* <div className="flex justify-center">Id: {order._id}</div> */}
           <div className="flex justify-center">Date: {order.orderDate}</div>
+          <div className="flex justify-center">{order.paymentMethod}</div>
         </div>
       ),
       totalPrice: (

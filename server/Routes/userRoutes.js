@@ -140,7 +140,7 @@ router.get('/user/:userId/addresses', (req, res) => {
 
 // wallet
 
-router.get('/user/:userId/wallet', (req, res) => { 
+router.get('/user/:userId/wallet',isUserLoggedIn, (req, res) => { 
   walletController.getBalance(req, res);
 });
 

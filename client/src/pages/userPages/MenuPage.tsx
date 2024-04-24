@@ -261,7 +261,7 @@ const MenuPage = () => {
                   >
                   Best selling product
                 </button>
-                <a
+                {/* <a
                   href="#"
                   className="text-gray-700 block px-4 py-2 text-sm"
                   role="menuitem"
@@ -289,7 +289,7 @@ const MenuPage = () => {
                     >
                     Sign out
                   </button>
-                </form>
+                </form> */}
               </div>
             </div>
               )
@@ -311,7 +311,7 @@ const MenuPage = () => {
                     price={item.price}
                     description={item.Description}
                     name={item.productName}
-                    discountPrice={item.discountPrice}
+                    discountPrice={item?.discountPrice}
                     offerInPercentage={item.offerInPercentage}
                     imageUrl={`${server}/${item.productImage[0].replace(
                       / /g,

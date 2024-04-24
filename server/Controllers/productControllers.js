@@ -200,9 +200,92 @@ exports.listProduct = async (req, res) => {
 };
 
 
+// exports.listBestProduct = async (req, res) => {
+
+
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const skip = (page - 1) * limit;
+
+//     // Aggregate pipeline to find top 10 best-selling products
+//     const topProducts = await orderModel.aggregate([
+//       { $match: { paymentStatus: true } }, // Filter orders with paymentStatus true
+//       { $unwind: "$products" }, // Split the products array into separate documents
+//       {
+//         $group: {
+//           _id: "$products.productId", // Group by product ID
+//           productName: { $first: "$products.productName" }, // Get the product name
+//           productImage: { $first: "$products.productImage" },
+//           price: { $first: "$products.price" },
+//           Description: { $first: "$products.Description" },
+//           category: { $first: "$products.category" },
+//           discountPrice: { $first: "$products.discountPrice" },
+//           productName: { $first: "$products.productName" },
+//           totalQuantitySold: { $sum: "$products.quantity" } // Sum the quantity sold
+//         }
+//       },
+//       { $sort: { totalQuantitySold: -1 } }, // Sort by total quantity sold in descending order
+//       { $limit: 10 } // Get only the top 10 best-selling products
+//     ]);
+
+//     res.status(200).json({
+//       success: true,
+//       data: topProducts,
+//       totalPages: 1, // Since we're not implementing pagination for best-selling products
+//       currentPage: 1, // Since we're not implementing pagination for best-selling products
+//       totalCount: topProducts.length // Length of topProducts array
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+
+
+// }
+
+
+
+// exports.listBestProduct = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const skip = (page - 1) * limit;
+
+//     // Aggregate pipeline to find top 10 best-selling products
+//     const topProducts = await orderModel.aggregate([
+//       { $match: { paymentStatus: true } }, // Filter orders with paymentStatus true
+//       { $unwind: "$products" }, // Split the products array into separate documents
+//       {
+//         $group: {
+//           _id: "$products.productId", // Group by product ID
+//           totalQuantitySold: { $sum: "$products.quantity" } // Sum the quantity sold
+//         }
+//       },
+//       { $sort: { totalQuantitySold: -1 } }, // Sort by total quantity sold in descending order
+//       { $limit: 10 } // Get only the top 10 best-selling products
+//     ]);
+
+//     // Extract product IDs from the aggregation result
+//     const productIds = topProducts.map(product => product._id);
+
+//     // Fetch product details from the productModel
+//     const productDetails = await productModel.find({ _id: { $in: productIds } });
+
+//     res.status(200).json({
+//       success: true,
+//       data: productDetails,
+//       totalPages: 1, // Since we're not implementing pagination for best-selling products
+//       currentPage: 1, // Since we're not implementing pagination for best-selling products
+//       totalCount: productDetails.length // Length of productDetails array
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+
+
 exports.listBestProduct = async (req, res) => {
-
-
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -215,7 +298,6 @@ exports.listBestProduct = async (req, res) => {
       {
         $group: {
           _id: "$products.productId", // Group by product ID
-          productName: { $first: "$products.name" }, // Get the product name
           totalQuantitySold: { $sum: "$products.quantity" } // Sum the quantity sold
         }
       },
@@ -223,20 +305,32 @@ exports.listBestProduct = async (req, res) => {
       { $limit: 10 } // Get only the top 10 best-selling products
     ]);
 
+    // Extract product IDs from the aggregation result
+    const productIds = topProducts.map(product => product._id);
+
+    // Fetch product details from the productModel
+    const productDetails = await productModel.find({ _id: { $in: productIds } });
+
+    // Combine product details with total quantity sold
+    const combinedProducts = productDetails.map(product => {
+      const totalQuantitySold = topProducts.find(item => item._id.equals(product._id))?.totalQuantitySold || 0;
+      return {
+        ...product.toObject(), // Convert Mongoose document to plain JavaScript object
+        totalQuantitySold: totalQuantitySold
+      };
+    });
+
     res.status(200).json({
       success: true,
-      data: topProducts,
+      data: combinedProducts,
       totalPages: 1, // Since we're not implementing pagination for best-selling products
       currentPage: 1, // Since we're not implementing pagination for best-selling products
-      totalCount: topProducts.length // Length of topProducts array
+      totalCount: combinedProducts.length // Length of combinedProducts array
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
-
-
-}
-
+};
 
 
 exports.searchProduct = async (req, res) => {
