@@ -7,8 +7,13 @@ import {
   usePagination,
   useSortBy,
   useTable,
-  TableOptions,
+  // TableOptions,
+  // TableState,
+  
 } from "react-table";
+
+
+
 
 function TableHOC<T extends Object>(
   columns: Column<T>[],
@@ -18,14 +23,25 @@ function TableHOC<T extends Object>(
   showPagination: boolean = false
 ) {
   return function HOC() {
-    const options: TableOptions<T> = {
+    // const options: TableOptions<T> = {
+    //   columns,
+    //   data,
+    //   initialState: {
+    //     pageSize: 6,
+    //   },
+
+      
+
+      
+    // };
+
+    const options: any = {
       columns,
       data,
       initialState: {
+        pageIndex: 0,
         pageSize: 6,
-      },
-
-      
+      } as any, // Type assertion to include pageSize
     };
 
     const {
@@ -40,7 +56,7 @@ function TableHOC<T extends Object>(
       previousPage,
       canNextPage,
       canPreviousPage,
-    } = useTable(options, useSortBy, usePagination);
+    }:any = useTable(options, useSortBy, usePagination);
 
     return (
       <div className={containerClassname}>
@@ -56,7 +72,7 @@ function TableHOC<T extends Object>(
                     {column.isSorted && (
                       <span>
                         {" "}
-                        {column.isSortedDesc ? (
+                        {column?.isSortedDesc ? (
                           <AiOutlineSortDescending />
                         ) : (
                           <AiOutlineSortAscending />

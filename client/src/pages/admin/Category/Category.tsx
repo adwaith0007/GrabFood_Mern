@@ -1,4 +1,5 @@
 import  { useEffect, useState } from "react";
+import { Column } from 'react-table';
 
 import { ReactElement } from "react";
 import { FaPlus } from "react-icons/fa";
@@ -15,7 +16,7 @@ interface DataType {
   action: ReactElement;
 }
 
-const columns = [
+const columns: Column<DataType>[] = [
   {
     Header: "Photo",
     accessor: "photo",

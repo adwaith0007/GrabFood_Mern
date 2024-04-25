@@ -184,20 +184,20 @@
 
 
 
-import UserSidebar from '../../../components/user/UserSidebar';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import UserSidebar from '../../../components/user/UserSidebar';
+import  { useEffect, useState } from 'react';
+// import axios from 'axios';
 import { ReactElement } from 'react';
-import { FaPlus } from 'react-icons/fa';
+// import { FaPlus } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
-import { useSelector } from 'react-redux';
-import { UserReducerInitialState } from '../../../types/reducer-types';
+// import { useSelector } from 'react-redux';
+// import { UserReducerInitialState } from '../../../types/reducer-types';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 
 import api from '../../../api';
-const server = import.meta.env.VITE_SERVER;
+// const server = import.meta.env.VITE_SERVER;
 
 // Define interfaces for order data
 interface Address {
@@ -229,15 +229,25 @@ interface OrderData {
   createdAt: string;
 }
 
+// interface DataType {
+//     // orderId: string;
+//     no: number;
+//     order: string;
+//     totalPrice: ReactElement;
+//     status: string;
+//   orderDetails: ReactElement;
+//   // manageAction: ReactElement;
+// }
+
+
 interface DataType {
-    orderId: string;
-    no: number;
-    order: string;
-    totalPrice: number;
-    status: string;
+  no: number;
+  order: ReactElement;
+  totalPrice: ReactElement;
+  status: ReactElement;
   orderDetails: ReactElement;
-  manageAction: ReactElement;
 }
+
 
 const columns: Column<DataType>[] = [
   { Header:(<div className='flex justify-center ' >S.NO</div> ) , accessor: 'no' },
@@ -261,25 +271,25 @@ const CustomersOrder = () => {
 
   const [rows, setRows] = useState<DataType[]>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  const handleCancelProduct = async (orderId: string, productId: string) => {
-    try {
-      const response = await api.put(
-        `/order/cancel/${orderId}/product/${productId}`
-      );
-      if (response.data.success) {
+  // const handleCancelProduct = async (orderId: string, productId: string) => {
+  //   try {
+  //     const response = await api.put(
+  //       `/order/cancel/${orderId}/product/${productId}`
+  //     );
+  //     if (response.data.success) {
         
-        console.log('Product canceled:', productId, 'from order:', orderId);
-        // After canceling, fetch the updated orders
-        fetchUserOrders();
-      } else {
-        console.error('Failed to cancel product:', response.data.error);
-      }
-    } catch (error) {
-      console.error('Error canceling product:', error);
-    }
-  };
+  //       console.log('Product canceled:', productId, 'from order:', orderId);
+  //       // After canceling, fetch the updated orders
+  //       fetchUserOrders();
+  //     } else {
+  //       console.error('Failed to cancel product:', response.data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error canceling product:', error);
+  //   }
+  // };
 
   const fetchUserOrders = async () => {
     try {
@@ -291,37 +301,42 @@ const CustomersOrder = () => {
       }
     } catch (error) {
       console.error('Error fetching user orders:', error);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   console.log(userOrders);
   
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Processing':
-        return 'red';
-      case 'Shipped':
-        return 'green';
-      case 'Delivered':
-        return 'purple';
-      default:
-        return 'black'; 
-    }
-  };
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case 'Processing':
+  //       return 'red';
+  //     case 'Shipped':
+  //       return 'green';
+  //     case 'Delivered':
+  //       return 'purple';
+  //     default:
+  //       return 'black'; 
+  //   }
+  // };
 
   useEffect(() => {
     fetchUserOrders();
   }, [userId]);
 
   console.log(userOrders);
+
+
+  
   
 
   useEffect(() => {
 
-    const newRows = userOrders.map((order, index) => ({
+    const newRows:any = userOrders.map((order, index) => ({
+      
         no: (<div className='flex justify-center ' >{index + 1}</div> ) ,
         order: (<div className=' flex flex-col justify-center gap-1   ' >
 

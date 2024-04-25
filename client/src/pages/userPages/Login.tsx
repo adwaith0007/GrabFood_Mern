@@ -5,7 +5,7 @@ import "../../index.css";
 import foodimg from "../../assets/login_food.png";
 import { Link, useNavigate } from "react-router-dom";
 import glogo from "../../assets/googlelogo.png";
-import {  useState } from "react";
+// import {  useState } from "react";
 import { useFormik } from "formik";
 import { verifyPassword } from "../../helper/helper";
 import toast from "react-hot-toast";
@@ -28,9 +28,11 @@ import Cookie from "js-cookie";
 
 import { jwtDecode } from "jwt-decode";
 
-const Login = ({ setToken }) => {
-  const [gender, setGender] = useState("");
-  const [date, setDate] = useState("");
+// const Login = ({ setToken }) => {
+
+const Login = () => {
+  // const [gender, setGender] = useState("");
+  // const [date, setDate] = useState("");
 
   const [login] = useLoginMutation();
 
@@ -60,9 +62,9 @@ const Login = ({ setToken }) => {
       loginPromise.then((res) => {
         const { token } = res.data;
 
-        const userToken = jwtDecode(token);
+        const userToken :any = jwtDecode(token);
 
-        const user = {
+        const user:any = {
           _id: userToken._id,
           name: userToken.name,
           email: userToken.email,
@@ -80,7 +82,7 @@ const Login = ({ setToken }) => {
 
         Cookie.set("token", token, { path: '/',  sameSite: 'Lax' });
 
-        setToken(token);
+        // setToken(token);
         navigate("/");
       });
     },
@@ -98,7 +100,7 @@ const Login = ({ setToken }) => {
         photo: user.photoURL!,
         gender: "sdfg",
         role: "user",
-        dob: date,
+        // dob: date,
         _id: user.uid,
       });
 

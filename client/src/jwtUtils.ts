@@ -1,4 +1,5 @@
-import jwtDecode from 'jwt-decode';
+// import {jwtDecode} from 'jwt-decode';
+import  {jwtDecode } from 'jwt-decode';
 import Cookie from 'js-cookie';
 
 const setToken = (token) => {
@@ -17,7 +18,9 @@ const removeToken = () => {
 const getUserIdFromToken = () => {
   const token = getToken();
   if (token) {
-    const decoded = jwtDecode(token);
+    // const decoded = jwtDecode(token);
+    const decoded:any = jwtDecode(token); 
+    
     return decoded.userId;
   }
   return null;

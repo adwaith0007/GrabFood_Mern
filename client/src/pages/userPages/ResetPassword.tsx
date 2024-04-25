@@ -49,8 +49,8 @@ const ResetPassword = () => {
       });
 
       loginPromise.then((res) => {
-        // const { token } = res.data;
-        // localStorage.setItem("token", token);
+        const { token } = res.data;
+        localStorage.setItem("token", token);
         // dispatch(setUser(values.username));
         navigate("/login");
       });

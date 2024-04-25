@@ -32,6 +32,7 @@ interface OrderData {
   _id: string;
   userId: string;
   orderDate: string;
+  userName:string;
   products: Product[];
   address: Address[];
   paymentMethod: string;
@@ -42,14 +43,14 @@ interface OrderData {
 }
 
 interface DataType {
-  orderId: string;
-  no: number;
-  order: string;
-  totalPrice: number;
-  status: string;
+  orderId: ReactElement;
+  no: ReactElement;
+  order: ReactElement;
+  totalPrice: ReactElement;
+  status: ReactElement;
   
 paymentMethod: ReactElement;
-  manageAction: ReactElement;
+  // manageAction: ReactElement;
   action: ReactElement;
 }
 
@@ -82,10 +83,10 @@ const Orders = () => {
   );
   const userId = user._id;
 
-  const [rows, setRows] = useState<DataType[]>([]);
+  const [rows, setRows] = useState([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const closeDropdown = (event) => {
@@ -117,9 +118,10 @@ const Orders = () => {
       }
     } catch (error) {
       console.error("Error fetching user orders:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   const getStatusColor = (status: string) => {

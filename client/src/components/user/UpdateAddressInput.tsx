@@ -50,7 +50,7 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
 
       await axios.delete(`http://localhost:5000/api/user/${userId}/addresses/${currentAddress._id}`);
 
-      handleDeleteAddress(currentAddress._id);
+      // handleDeleteAddress(currentAddress._id);
       onClose();
     } catch (error) {
       console.error(error);
@@ -70,6 +70,8 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
         </div>
 
         <h2 className="text-xl font-semibold mb-4">Update Your Address </h2>
+
+        {error && <p className="text-red-500 mb-2">{error}</p>}
         <form onSubmit={handleAddressChange}>
           {/* {error && <p className="text-red-500 mb-2">{error}</p>} */}
           <div className="mb-2">

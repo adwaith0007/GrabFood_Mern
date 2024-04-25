@@ -110,7 +110,7 @@ const PaymentPage = () => {
 
 
   
-  const handleCOD = async (amount) => {
+  const handleCOD = async () => {
     try {
 
       if(currentOrder.totalPrice>1000){
@@ -221,6 +221,7 @@ const PaymentPage = () => {
             },
         };
 
+        //@ts-ignore
         const rzp1 = new window.Razorpay(options);
         rzp1.on("payment.failed", function (response) {
 

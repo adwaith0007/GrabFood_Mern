@@ -54,9 +54,9 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   
   
 
-  const handleAddressChange = (address) => {
-    setSelectedAddress(address);
-  };
+  // const handleAddressChange = (address) => {
+  //   setSelectedAddress(address);
+  // };
 
   const handleProceedToPayment = () => {
     // Implement the logic to proceed to payment with the selected address and payment method

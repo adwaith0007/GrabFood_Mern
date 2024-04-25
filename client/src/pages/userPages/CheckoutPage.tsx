@@ -31,7 +31,7 @@ const CheckoutPage = () => {
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
 
-  const [selectedAddress, setSelectedAddress] = useState();
+  const [selectedAddress, setSelectedAddress] = useState<any>();
 
  
 
@@ -48,7 +48,7 @@ const CheckoutPage = () => {
         .get(`/user/${userId}/addresses`)
 
         .then((response) => {
-          setSelectedAddress(response.data[0]);
+          setSelectedAddress(response?.data[0]);
         })
         .catch((error) => {
           console.error(error);
@@ -104,7 +104,7 @@ const CheckoutPage = () => {
   //   return formattedDateTime;
   // };
 
-  const handleOnPlaceOrder = async (totalAmount,discountAmount,couponCode) => {
+  const handleOnPlaceOrder:any = async (totalAmount,discountAmount,couponCode) => {
     console.log( 'total', totalAmount);
 
    
@@ -115,7 +115,7 @@ const CheckoutPage = () => {
     }
 
     try {
-      const checkoutData = {
+      const checkoutData:any = {
         userId,
         products: cartItems,
         address: selectedAddress,
@@ -290,20 +290,20 @@ const CheckoutPage = () => {
             select your address or add a new address.
           </p>
           <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-            {selectedAddress != undefined ? (
+            {selectedAddress !== undefined ? (
               <div className="flex justify-between   ">
                 <div>
                   <div className="flex items-center gap-2 mb-2 ">
                     <FontAwesomeIcon icon={faLocationDot} />
 
                     <h3 className="text-[#093bc9] font-semibold ">
-                      {selectedAddress.city}
+                      {selectedAddress?.city}
                     </h3>
                   </div>
 
                   <div className="w-[300px]">
-                    <p>{selectedAddress.street}</p>
-                    <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
+                    <p>{selectedAddress?.street}</p>
+                    <p>{`${selectedAddress?.state} - ${selectedAddress?.zipCode} `}</p>
                   </div>
 
                   <button

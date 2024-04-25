@@ -24,7 +24,7 @@ const ManageAddressPage = () => {
   const [addressTab, setAddressTab] = useState(false);
   const [updateAddressTab, setUpdateAddressTab] = useState(false);
   const [chooseaddressTab, setChooseaddressTab] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState();
+  const [selectedAddress, setSelectedAddress] = useState<any>();
 
 
   useEffect(() => {

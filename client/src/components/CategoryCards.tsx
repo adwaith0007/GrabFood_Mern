@@ -6,8 +6,9 @@ type CategoryCardProps = {
   
   imageUrl: string;
   name: string;
+  handler: (name: string) => void;
   
-  handler: () => void;
+  
 };
 
 

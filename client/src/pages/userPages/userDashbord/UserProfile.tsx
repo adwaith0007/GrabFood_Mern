@@ -21,7 +21,7 @@ const UserProfile = () => {
     gender: '',
     email: '',
     phoneNumber: '',
-    profilePicture: null,
+    profileImage: null,
     
   });
 
@@ -46,7 +46,7 @@ const UserProfile = () => {
                     gender: userDataFromApi.gender,
                     email: userDataFromApi.email,
                     phoneNumber: userDataFromApi.phone,
-                    profilePicture:userDataFromApi.profilePicture,
+                    profileImage:userDataFromApi.profilePicture,
                     
                 });
             }
@@ -103,7 +103,7 @@ const UserProfile = () => {
     }
   };
 
-  const image = `${server}/${userData?.profilePicture?.replace(/ /g, "%20")}`;
+  const image = `${server}/${userData?.profileImage?.replace(/ /g, "%20")}`;
 
   return (
     <div className="admin-container">

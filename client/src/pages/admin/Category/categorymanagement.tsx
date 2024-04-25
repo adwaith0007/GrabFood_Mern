@@ -68,7 +68,7 @@ const CategoryManagement = () => {
     try {
       const formData = new FormData();
       formData.append("category", categoryDetails?.category || "");
-      formData.append("offer", offer);
+      formData.append("offer", String(offer));
       if (photoFile) {
         formData.append("photo", photoFile);
       }

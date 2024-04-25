@@ -40,13 +40,16 @@ export const store = configureStore({
     // [dashboardApi.reducerPath]: dashboardApi.reducer,
     // [cartReducer.name]: cartReducer.reducer,
   },
-  middleware: (mid) => [
-    ...mid(),
-    userAPI.middleware,
-    // productAPI.middleware,
-    // orderApi.middleware,
-    // dashboardApi.middleware,
-  ],
+
+  // 👇 if redux is not working uncomment 
+
+  // middleware: (mid) => [
+  //   ...mid(),
+  //   userAPI.middleware,
+  //   // productAPI.middleware,
+  //   // orderApi.middleware,
+  //   // dashboardApi.middleware,
+  // ],
 });
 
 export type RootState = ReturnType<typeof store.getState>;

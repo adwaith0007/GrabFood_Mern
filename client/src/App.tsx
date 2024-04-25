@@ -1,4 +1,5 @@
 import "./App.scss";
+import  {jwtDecode } from 'jwt-decode';
 
 import {
   // BrowserRouter as Router,
@@ -6,11 +7,11 @@ import {
   Route,
   
 } from "react-router-dom";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense } from "react";
 import { useEffect } from "react";
-import { AuthorizeUser } from "./middleware/auth";
+// import { AuthorizeUser } from "./middleware/auth";
 import { Toaster } from "react-hot-toast";
-import PrivateRoute from './Routes/PrivateRoute';
+// import PrivateRoute from './Routes/PrivateRoute';
 
 import Loader from "./components/loader";
 import Navbar from "./components/Layout/Navbar";
@@ -41,21 +42,21 @@ const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
 
 import Cookies from "js-cookie";
 
-import { jwtDecode } from "jwt-decode";
 
-import JwtPayload from "./types/types";
+
+// import JwtPayload from "./types/types";
 
 import AdminRoutes from "./Routes/AdminRoutes";
 import UserRoutes from "./Routes/UserRoutes";
-import UserLayout from "./components/Layout/UserLayout";
+// import UserLayout from "./components/Layout/UserLayout";
 
 function App() {
   const { user, loading } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
 
-  const [token, setToken] = useState(Cookies.get("token") || "");
-  const [role, setRole] = useState('');
+  // const [token, setToken] = useState(Cookies.get("token") || "");
+  // const [role, setRole] = useState('');
 
   const dispatch = useDispatch();
 
@@ -67,10 +68,10 @@ function App() {
 
       console.log(user);
 
-      setRole(user.role)
+      // setRole(user.role)
 
       console.log("Logged In");
-      dispatch(userExist(user));
+      dispatch(userExist(jwtDecode(token)));
 
       // i have to fix this
     } else {
@@ -213,7 +214,9 @@ function App() {
                   isAuthenticated={user ? false : true}
                   redirect="/"
                 >
-                  <Login setToken={setToken} />
+                  <Login 
+                  // setToken={setToken}
+                   />
                 </ProtectedRoute>
               }
             ></Route>

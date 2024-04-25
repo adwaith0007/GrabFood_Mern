@@ -36,6 +36,8 @@ interface Product {
 
 interface OrderData {
   _id: string;
+  userName:string;
+  phone:string;
   userId: string;
   orderDate: string;
   products: Product[];
@@ -88,12 +90,12 @@ const SalesReport = () => {
   // );
   // const userId = user._id;
 
-  const [rows, setRows] = useState<DataType[]>([]);
+  const [rows, setRows] = useState<any>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  const [orders, setOrders] = useState([]);
+  // const [orders, setOrders] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(new Date());
   
@@ -115,7 +117,7 @@ const SalesReport = () => {
   }
 
   const downloadPDF = () => {
-    const pdf = new jsPDF();
+    const pdf:any = new jsPDF();
 
     const deliveredOrders = userOrders.filter(
       (order) => order.orderStatus === "Delivered"

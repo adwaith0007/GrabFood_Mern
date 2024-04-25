@@ -20,7 +20,7 @@ type ProductCardProps = {
   description: string;
   price: number;
   onAddToCart: () => void;
-  onAddToFavorites: () => void;
+  // onAddToFavorites: () => void;
 };
 
 const ProductCard = ({

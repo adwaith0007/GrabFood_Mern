@@ -13,7 +13,7 @@ import { UserReducerInitialState } from '../../types/reducer-types';
 import { generateOTP,verifyOTP} from "../../helper/helper";
 
 const ResetPasswordOtp = () => {
-    const [OTP,setOTP]=useState()
+    const [OTP,setOTP]=useState("")
 
     const {registeredUsername } = useSelector((state:{userReducer:UserReducerInitialState})=>state.userReducer);
   
@@ -51,7 +51,7 @@ const ResetPasswordOtp = () => {
     }
   
     function resendOTP (){
-      let sendPromise = generateOTP(username);
+      const sendPromise = generateOTP(username);
   
       toast.promise(sendPromise,{
         loading:'Sending...',

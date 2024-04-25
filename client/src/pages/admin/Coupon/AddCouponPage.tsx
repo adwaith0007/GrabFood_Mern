@@ -13,8 +13,10 @@ const allSymbols = "!@#$%^&*()_+";
 const AddCouponPage = () => {
   const navigate = useNavigate();
 
-  const [size, setSize] = useState<number>(8);
-  const [prefix, setPrefix] = useState<string>("");
+  // const [size, setSize] = useState<number>(8);
+  const size = 8
+  // const [prefix, setPrefix] = useState<string>("");
+  const prefix= ""
   const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
   const [includeCharacters, setIncludeCharacters] = useState<boolean>(false);
   const [includeSymbols, setIncludeSymbols] = useState<boolean>(false);

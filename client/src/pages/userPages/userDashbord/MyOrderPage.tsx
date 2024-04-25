@@ -86,13 +86,13 @@ const MyOrderPage = () => {
 
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<DataType[]>([]);
+  const [rows, setRows] = useState<any>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [productDeletePopUp, setProductDeletePopUp] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const closeDropdown = (event) => {
@@ -110,7 +110,7 @@ const MyOrderPage = () => {
     };
   }, [activeDropdown]);
 
-  const handleCancelOrder = (orderId: string, orderStatus) => {
+  const handleCancelOrder = (orderId: string) => {
     // if(orderStatus== "Delivered" ){
     //    window.alert("Order is already delivered");
     // }else if (orderStatus== "Cancel"){
@@ -207,9 +207,10 @@ const MyOrderPage = () => {
       }
     } catch (error) {
       console.error("Error fetching user orders:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   const getStatusColor = (status: string) => {
@@ -300,7 +301,10 @@ const MyOrderPage = () => {
                   <button
                     className="bg-red-500 text-white px-4 py-2 rounded"
                     onClick={() =>
-                      handleCancelOrder(order._id, order.orderStatus)
+                      // handleCancelOrder(order._id, order.orderStatus)
+
+                      handleCancelOrder(order._id)
+
                     }
                   >
                     Cancel
@@ -392,12 +396,13 @@ const MyOrderPage = () => {
     setRows(newRows);
   }, [userOrders, activeDropdown]);
 
-  const Table = TableHOC<DataType>(
+  const Table = TableHOC(
     columns,
     rows,
     "dashboard-product-box",
-    <p className="text-xl font-medium">Orders</p>,
-    rows.length > 6
+    // <p className="text-xl font-medium">Orders</p>,
+    
+   "table"
   )();
 
   return (

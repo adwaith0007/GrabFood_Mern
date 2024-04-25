@@ -14,7 +14,7 @@ const userImg =
 
 const Dashboard = () => {
 
-  const [monthlyRevenue , setmonthlyRevenue ]=useState()
+  const [monthlyRevenue , setmonthlyRevenue ]=useState<any>([]);
 
   useEffect(()=>{
 
@@ -35,7 +35,12 @@ const Dashboard = () => {
   console.log(monthlyRevenue);
   
 
-  const thisMonthRevenue = monthlyRevenue?.pop()
+  // const thisMonthRevenue = monthlyRevenue?.pop()
+
+ 
+
+  const thisMonthRevenue = monthlyRevenue && monthlyRevenue.length > 0 ? monthlyRevenue.pop() : undefined;
+  
 
   // const lastMonthRevenue = monthlyRevenue[monthlyRevenue.length - 3];
 

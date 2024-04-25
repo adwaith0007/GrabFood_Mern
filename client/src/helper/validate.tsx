@@ -32,7 +32,12 @@ export async function adminRegisterValidation(values) {
   }
 
 /* validate username */
-function usernameVerify(error = {}, values) {
+
+interface FormError {
+  username?: string; // Make the username property optional with `?`
+}
+
+function usernameVerify(error: FormError = {}, values: { username: string }) {
   if (!values.username) {
     error.username = toast.error("Username Required");
   } else if (values.username.includes(" ")) {
@@ -43,7 +48,25 @@ function usernameVerify(error = {}, values) {
 }
 
 /** validate email */
-function emailVerify(error = {}, values) {
+
+
+// function emailVerify(error = {}, values) {
+//   if (!values.email) {
+//     error.email = toast.error("Email Required...!");
+//   } else if (values.email.includes(" ")) {
+//     error.email = toast.error("Wrong Email...!");
+//   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+//     error.email = toast.error("Invalid email address...!");
+//   }
+
+//   return error;
+// }
+
+interface FormError {
+  email?: string; // Make the email property optional with `?`
+}
+
+function emailVerify(error: FormError = {}, values: { email: string }) {
   if (!values.email) {
     error.email = toast.error("Email Required...!");
   } else if (values.email.includes(" ")) {
@@ -56,7 +79,7 @@ function emailVerify(error = {}, values) {
 }
 
 /* validate password */
-function passwordVerify(error = {}, values) {
+function passwordVerify(error , values) {
   if (!values.password) {
     error.password = toast.error("Password Required...!");
   } else if (values.password.includes(" ")) {

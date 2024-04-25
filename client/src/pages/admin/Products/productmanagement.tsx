@@ -119,7 +119,7 @@ const ProductManagement = () => {
       formData.append("name", productDetails.productName);
       formData.append("price", String(productDetails.price));
       formData.append("category", productDetails.category);
-      formData.append("offer", offer);
+      formData.append("offer", String(offer));
 
       productDetails.productImage.forEach((image: string) => {
         formData.append("images", image);

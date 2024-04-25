@@ -1,4 +1,4 @@
-import  { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { ReactElement } from "react";
 // import { FaPlus } from "react-icons/fa";
 // import { Link } from "react-router-dom";
@@ -14,34 +14,34 @@ const server = import.meta.env.VITE_SERVER;
 // import axios from "axios";
 import toast from "react-hot-toast";
 
-interface Address {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+// interface Address {
+//   street: string;
+//   city: string;
+//   state: string;
+//   zipCode: string;
+// }
 
-interface Product {
-  productId: string;
-  productName: string;
-  productImage: string[];
-  price: number;
-  quantity: number;
-  _id: string;
-}
+// interface Product {
+//   productId: string;
+//   productName: string;
+//   productImage: string[];
+//   price: number;
+//   quantity: number;
+//   _id: string;
+// }
 
-interface OrderData {
-  _id: string;
-  userId: string;
-  orderDate: string;
-  products: Product[];
-  address: Address[];
-  paymentMethod: string;
-  totalPrice: number;
-  paymentStatus: boolean;
-  orderStatus: string;
-  createdAt: string;
-}
+// interface OrderData {
+//   _id: string;
+//   userId: string;
+//   orderDate: string;
+//   products: Product[];
+//   address: Address[];
+//   paymentMethod: string;
+//   totalPrice: number;
+//   paymentStatus: boolean;
+//   orderStatus: string;
+//   createdAt: string;
+// }
 
 interface DataType {
   orderId: string;
@@ -51,6 +51,9 @@ interface DataType {
   status: string;
   orderDetails: ReactElement;
   manageAction: ReactElement;
+  productName: ReactElement;
+  unitPrice: ReactElement;
+  item: ReactElement;
   action: ReactElement;
 }
 
@@ -80,15 +83,14 @@ const FavouritesPage = () => {
   const userId = user._id;
 
   const [rows, setRows] = useState<DataType[]>([]);
-  const [userFavourites, setUserFavourites] = useState<OrderData[]>([]);
+  const [userFavourites, setUserFavourites] = useState<any>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const [popup, setPopup] = useState(false);
-  
 
-  const[selectedProductId,setSelectedProductId]= useState()
+  const [selectedProductId, setSelectedProductId] = useState();
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const closeDropdown = (event) => {
@@ -123,30 +125,25 @@ const FavouritesPage = () => {
   const handleRemove = (productId) => {
     setPopup(true);
 
-    setSelectedProductId(productId)
-
+    setSelectedProductId(productId);
   };
 
-
-
-  const confirmHandleRemove = async () =>{
-   await api
-        .put(`/wishlist/remove/${userId}`, {selectedProductId, quantity: 1 })
-        .then((response) => {
-          console.log("Product removed from Favorites:", response.data);
-          toast.success("Product removed from Favorites successfully");
-          setUserFavourites(response.data.data);
-          setPopup(false);
-        })
-        .catch((error) => {
-          console.error("Error removing from Favorites:", error);
-          toast.error(
-            "Failed to remove product from Favorites. Please try again later."
-          );
-        });
-
-  }
-
+  const confirmHandleRemove = async () => {
+    await api
+      .put(`/wishlist/remove/${userId}`, { selectedProductId, quantity: 1 })
+      .then((response) => {
+        console.log("Product removed from Favorites:", response.data);
+        toast.success("Product removed from Favorites successfully");
+        setUserFavourites(response.data.data);
+        setPopup(false);
+      })
+      .catch((error) => {
+        console.error("Error removing from Favorites:", error);
+        toast.error(
+          "Failed to remove product from Favorites. Please try again later."
+        );
+      });
+  };
 
   const fetchingFavourites = async () => {
     try {
@@ -158,9 +155,10 @@ const FavouritesPage = () => {
       }
     } catch (error) {
       console.error("Error fetching user orders:", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   console.log("data:", userFavourites);
@@ -170,7 +168,7 @@ const FavouritesPage = () => {
   }, [userId]);
 
   useEffect(() => {
-    const newRows = userFavourites.map((item, index) => ({
+    const newRows = userFavourites.map((item) => ({
       // item: <div className="flex justify-center ">{index + 1}</div>,
 
       item: (
@@ -191,7 +189,7 @@ const FavouritesPage = () => {
       ),
 
       action: (
-        <div className=" flex justify-center  inline-block " key={item._id}>
+        <div className=" flex justify-center   " key={item._id}>
           <div className="flex justify-center flex-col">
             <div className="py-1 flex gap-3 " role="none">
               <button
@@ -205,8 +203,6 @@ const FavouritesPage = () => {
                 className="  flex border w-36  rounded justify-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 role="menuitem"
                 onClick={() => handleRemove(item.productId)}
-
-                
               >
                 <span>Remove </span>
               </button>
@@ -219,12 +215,12 @@ const FavouritesPage = () => {
     setRows(newRows);
   }, [userFavourites, activeDropdown]);
 
-  const Table = TableHOC<DataType>(
+  const Table = TableHOC(
     columns,
     rows,
     "dashboard-product-box",
-    <p className="text-xl font-medium">Favourites</p>,
-    rows.length > 6
+    // <p className="text-xl font-medium">Favourites</p>,
+    "Products"
   )();
 
   return (
@@ -294,8 +290,6 @@ const FavouritesPage = () => {
             </div>
             <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
               <button
-                
-
                 onClick={() => confirmHandleRemove()}
                 type="button"
                 data-behavior="commit"

@@ -60,7 +60,7 @@ const Products = () => {
 
   useEffect(() => {
     // Update rows with the data from productList
-    const newRows: DataType[] = productList.map((item) => ({
+    const newRows:any = productList.map((item) => ({
 
       
       photo: (

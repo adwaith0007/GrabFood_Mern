@@ -8,7 +8,7 @@ const AddProduct = () => {
     name: "",
     desc: "",
     category: "",
-    price: 0,
+    price: "",
     images: [],
   });
 
@@ -99,7 +99,7 @@ const AddProduct = () => {
           name: "",
           desc: "",
           category: "",
-          price: 0,
+          price: "",
           images: [],
         });
         setSelectedImages([]);

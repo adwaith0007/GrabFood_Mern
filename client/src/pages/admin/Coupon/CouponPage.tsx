@@ -56,12 +56,12 @@ const CouponPage = () => {
           setCouponData(response.data.data);
         } else {
           console.error("Error deleting Coupon");
-          setError("Failed to delete Coupon");
+          // setError("Failed to delete Coupon");
           toast.error("Failed to delete Coupon");
         }
       } catch (error) {
         console.error("Error deleting Coupon", error);
-        setError("Failed to delete Coupon");
+        // setError("Failed to delete Coupon");
         toast.error("Failed to delete Coupon");
       }
     }

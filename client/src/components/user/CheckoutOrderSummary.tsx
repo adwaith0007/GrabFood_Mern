@@ -80,7 +80,7 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
 
  
 
-  const totalAmount = (parseFloat(amount) + parseFloat(taxAmount) + parseFloat(deliveryAmount)).toFixed(2);
+  const totalAmount = (parseFloat(amount.toString()) + parseFloat(taxAmount) + parseFloat(deliveryAmount.toString())).toFixed(2);
 
   return (
     <div className="px-4 pt-8 relative ">

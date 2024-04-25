@@ -73,7 +73,7 @@ const CustomersProducts = () => {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [productDeletePopUp, setProductDeletePopUp] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const fetchUserOrders = async () => {
     try {
@@ -85,9 +85,10 @@ const CustomersProducts = () => {
       }
     } catch (error) {
       console.error('Error fetching user orders:', error);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   const getStatusColor = (status) => {
@@ -103,11 +104,11 @@ const CustomersProducts = () => {
     }
   };
 
-  const handleCancelProduct = (orderId: string, productId: string) => {
-    setSelectedOrderId(orderId);
-    setSelectedProductId(productId);
-    setProductDeletePopUp(true);
-  };
+  // const handleCancelProduct = (orderId: string, productId: string) => {
+  //   setSelectedOrderId(orderId);
+  //   setSelectedProductId(productId);
+  //   setProductDeletePopUp(true);
+  // };
 
   const handlePopUpCancel = () => {
     setProductDeletePopUp(false);
