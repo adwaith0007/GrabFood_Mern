@@ -19,7 +19,7 @@ require("dotenv").config();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const BuildPath = path.join(__dirname, "../client/dist");
+
 
 // B:\vs\Project\GrabFood_Mern_2024\client\dist
 
@@ -27,11 +27,13 @@ const BuildPath = path.join(__dirname, "../client/dist");
 const app = express();
 const PORT = process.env.PORT;
 // app.use(cors({
-//   origin: 'http://localhost:5173',
-//   credentials: true
-// }));
+  //   origin: 'http://localhost:5173',
+  //   credentials: true
+  // }));
+  
+  // const buildPath = path.join(__dirname, "../client/dist");
+// app.use(express.static(buildPath));
 
-app.use(express.static(BuildPath));
 app.use(cors())
 app.use(morgan("tiny"));
 
@@ -68,16 +70,16 @@ app.use("/api/coupon", couponRouter);
 // });
 
 
-app.get("/*", function (req, res) {
-  res.sendFile(
-      path.join(__dirname, "../client/dist/index.html"),
-      function (err) {
-          if (err) {
-              res.status(500).send(err);
-          }
-      }
-  );
-});
+// app.get("/*", function (req, res) {
+//   res.sendFile(
+//       path.join(__dirname, "../client/dist/index.html"),
+//       function (err) {
+//           if (err) {
+//               res.status(500).send(err);
+//           }
+//       }
+//   );
+// });
 
 
 app.listen(PORT, () => {
