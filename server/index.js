@@ -68,6 +68,17 @@ app.use("/api/coupon", couponRouter);
 // });
 
 
+app.get("/*", function (req, res) {
+  res.sendFile(
+      path.join(__dirname, "../client/dist/index.html"),
+      function (err) {
+          if (err) {
+              res.status(500).send(err);
+          }
+      }
+  );
+});
+
 
 app.listen(PORT, () => {
   console.log(`Express app listening on port ${PORT}`);
