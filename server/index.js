@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require('path');
 const userRouter = require("./Routes/userRoutes.js");
 const adminRouter = require("./Routes/adminRoutes.js");
 const productRouter = require("./Routes/productRoutes.js");
@@ -18,7 +19,9 @@ require("dotenv").config();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const BuildPath = path.join(__dirname, "../client/dist");
 
+// B:\vs\Project\GrabFood_Mern_2024\client\dist
 
 
 const app = express();
@@ -27,6 +30,8 @@ const PORT = process.env.PORT;
 //   origin: 'http://localhost:5173',
 //   credentials: true
 // }));
+
+app.use(express.static(BuildPath));
 app.use(cors())
 app.use(morgan("tiny"));
 
