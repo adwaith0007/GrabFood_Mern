@@ -39,6 +39,7 @@ exports.adminLogin = async (req, res) => {
     //check admin
     if (!admin) {
       res.json({ success: false, message: "user not found" });
+      return
     }
     if (await bcrypt.compare(password, admin.password)) {
       console.log(admin.name);
