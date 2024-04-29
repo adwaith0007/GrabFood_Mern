@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../Controllers/adminControllers");
-const categoryControllers = require("../Controllers/categoryControllers");
+// const categoryControllers = require("../Controllers/categoryControllers");
 
-const productControllers = require("../Controllers/productControllers");
+// const productControllers = require("../Controllers/productControllers");
 const upload = require("../middlewares/multer");
 
 

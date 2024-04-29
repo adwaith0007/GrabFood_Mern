@@ -10,7 +10,7 @@ const couponRouter = require("./Routes/couponRouter.js");
 const orderRouter = require("./Routes/orderRouter.js");
 const cartRoutes = require("./Routes/cartRoutes.js");
 
-const Razorpay = require("razorpay")
+// const Razorpay = require("razorpay")
 
 
 
@@ -64,10 +64,10 @@ app.use("/api/coupon", couponRouter);
 
 
 
-exports.instance = new Razorpay({
-  key_id: process.env.RAZORPAY_API_KEY,
-  key_secret: process.env.RAZORPAY_API_SECRET,
-});
+// exports.instance = new Razorpay({
+//   key_id: process.env.RAZORPAY_API_KEY,
+//   key_secret: process.env.RAZORPAY_API_SECRET,
+// });
 
 
 app.get("/*", function (req, res) {
