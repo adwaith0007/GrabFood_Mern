@@ -1,4 +1,4 @@
-const categoryModel = require("../Models/category.js");
+const categoryModel = require("../Models/Category");
 const upload = require("../middlewares/multer");
 const productModel = require("../Models/product");
 
