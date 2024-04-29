@@ -31,8 +31,8 @@ const PORT = process.env.PORT;
   //   credentials: true
   // }));
   
-  // const buildPath = path.join(__dirname, "../client/dist");
-// app.use(express.static(buildPath));
+  const buildPath = path.join(__dirname, "../client/dist");
+app.use(express.static(buildPath));
 
 app.use(cors())
 app.use(morgan("tiny"));
@@ -70,16 +70,16 @@ app.use("/api/coupon", couponRouter);
 // });
 
 
-// app.get("/*", function (req, res) {
-//   res.sendFile(
-//       path.join(__dirname, "../client/dist/index.html"),
-//       function (err) {
-//           if (err) {
-//               res.status(500).send(err);
-//           }
-//       }
-//   );
-// });
+app.get("/*", function (req, res) {
+  res.sendFile(
+      path.join(__dirname, "../client/dist/index.html"),
+      function (err) {
+          if (err) {
+              res.status(500).send(err);
+          }
+      }
+  );
+});
 
 
 app.listen(PORT, () => {
@@ -88,6 +88,7 @@ app.listen(PORT, () => {
 
 mongoose
   .connect("mongodb+srv://admin:admin123@cluster0.oxxkgcl.mongodb.net/")
+  // .connect("mongodb://localhost:27017/grabfoodmern")
   .then(() => {
     console.log("Db connection established");
   })

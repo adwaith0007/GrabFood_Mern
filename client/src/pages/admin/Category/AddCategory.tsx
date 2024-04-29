@@ -56,23 +56,20 @@ const AddCategory = () => {
     }
 
     try {
+      console.log('clicked')
       const response = await api.post(`/category/add`,formData);
-
-      
+       
       if (response.data.success) {
         toast.success("Category added");
 
         navigate("/admin/category");
 
       } else {
+        console.log('coming error')
         toast.error(response.data.message);
       }
     } catch (error) {
-      if (error.response) {
-        toast.error(`Error: ${error.response.data.message}`);
-      } else {
-        toast.error(`Error: ${error.message}`);
-      }
+        console.log(error ,' error from try catch ')
     }
   };
 

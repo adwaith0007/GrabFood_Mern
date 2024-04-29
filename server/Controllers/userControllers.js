@@ -531,6 +531,8 @@ exports.verifyLogin_post = async (req, res) => {
 
 
 exports.toggleWishlist = async (req, res) => {
+
+  
   const { userId, productId } = req.body;
 
   try {

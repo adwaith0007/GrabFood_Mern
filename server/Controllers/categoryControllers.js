@@ -131,7 +131,7 @@ exports.addCategory = async (req, res) => {
     });
 
     await categoryDoc.save();
-
+    console.log('worked')
     res
       .status(201)
       .json({ success: true, message: "Category added successfully" });

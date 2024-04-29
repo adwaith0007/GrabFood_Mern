@@ -137,6 +137,8 @@ exports.addProduct = async (req, res) => {
 
         productDoc.productId = productDoc._id;
 
+        
+
         await productDoc.save();
 
         res.status(201).json({ success: true, message: "Product added successfully" });

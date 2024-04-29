@@ -29,7 +29,7 @@ router.post("/register", (req, res) => {
 });
 
 
-router.post("/user/wishlist/add", (req, res) => {
+router.post("/user/wishlist/add", (req, res) => {  
   userController.toggleWishlist(req, res);
 });
 
