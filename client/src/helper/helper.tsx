@@ -54,14 +54,17 @@ export async function registerUser( credentials) {
 /* register admin function */
 export async function registerAdmin( credentials) {
     try {
-      const { data : {msg} , status } =  await axios.post(`http://localhost:5000/api/admin/register`, credentials );
+      // const { data : {msg} , status } =  await axios.post(`http://localhost:5000/api/admin/register`, credentials );
+      const { data : {msg} , status } =  await api.post(`/admin/register`, credentials );
       const {name, email} = credentials;
 
       /* send email */
         if(status===200){
             console.log('ok');
             
-            await axios.post('http://localhost:5000/api/registerMail',{ name , userEmail: email ,text : msg })
+            // await axios.post('http://localhost:5000/api/registerMail',{ name , userEmail: email ,text : msg })
+
+            await api.post('/registerMail',{ name , userEmail: email ,text : msg })
         }
 
         return Promise.resolve(msg)
@@ -77,7 +80,8 @@ export async function adminVerifyPassword({email, password }) {
     try {
 
         if(email){
-           const {data}= await axios.post(`http://localhost:5000/api/admin/login`, {email,password});
+          //  const {data}= await axios.post(`http://localhost:5000/api/admin/login`, {email,password});
+           const {data}= await api.post(`/admin/login`, {email,password});
            return Promise.resolve({data});
         }
         
