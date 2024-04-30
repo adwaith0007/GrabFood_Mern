@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import api from "../api"
+
 
 // axios.defaults.baseURL= 'http://localhost:5000';
 //  process.env.REACT_APP_SERVER_DOMAIN;
@@ -90,7 +92,9 @@ export async function verifyPassword({username, password }) {
     try {
 
         if(username){
-           const {data}= await axios.post(`http://localhost:5000/api/login`, {username,password});
+          //  const {data}= await axios.post(`http://localhost:5000/api/login`, {username,password});
+
+           const {data}= await api.post(`/login`, {username,password});
            return Promise.resolve({data});
         }
         
