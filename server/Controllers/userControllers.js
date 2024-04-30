@@ -9,8 +9,11 @@ const productModel = require("../Models/product");
 
 /* POST: http://localhost:5000/api/login */
 exports.login = async (req, res) => {
-  const { username , password } = req.body;
 
+  
+  const { username , password } = req.body;
+  
+  console.log("userlogin123",username)
 
   if (!username || !password) {
     return res.json({ success: false, message: "enter username and password" });
