@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 
 import api from "../api"
 
@@ -12,7 +12,9 @@ import api from "../api"
 export async function authenticate(username) {
 
     try {
-        return await axios.post('/api/authenticate', {username})
+        // return await axios.post('/api/authenticate', {username})
+
+        return await api.post('/authenticate', {username})
     } catch (error) {
         return {error:"Username doesn't exist...!"}
     }
@@ -22,7 +24,9 @@ export async function authenticate(username) {
 /* get User details */
 export async function getUser({username}) {
     try {
-      const {data} = await axios.get(`http://localhost:5000/api/user/${username}`);
+      // const {data} = await axios.get(`http://localhost:5000/api/user/${username}`);
+
+      const {data} = await api.get(`/user/${username}`);
       return {data};
     } catch (error) {
         return {error: "Password doesn't Match...!"}
@@ -32,14 +36,18 @@ export async function getUser({username}) {
 /* register user function */
 export async function registerUser( credentials) {
     try {
-      const { data : {msg} , status } =  await axios.post(`http://localhost:5000/api/register`, credentials );
+      // const { data : {msg} , status } =  await axios.post(`http://localhost:5000/api/register`, credentials );
+
+      const { data : {msg} , status } =  await api.post(`/register`, credentials );
       const {username, email} = credentials;
 
       /* send email */
         if(status===200){
             console.log('ok');
             
-            await axios.post('http://localhost:5000/api/registerMail',{ username , userEmail: email ,text : msg })
+            // await axios.post('http://localhost:5000/api/registerMail',{ username , userEmail: email ,text : msg })
+
+            await api.post('/registerMail',{ username , userEmail: email ,text : msg })
         }
 
         return Promise.resolve(msg)
@@ -123,7 +131,9 @@ export async function verifyPassword({username, password }) {
 
 export async function getCustomers() {
   try {
-    const response = await axios.get('http://localhost:5000/api/admin/customers');
+    // const response = await axios.get('http://localhost:5000/api/admin/customers');
+
+    const response = await api.get('/admin/customers');
 
     // Check if the response status is in the success range (2xx)
     if (response.status >= 200 && response.status < 300) {
@@ -150,7 +160,8 @@ export async function updateUser(response){
     try {
 
         const token = await localStorage.getItem('token');
-        const data = await axios.put('http://localhost:5000/api/updateuser',response,{headers: {"Authorization": `Bearer ${token}`}});
+        // const data = await axios.put('http://localhost:5000/api/updateuser',response,{headers: {"Authorization": `Bearer ${token}`}});
+        const data = await api.put('/updateuser',response,{headers: {"Authorization": `Bearer ${token}`}});
         return Promise.resolve({data})
     } catch (error) {
         return Promise.reject({error:"Couldn't Update Profile...!"})
@@ -163,13 +174,16 @@ export async function updateUser(response){
 /* generate OTP */
 export async function generateOTP(username){
     try {
-      const {data : {code},status}=  await axios.get('http://localhost:5000/api/generateOTP',{params:{username}});
+      // const {data : {code},status}=  await axios.get('http://localhost:5000/api/generateOTP',{params:{username}});
+
+      const {data : {code},status}=  await api.get('/generateOTP',{params:{username}});
       
       // send mail with the OTP
       if(status===201){
        const {data:{email}} = await getUser({username});
        const text = `Your Password Recovery OTP is ${code}. Verify and recover your password.`;
-       await axios.post('http://localhost:5000/api/registerMail',{username,userEmail:email,text,subject:"Password Recovery OTP"})
+      //  await axios.post('http://localhost:5000/api/registerMail',{username,userEmail:email,text,subject:"Password Recovery OTP"})
+       await api.post('/registerMail',{username,userEmail:email,text,subject:"Password Recovery OTP"})
       }
       return Promise.resolve(code)
     } catch (error) {
@@ -181,7 +195,8 @@ export async function generateOTP(username){
 export async function verifyOTP({username,code}) {
 
     try {
-      const {data,status} =  await axios.get('http://localhost:5000/api/verifyOTP',{params:{username,code}});
+      // const {data,status} =  await axios.get('http://localhost:5000/api/verifyOTP',{params:{username,code}});
+      const {data,status} =  await api.get('/verifyOTP',{params:{username,code}});
       return {data,status}
     } catch (error) {
         return Promise.reject(error)
@@ -193,7 +208,8 @@ export async function verifyOTP({username,code}) {
 /* reset password */
 export async function resetPassword({username,password}) {
     try {
-        const {data,status} = await axios.put('http://localhost:5000/api/resetPassword',{username,password});
+        // const {data,status} = await axios.put('http://localhost:5000/api/resetPassword',{username,password});
+        const {data,status} = await api.put('/resetPassword',{username,password});
         return Promise.resolve({data,status})
     } catch (error) {
         return Promise.reject({error})
@@ -225,7 +241,9 @@ export async function resetPassword({username,password}) {
 
 export async function addCategory(credentials) {
     try {
-      const { data: { msg }, status } = await axios.post(`http://localhost:5000/api/admin/category/add`, credentials);
+      // const { data: { msg }, status } = await axios.post(`http://localhost:5000/api/admin/category/add`, credentials);
+
+      const { data: { msg }, status } = await api.post(`/admin/category/add`, credentials);
   
       if (status >= 200 && status < 300) {
         console.log('Request successful');
@@ -242,7 +260,9 @@ export async function addCategory(credentials) {
 
   export async function addCategory2(credentials) {
     try {
-      const { data: { msg }, status } = await axios.post(`http://localhost:5000/api/admin/category/add`, credentials);
+      // const { data: { msg }, status } = await axios.post(`http://localhost:5000/api/admin/category/add`, credentials);
+
+      const { data: { msg }, status } = await api.post(`/admin/category/add`, credentials);
   
       if (status >= 200 && status < 300) {
         console.log('Request successful');
