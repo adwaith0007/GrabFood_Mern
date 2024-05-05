@@ -12,6 +12,8 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
 
   const userId = user._id;
 
+  const server = import.meta.env.VITE_SERVER;
+
   const [cartItems, setCartItems] = useState([]);
   const [couponCode, setCouponCode] = useState("");
   const [pctDiscount, setPctDiscount] = useState();
@@ -100,7 +102,7 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
             >
               <img
                 className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-                src={`http://localhost:5000/${product.productImage[0]?.replace(
+                src={`${server}/${product.productImage[0]?.replace(
                   / /g,
                   "%20"
                 )}`}

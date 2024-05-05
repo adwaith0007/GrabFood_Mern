@@ -13,6 +13,8 @@ import api from "../../api";
 
 const server = import.meta.env.VITE_SERVER;
 
+
+
 const MenuPage = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
