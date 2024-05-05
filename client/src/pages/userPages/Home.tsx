@@ -4,20 +4,21 @@ import s2_1 from "../../assets/s2_1.png";
 import s2_2 from "../../assets/s2_2.png";
 import s3 from "../../assets/s3.png";
 import s4_1 from "../../assets/s4_1.png";
-import s5bg from "../../assets/s5bg.png";
+// import s5bg from "../../assets/s5bg.png";
 
 // import api from '../../api';
 // const server = import.meta.env.VITE_SERVER;
 
 import '../../App.scss' 
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className=" bg-[#e5d9ca] ">
+    <div className=" bg-[#e5d9ca] w-full ">
       {/* <Navbar /> */}
 
-      <div className="container custom-height flex flex-col justify-center items-center mx-auto  ">
-        <div className="h-[100vh] max-w-screen-xl md:mx-auto px-4 py-10 xl:px-0 flex justify-center items-center ">
+      <div className="container w-full custom-height flex flex-col justify-center items-center mx-auto  ">
+        <div className="h-[100vh]  max-w-screen-xl md:mx-auto px-4 py-10 xl:px-0 flex justify-center items-center ">
           <div className="">
             <div className="text-[60px] leading-[80px] font-bold mb-10">
               <h1>
@@ -35,9 +36,9 @@ const Home = () => {
             </div>
 
             <div>
-              <button className=" border bg-[#ff9e39] font-semibold px-10 py-2 rounded-[50px] ">
+              <Link to={"/menu"} className=" border bg-[#ff9e39] font-semibold px-10 py-2 rounded-[50px] ">
                 Explore Menu
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -47,7 +48,7 @@ const Home = () => {
         </div>
 
         <div className="h-[30vh]  ">
-          <div className="flex  gap-[200px] ">
+          <div className="flex lg:flex-row flex-col gap-[20px] lg:gap-[200px] ">
             <div className="flex bg-[#ede8e3]  h-[200px] w-[470px] rounded-[20px] shadow relative  ">
               <div className=" flex flex-col pl-20 gap-3 py-5 w-[340px]  ">
                 <div className="">
@@ -177,7 +178,7 @@ const Home = () => {
 
             </div>
 
-            <div className="grid grid-cols-2 w-[955px] gap-4   " >
+            <div className=" hidden lg:grid  lg:grid-cols-2 w-[955px] gap-4   " >
 
               
 
@@ -361,12 +362,12 @@ const Home = () => {
           
           </div>
 
-          <div className="h-[100vh] w-full myContainer bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${s5bg})` }}>5dfgdfg</div>
+          {/* <div className="h-[100vh] w-full myContainer bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${s5bg})` }}>5dfgdfg</div> */}
 
 
-        <div className="h-[100vh]">
-          {/* <img src={s5bg} ></img> */}
-          6</div>
+        {/* <div className="h-[100vh]">
+          <img src={s5bg} ></img>
+          6</div> */}
       </div>
     </div>
   );

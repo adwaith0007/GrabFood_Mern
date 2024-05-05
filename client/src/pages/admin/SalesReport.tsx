@@ -103,6 +103,13 @@ const SalesReport = () => {
   function filterDataByDate() {
     try {
 
+      const today = new Date();
+      
+      if (startDate > today || endDate > today) {
+        toast.error("Please select valid dates.");
+        return; 
+      }
+
       api.post('/order/filterDataByDate', { startDate, endDate })
         .then((res) => {
           if (res.data.success) {

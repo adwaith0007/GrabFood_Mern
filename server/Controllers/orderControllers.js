@@ -1010,6 +1010,8 @@ exports.calculateMonthlyStats = async (req, res) => {
       }
     });
 
+    console.log(monthlyRevenue)
+
     res.json({ monthlyRevenue, noMonthlyTransactions, noMonthlySuccessfulOrders });
   } catch (error) {
     console.error('Error calculating monthly stats:', error);

@@ -4,15 +4,15 @@ import "../../index.css";
 // import axios from "axios";
 import foodimg from "../../assets/login_food.png";
 import { Link, useNavigate } from "react-router-dom";
-import glogo from "../../assets/googlelogo.png";
+// import glogo from "../../assets/googlelogo.png";
 // import {  useState } from "react";
 import { useFormik } from "formik";
 import { verifyPassword } from "../../helper/helper";
 import toast from "react-hot-toast";
-import { GoogleAuthProvider } from "firebase/auth";
-import { signInWithPopup } from "firebase/auth";
-import { auth } from "../../firebase";
-import { useLoginMutation } from "../../redux/api/userAPI";
+// import { GoogleAuthProvider } from "firebase/auth";
+// import { signInWithPopup } from "firebase/auth";
+// import { auth } from "../../firebase";
+// import { useLoginMutation } from "../../redux/api/userAPI";
 
 // import { useSelector } from "react-redux";
 // import { selectUser } from "./../../redux/userSlice";
@@ -21,8 +21,8 @@ import { userExist,
   // userNotExist
  } from "../../redux/reducer/useReducer";
 // import { setUser } from "./../../redux/userSlice";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
-import { MessageResponse } from "../../types/api-types";
+// import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+// import { MessageResponse } from "../../types/api-types";
 
 import Cookie from "js-cookie";
 
@@ -34,7 +34,7 @@ const Login = () => {
   // const [gender, setGender] = useState("");
   // const [date, setDate] = useState("");
 
-  const [login] = useLoginMutation();
+  // const [login] = useLoginMutation();
 
   const dispatch = useDispatch();
 
@@ -88,47 +88,47 @@ const Login = () => {
     },
   });
 
-  const loginHandler = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
+  // const loginHandler = async () => {
+  //   try {
+  //     const provider = new GoogleAuthProvider();
 
-      const { user } = await signInWithPopup(auth, provider);
+  //     const { user } = await signInWithPopup(auth, provider);
 
-      console.log({
-        lname: user.displayName!,
-        email: user.email!,
-        photo: user.photoURL!,
-        gender: "sdfg",
-        role: "user",
-        // dob: date,
-        _id: user.uid,
-      });
+  //     console.log({
+  //       lname: user.displayName!,
+  //       email: user.email!,
+  //       photo: user.photoURL!,
+  //       gender: "sdfg",
+  //       role: "user",
+        
+  //       _id: user.uid,
+  //     });
 
-      const res = await login({
-        name: user.displayName!,
-        email: user.email!,
-        photo: user.photoURL!,
-        gender: "male",
-        role: "user",
-        dob: "5647",
-        _id: user.uid,
-      });
+  //     const res = await login({
+  //       name: user.displayName!,
+  //       email: user.email!,
+  //       photo: user.photoURL!,
+  //       gender: "male",
+  //       role: "user",
+  //       dob: "5647",
+  //       _id: user.uid,
+  //     });
 
-      if ("data" in res) {
-        toast.success(res.data.message);
-      } else {
-        const error = res.error as FetchBaseQueryError;
-        const message = (error.data as MessageResponse).message;
-        toast.error(message);
-      }
+  //     if ("data" in res) {
+  //       toast.success(res.data.message);
+  //     } else {
+  //       const error = res.error as FetchBaseQueryError;
+  //       const message = (error.data as MessageResponse).message;
+  //       toast.error(message);
+  //     }
 
-      // console.log(user)
-    } catch (error) {
-      toast.error("Sign In Failed");
-    }
-  };
+     
+  //   } catch (error) {
+  //     toast.error("Sign In Failed");
+  //   }
+  // };
 
-  // project-1066668375532
+  
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
@@ -213,11 +213,11 @@ const Login = () => {
                   </Link>
                 </div>
 
-                <div className="flex flex-row gap-5 mb-4 items-center ">
+                {/* <div className="flex flex-row gap-5 mb-4 items-center ">
                   <div className="h-[2px] w-[40%] bg-[#D9D9D9]"></div>
                   <p>OR</p>
                   <div className="h-[2px] w-[40%] bg-[#D9D9D9]"></div>
-                </div>
+                </div> */}
 
                 <div className="flex justify-center w-full px-6 ">
                   <button
@@ -245,7 +245,7 @@ const Login = () => {
                 </div>
               </form>
 
-              <div className="w-full px-6 ">
+              {/* <div className="w-full px-6 ">
                 <button
                   onClick={loginHandler}
                   type="button"
@@ -254,7 +254,7 @@ const Login = () => {
                   <img src={glogo} alt=""></img>
                   <p>Sign in with Google</p>
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

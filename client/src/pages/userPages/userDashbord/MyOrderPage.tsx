@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactElement } from "react";
 // import { FaPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../../types/reducer-types";
 import api from "../../../api";
 import UserSidebar from "../../../components/user/UserSidebar";
-import { TbShoppingCartCancel } from "react-icons/tb";
+
 import DeletePopeUp from "../../../components/DeletePopeUp";
 // import { BsExclamationSquareFill } from "react-icons/bs";
 import toast from "react-hot-toast";
@@ -147,23 +147,6 @@ const MyOrderPage = () => {
       setProductDeletePopUp(false);
       setSelectedOrderId(null);
     }
-
-    //   const response = await api.put(
-    //     `/order/cancel/${selectedOrderId}/product/${selectedProductId}`
-    //   );
-    //   if (response.data.success) {
-    //     console.log('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
-    //     fetchUserOrders();
-    //   } else {
-    //     console.error('Failed to cancel product:', response.data.error);
-    //   }
-    // } catch (error) {
-    //   console.error('Error canceling product:', error);
-    // } finally {
-    //   setProductDeletePopUp(false);
-    //   setSelectedOrderId(null);
-    //   setSelectedProductId(null);
-    // }
   };
 
   const handleReorder = async (orderId) => {
@@ -197,6 +180,8 @@ const MyOrderPage = () => {
     }
   };
 
+  
+
   const fetchUserOrders = async () => {
     try {
       const response = await api.get(`/order/user/${userId}`);
@@ -207,10 +192,7 @@ const MyOrderPage = () => {
       }
     } catch (error) {
       console.error("Error fetching user orders:", error);
-    } 
-    // finally {
-    //   setLoading(false);
-    // }
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -267,8 +249,6 @@ const MyOrderPage = () => {
       action: (
         <div className="relative w-full inline-block " key={order._id}>
           <div className="flex flex-col">
-
-            
             {order.orderStatus == "payment pending" && (
               <div className="w-full flex justify-center">
                 <button
@@ -280,8 +260,6 @@ const MyOrderPage = () => {
                 </button>
               </div>
             )}
-
-            
 
             {order.orderStatus == "Cancelled" && (
               <div className="w-full flex justify-center">
@@ -298,17 +276,18 @@ const MyOrderPage = () => {
             {order.orderStatus !== "payment pending" &&
               order.orderStatus !== "Cancelled" && (
                 <div className="py-1 flex gap-3 " role="none">
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded"
-                    onClick={() =>
-                      // handleCancelOrder(order._id, order.orderStatus)
+                  {order.orderStatus !== "Delivered" && (
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded"
+                      onClick={() =>
+                        // handleCancelOrder(order._id, order.orderStatus)
 
-                      handleCancelOrder(order._id)
-
-                    }
-                  >
-                    Cancel
-                  </button>
+                        handleCancelOrder(order._id)
+                      }
+                    >
+                      Cancel
+                    </button>
+                  )}
 
                   <button
                     className=" w-full flex border rounded justify-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -326,8 +305,6 @@ const MyOrderPage = () => {
                   </button>
                 </div>
               )}
-
-            
 
             {/* <div className="flex justify-center  " >
             <button
@@ -357,7 +334,7 @@ const MyOrderPage = () => {
           </div> */}
           </div>
 
-          {activeDropdown === order._id && (
+          {/* {activeDropdown === order._id && (
             <div
               className={` origin-top-right z-10  absolute left-0 mt-2 w-32 border-2 rounded-md shadow-lg bg-slate-50 ring-1 ring-black ring-opacity-5`}
               role="menu"
@@ -388,7 +365,7 @@ const MyOrderPage = () => {
                 </button>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       ),
     }));
@@ -401,8 +378,8 @@ const MyOrderPage = () => {
     rows,
     "dashboard-product-box",
     // <p className="text-xl font-medium">Orders</p>,
-    
-   "table"
+
+    "table"
   )();
 
   return (

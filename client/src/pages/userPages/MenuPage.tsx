@@ -5,13 +5,20 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import {  useLocation } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
+import { useDispatch } from 'react-redux';
+import { addItemToCart } from '../../redux/reducer/cartReducer';
 import api from "../../api";
+
+
+
 const server = import.meta.env.VITE_SERVER;
 
 const MenuPage = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
+
+  const dispatch = useDispatch();
 
   const userId = user._id;
   // const navigate = useNavigate();
@@ -29,7 +36,7 @@ const MenuPage = () => {
   // const [bestProductBtn, setBestProductBtn] = useState(false);
   const dropdownRef = useRef(null);
 
-  const rowsPerPage = 4;
+  const rowsPerPage = 8;
 
   const [userFavourites, setUserFavourites] = useState([]);
 
@@ -134,6 +141,63 @@ const MenuPage = () => {
 
   }
 
+
+  // const HandleProductLowToHigh =()=>{
+
+  //   try {
+  //     api
+  //       .get(
+  //         `/product/get_LowToHigh?page=${currentPage}&limit=${rowsPerPage}`
+  //       )
+  //       .then((res) => {
+  //         if (res.data.success) {
+  //           setProductList(res.data.data);
+  //           setTotalPages(res.data.totalPages);
+  //         }
+  //       });
+  //   } catch (error) {
+  //     toast.error("Error while loading products");
+  //     console.log(error);
+  //   }
+
+
+  // }
+
+  const HandleProductLowToHigh = async () => {
+    try {
+      const res = await api.get(`/product/get_LowToHigh?page=${currentPage}&limit=${rowsPerPage}`);
+      if (res.data.success) {
+        setProductList(res.data.data);
+        setTotalPages(res.data.totalPages);
+      } else {
+        
+        console.error("Unsuccessful response from the API:", res.data.message);
+      }
+    } catch (error) {
+      
+      toast.error("Error while loading products");
+      console.error("API call error:", error);
+    }
+  };
+
+
+  const HandleProductHighToLow = async () => {
+    try {
+      const res = await api.get(`/product/get_HighToLow?page=${currentPage}&limit=${rowsPerPage}`);
+      if (res.data.success) {
+        setProductList(res.data.data);
+        setTotalPages(res.data.totalPages);
+      } else {
+        
+        console.error("Unsuccessful response from the API:", res.data.message);
+      }
+    } catch (error) {
+      
+      toast.error("Error while loading products");
+      console.error("API call error:", error);
+    }
+  };
+
   const searchProducts = (query) => {
     try {
       api
@@ -153,6 +217,8 @@ const MenuPage = () => {
   };
 
   const addToCart = (product) => {
+
+    
     api
       .post(`/cart/add/${userId}`, { product, quantity: 1 })
       .then((response) => console.log("Product added to cart:", response.data))
@@ -163,7 +229,7 @@ const MenuPage = () => {
     );
 
     if (existingItem) {
-      // If the product is already in the cart, increase its quantity
+      
       const updatedCart = cartItems.map((item) =>
         item.productId === product._id
           ? { ...item, quantity: item.quantity + 1 }
@@ -171,7 +237,9 @@ const MenuPage = () => {
       );
       setCartItems(updatedCart);
     } else {
-      // If the product is not in the cart, add it with quantity 1 and other details
+
+      dispatch(addItemToCart(product.productName));
+      
       setCartItems([
         ...cartItems,
         {
@@ -194,6 +262,7 @@ const MenuPage = () => {
 
   return (
     <div className="bg-[#e5d9ca] h-full ">
+     
       <div className="container custom-height flex flex-col justify-center items-center mx-auto  ">
         <div className="flex gap-4">
           {categoryList.map((item) => (
@@ -261,6 +330,34 @@ const MenuPage = () => {
                   >
                   Best selling product
                 </button>
+
+                <button
+                  // onClick={()=>{setBestProductBtn(true)}}
+                  onClick={()=>{HandleProductLowToHigh()}}
+                  className="text-gray-700 block px-4 py-2 text-sm"
+                  role="menuitem"
+                  // tabindex="-1"
+                  id="menu-item-0"
+                  >
+                  Price: Low to High
+                  
+                </button>
+
+                <button
+                 
+                  onClick={()=>{HandleProductHighToLow()}}
+                  className="text-gray-700 block px-4 py-2 text-sm"
+                  role="menuitem"
+                  // tabindex="-1"
+                  id="menu-item-0"
+                  >
+                  Price: High to Low
+                  
+                </button>
+
+
+
+
                 {/* <a
                   href="#"
                   className="text-gray-700 block px-4 py-2 text-sm"
@@ -298,7 +395,7 @@ const MenuPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2  md:grid-cols-2 lg:grid-cols-4 gap-4">
 
           
           {productList.map((item) => (

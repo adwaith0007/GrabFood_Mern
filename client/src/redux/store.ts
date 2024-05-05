@@ -25,7 +25,7 @@ import { configureStore } from "@reduxjs/toolkit";
 // import { productAPI } from "./api/productAPI";
 import { userAPI } from "./api/userAPI";
 import { userReducer } from "../redux/reducer/useReducer"
-// import { cartReducer } from "./reducer/cartReducer";
+import  cartReducer  from "./reducer/cartReducer";
 // import { orderApi } from "./api/orderAPI";
 // import { dashboardApi } from "./api/dashboardAPI";
 
@@ -39,6 +39,7 @@ export const store = configureStore({
     // [orderApi.reducerPath]: orderApi.reducer,
     // [dashboardApi.reducerPath]: dashboardApi.reducer,
     // [cartReducer.name]: cartReducer.reducer,
+    cart: cartReducer,
   },
 
   // 👇 if redux is not working uncomment 

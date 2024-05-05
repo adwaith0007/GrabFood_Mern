@@ -1,11 +1,10 @@
 import "./App.scss";
-import  {jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 import {
   // BrowserRouter as Router,
   Routes,
   Route,
-  
 } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { useEffect } from "react";
@@ -41,8 +40,6 @@ const LoginPage = lazy(() => import("./pages/adminPages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
 
 import Cookies from "js-cookie";
-
-
 
 // import JwtPayload from "./types/types";
 
@@ -94,223 +91,99 @@ function App() {
   ) : (
     <>
       {/* <Router> */}
-        <Navbar user={user} />
+      <Navbar user={user} />
 
-        <Suspense fallback={<Loader />}>
-
-          <Routes>
-
-
-        
-
-
-
-
-
-
-        <Route path="/" element={<Home />}></Route>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
 
           <Route path="/signup" element={<SignUp />}></Route>
-            <Route path="/otp" element={<Otp />}></Route>
-            <Route
-              path="/resetpasswordotp"
-              element={<ResetPasswordOtp />}
-              ></Route>
-            <Route path="/forgot_password" element={<ResetPassword />}></Route>
+          <Route path="/otp" element={<Otp />}></Route>
+          <Route
+            path="/resetpasswordotp"
+            element={<ResetPasswordOtp />}
+          ></Route>
+          <Route path="/forgot_password" element={<ResetPassword />}></Route>
 
-            <Route path="/admin/signup" element={<SignupPage />}></Route>
-            <Route path="/admin" element={<LoginPage />}></Route>
+          <Route path="/admin/signup" element={<SignupPage />}></Route>
+          <Route path="/admin" element={<LoginPage />}></Route>
 
-
-
-
-
-               <Route
-              element={
-                <ProtectedRoute
-                  isAuthenticated={true}
-                  adminOnly={true}
-                  admin={user?.role === "admin" ? true : false}
-                />
-              }
-            >
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route>
-
-
-
-              <Route
-              element={<ProtectedRoute isAuthenticated={user ? true : false} />}
-            >
-              <Route path="/*" element={<UserRoutes />} />
-            </Route>
-
-
-
-
-
-
-              </Routes>
-
-
-
-
-
-        {/* {role === 'user' && <UserRoutes/>} */}
-
-  
-
-          {/* <Routes>
-           
-            
-            <Route path="/login" element={<ProtectedRoute isAuthenticated={user ? false : true}redirect="/"><Login setToken={setToken} /></ProtectedRoute>}></Route>
-           
-            <Route element={<ProtectedRoute isAuthenticated={true} adminOnly={true} admin={user?.role === "admin" ? true : false}/>}>
-
+          <Route
+            element={
+              <ProtectedRoute
+                isAuthenticated={true}
+                adminOnly={true}
+                admin={user?.role === "admin" ? true : false}
+              />
+            }
+          >
             <Route path="/admin/*" element={<AdminRoutes />} />
-              
-            </Route>
+          </Route>
 
-
-
-            <Route path="/" element={<Home />}></Route>
-            <Route path="/signup" element={<SignUp />}></Route>
-            <Route path="/otp" element={<Otp />}></Route>
-            <Route path="/resetpasswordotp" element={<ResetPasswordOtp />} ></Route>
-            <Route path="/forgot_password" element={<ResetPassword />}></Route>
-
-
-            <Route path="/admin/signup" element={<SignupPage />}></Route>
-           <Route path="/admin" element={<LoginPage />}></Route>
-
-            
-            <Route
-              element={<ProtectedRoute isAuthenticated={user ? true : false} />}>
-              <Route path="/*" element={<UserRoutes />} />
-            </Route>
+          {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
 
 
 
 
-     
-            <Route path="/demo" element={<Demo />}></Route>
-           
-            
-          </Routes> */}
 
-          {/* <Route>
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route> */}
+
+          {/* now */}
+
+          {/* <Route  >
 
 
 
-            {/* now  ********** */}
+          <PrivateRoute path="/admin" element={<AdminRoutes />} requiredRole="admin" />
 
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={user ? false : true}
-                  redirect="/"
-                >
-                  <Login 
-                  // setToken={setToken}
-                   />
-                </ProtectedRoute>
-              }
-            ></Route>
+          </Route> */}
 
-            {/* <Route
-              element={
-                <ProtectedRoute
-                  isAuthenticated={true}
-                  adminOnly={true}
-                  admin={user?.role === "admin" ? true : false}
+
+{/* <Route path="/admin/*"
+            element={
+              <PrivateRoute requiredRole="admin" 
+               
+              >
+                <AdminRoutes />
+                
+
+              </PrivateRoute>
+            }
+          >
+          </Route> */}
+
+
+         
+
+
+
+          <Route
+            element={<ProtectedRoute isAuthenticated={user ? true : false} />}
+          >
+            <Route path="/*" element={<UserRoutes />} />
+          </Route>
+        </Routes>
+
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute
+                isAuthenticated={user ? false : true}
+                redirect="/"
+              >
+                <Login
+                // setToken={setToken}
                 />
-              }
-            >
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route> */}
+              </ProtectedRoute>
+            }
+          ></Route>
 
+          <Route path="/demo" element={<Demo />}></Route>
+        </Routes>
+      </Suspense>
 
-{/* <Route path="/product/*" element={<ProductRoutes />} /> */}
-
-        {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
-        {/* <Route path="/*" element={<UserRoutes />} /> */}
-
-            
-{/* <Route  element={<PrivateRoute roles={['admin']} />} >
-
-<Route path="/admin/*" element={<AdminRoutes />} />
-</Route> */}
-
-{/* <Route path="/admin/*" element={<PrivateRoute roles={['admin']} element={<AdminRoutes />} />} /> */}
-
-
-          {/* <Route 
-              element={
-                <PrivateRoute
-
-                roles={['admin']}
-                  
-                />
-              }
-            >
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Route> */}
-
-
-            {/* <Route path="/" element={<UserLayout/>}>
-
-            <Route path="/" element={<Home />}></Route>
-
-            </Route> */}
-   
-           
-
-            {/* <Route path="/" element={<Home />}></Route> */}
-          
-
-            {/* <Route
-              element={<ProtectedRoute isAuthenticated={user ? true : false} />}
-            >
-              <Route path="/*" element={<UserRoutes />} />
-            </Route> */}
-
-            <Route path="/demo" element={<Demo />}></Route>
-          </Routes>
-        </Suspense>
-
-        <Toaster position="top-center" />
+      <Toaster position="top-center" />
       {/* </Router> */}
-
-
-
-
-
-
-
-
-
-
- {/* <Router>
-
-
-<Routes>
-
-<Route path="/" element={<Layout />}>
-
-
-
-<Route path="/" element={<Home />}></Route>
-</Route>
-</Routes>
-
-</Router>  */}
-
-
-
     </>
   );
 }

@@ -34,7 +34,7 @@ const PORT = process.env.PORT;
   const buildPath = path.join(__dirname, "../client/dist");
 app.use(express.static(buildPath));
 
-app.use(cors())
+app.use(cors({credentials:true , origin:"http://localhost:5173"}))
 app.use(morgan("tiny"));
 
 app.use(express.json());

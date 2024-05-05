@@ -81,7 +81,7 @@ const Orders = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
-  const userId = user._id;
+  const userId = user?._id;
 
   const [rows, setRows] = useState([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);

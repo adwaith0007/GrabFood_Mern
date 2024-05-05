@@ -4,15 +4,19 @@ import '../../index.css';
 
 import foodimg from "../../assets/login_food.png";
 import { Link,useNavigate } from "react-router-dom";
-
-
+import { useDispatch } from "react-redux";
+import { userExist, 
+  // userNotExist
+ } from "../../redux/reducer/useReducer";
 import { useFormik } from "formik";
 import { adminVerifyPassword } from "../../helper/helper";
 import toast from "react-hot-toast";
-
+import { jwtDecode } from "jwt-decode";
 import Cookie from "js-cookie";
 
 const LoginPage = () => {
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -34,8 +38,31 @@ const LoginPage = () => {
 
     loginPromise.then(res =>{
       const {token} = res.data;
-      localStorage.setItem('token',token);
-      Cookie.set("token", token, { sameSite: true });
+      // localStorage.setItem('token',token);
+      // Cookie.set("token", token, { sameSite: true });
+
+      
+      const userToken :any = jwtDecode(token);
+
+      const user:any = {
+        _id: userToken._id,
+        name: userToken.name,
+        email: userToken.email,
+        photo: userToken.photo,
+        role: userToken.role,
+        gender: userToken.gender,
+        token,
+      };
+
+      console.log(user);
+
+      dispatch(userExist(user));
+
+
+
+
+      Cookie.set("token", token, { path: '/',  sameSite: 'Lax' });
+
       navigate('/admin/dashboard')
      
     })

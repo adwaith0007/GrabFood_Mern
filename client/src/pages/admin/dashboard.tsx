@@ -1,11 +1,12 @@
 // import { BiMaleFemale } from "react-icons/bi";
 import { BsSearch } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
-import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
+// import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import { BarChart } from "../../components/admin/Charts";
-import Table from "../../components/admin/DashboardTable";
-import data from "../../assets/data.json"
+// import Table from "../../components/admin/DashboardTable";
+// import data from "../../assets/data.json"
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import api from "../../api"
 
@@ -15,24 +16,58 @@ const userImg =
 const Dashboard = () => {
 
   const [monthlyRevenue , setmonthlyRevenue ]=useState<any>([]);
+  const [customerData, setCustomerData] = useState([]);
+  const [productList, setProductList] = useState([]);
 
-  useEffect(()=>{
-
-    try {
-      api.get("/order/monthlyStats")
-      .then((res)=>{
-        setmonthlyRevenue(res.data.monthlyRevenue)
+  useEffect(() => {
+    api.get(`/admin/customers`)
+      .then((res) => {
+        if (res.data.success) {
+          setCustomerData(res.data.data);
+        } else {
+          toast.error("Error while loading data");
+        }
       })
-      
-    } catch (error) {
-      console.error(error)
-    }
+      .catch((error) => {
+        toast.error("Error while loading data");
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get("/product/get");
+        if (response.data.success) {
+          setProductList(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error while loading products", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
 
+  
+  
 
-  },[])
+  useEffect(() => {
+    const fetchMonthlyStats = async () => {
+        try {
+            const res = await api.get("/order/monthlyStats");
+            setmonthlyRevenue(res.data.monthlyRevenue);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-  console.log(monthlyRevenue);
+    fetchMonthlyStats();
+}, []);
+
+
+  console.log("mr:",monthlyRevenue);
   
 
   // const thisMonthRevenue = monthlyRevenue?.pop()
@@ -58,29 +93,29 @@ const Dashboard = () => {
 
         <section className="widget-container">
           <WidgetItem
-            percent={40}
+            // percent={40}
             amount={true}
             value={thisMonthRevenue}
             heading="Revenue"
-            color="rgb(0, 115, 255)"
+            // color="rgb(0, 115, 255)"
           />
           <WidgetItem
-            percent={-14}
-            value={400}
-            color="rgb(0 198 202)"
+            // percent={-14}
+            value={customerData.length}
+            // color="rgb(0 198 202)"
             heading="Users"
           />
-          <WidgetItem
+          {/* <WidgetItem
             percent={80}
             value={23000}
             color="rgb(255 196 0)"
             heading="Transactions"
-          />
+          /> */}
 
           <WidgetItem
-            percent={30}
-            value={1000}
-            color="rgb(76 0 255)"
+            // percent={30}
+            value= {productList.length}
+            // color="rgb(76 0 255)"
             heading="Products"
           />
         </section>
@@ -102,7 +137,8 @@ const Dashboard = () => {
             <h2>Revenue & Transaction</h2>
             <BarChart
               data_2={monthlyRevenue}
-              data_1={[200, 444, 343, 556, 778, 455]}
+              // data_1={[200, 444, 343, 556, 778, 455]}
+              data_1={[0,0,0,2071,1030]}
               title_1="Revenue"
               title_2="Transaction"
               bgColor_1="rgb(0, 115, 255)"
@@ -110,7 +146,7 @@ const Dashboard = () => {
             />
           </div>
 
-          <div className="dashboard-categories">
+          {/* <div className="dashboard-categories">
             <h2>Inventory</h2>
 
             <div>
@@ -123,10 +159,10 @@ const Dashboard = () => {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
         </section>
 
-        <section className="transaction-container">
+        {/* <section className="transaction-container"> */}
           {/* <div className="gender-chart">
             <h2>Gender Ratio</h2>
             <DoughnutChart
@@ -142,8 +178,8 @@ const Dashboard = () => {
               <BiMaleFemale />
             </p>
           </div> */}
-          <Table data={data.transaction} />
-        </section>
+          {/* <Table data={data.transaction} /> */}
+        {/* </section> */}
 
         
       </main>
@@ -156,23 +192,23 @@ const Dashboard = () => {
 interface WidgetItemProps {
   heading: string;
   value: number;
-  percent: number;
-  color: string;
+  // percent: number;
+  // color: string;
   amount?: boolean;
 }
 
 const WidgetItem = ({
   heading,
   value,
-  percent,
-  color,
+  // percent,
+  // color,
   amount = false,
 }: WidgetItemProps) => (
   <article className="widget">
     <div className="widget-info">
       <p>{heading}</p>
       <h4>{amount ? `₹${value}` : value}</h4>
-      {percent > 0 ? (
+      {/* {percent > 0 ? (
         <span className="green">
           <HiTrendingUp /> +{percent}%{" "}
         </span>
@@ -180,10 +216,10 @@ const WidgetItem = ({
         <span className="red">
           <HiTrendingDown /> {percent}%{" "}
         </span>
-      )}
+      )} */}
     </div>
 
-    <div
+    {/* <div
       className="widget-circle"
       style={{
         background: `conic-gradient(
@@ -199,30 +235,30 @@ const WidgetItem = ({
       >
         {percent}%
       </span>
-    </div>
+    </div> */}
   </article>
 );
 
-interface CategoryItemProps {
-  color: string;
-  value: number;
-  heading: string;
-}
+// interface CategoryItemProps {
+//   color: string;
+//   value: number;
+//   heading: string;
+// }
 
-const CategoryItem = ({ color, value, heading }: CategoryItemProps) => (
-  <div className="category-item">
+// const CategoryItem = ({ color, value, heading }: CategoryItemProps) => (
+//   <div className="category-item">
     
-    <h5>{heading}</h5>
-    <div>
-      <div
-        style={{
-          backgroundColor: color,
-          width: `${value}%`,
-        }}
-      ></div>
-    </div>
-    <span>{value}%</span>
-  </div>
-);
+//     <h5>{heading}</h5>
+//     <div>
+//       <div
+//         style={{
+//           backgroundColor: color,
+//           width: `${value}%`,
+//         }}
+//       ></div>
+//     </div>
+//     <span>{value}%</span>
+//   </div>
+// );
 
 export default Dashboard;

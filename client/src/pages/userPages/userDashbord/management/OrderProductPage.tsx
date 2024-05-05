@@ -47,8 +47,8 @@ interface DataType {
   name: string;
   price: number;
   quantity: number;
-  status: JSX.Element;
-  cancelAction: JSX.Element;
+  
+  address:  string;
 }
 
 const columns: Column<DataType>[] = [
@@ -56,8 +56,8 @@ const columns: Column<DataType>[] = [
   { Header: 'Name', accessor: 'name' },
   { Header: 'Quantity', accessor: 'quantity' },
   { Header: 'Price', accessor: 'price' },
-  { Header: 'Status', accessor: 'status' },
-  { Header: 'Action', accessor: 'cancelAction' },
+  { Header: 'Address', accessor: 'address' },
+  
 ];
 
 const OrderProductPage = () => {
@@ -89,26 +89,9 @@ const OrderProductPage = () => {
     // }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Processing':
-        return ' purple';
-        case 'Canceled':
-        return 'red';
-      case 'Shipped':
-        return 'green';
-      case 'Delivered':
-        return 'green';
-      default:
-        return 'black';
-    }
-  };
 
-  const handleCancelProduct = (orderId: string, productId: string) => {
-    setSelectedOrderId(orderId);
-    setSelectedProductId(productId);
-    setProductDeletePopUp(true);
-  };
+
+  
 
   const handlePopUpCancel = () => {
     setProductDeletePopUp(false);
@@ -143,6 +126,8 @@ const OrderProductPage = () => {
   useEffect(() => {
     const singleOrder = userOrders.find((order) => order._id === orderId);
 
+   
+
     if (singleOrder) {
       const newRows: DataType[] = singleOrder.products.map((product) => ({
         orderId: singleOrder._id,
@@ -155,19 +140,10 @@ const OrderProductPage = () => {
         name: product.productName,
         price: product.price,
         quantity: product.quantity,
-        status: (
-          <p>
-            <span className={getStatusColor(product.status)}>{product.status}</span>
-          </p>
-        ),
-        cancelAction: (
-          <button
-            className='bg-red-500 text-white px-4 py-2 rounded'
-            onClick={() => handleCancelProduct(singleOrder._id, product.productId)}
-          >
-            Cancel
-          </button>
-        ),
+        address: singleOrder.address[0].street
+          
+        ,
+       
       }));
 
       setRows(newRows);

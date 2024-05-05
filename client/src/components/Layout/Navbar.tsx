@@ -2,7 +2,7 @@ import  { useState, useEffect, useRef } from "react";
 
 import {
   AiOutlineClose,
-  AiOutlineMenu,
+  // AiOutlineMenu,
   // AiOutlineMinus,
   // AiOutlinePlus,
 } from "react-icons/ai";
@@ -10,7 +10,10 @@ import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdFavorite, MdHelp } from "react-icons/md";
 import { FaSignOutAlt,  FaWallet } from "react-icons/fa";
-
+import { useDispatch } from "react-redux";
+import { 
+  userNotExist
+ } from "../../redux/reducer/useReducer";
 // import AddToCart from "../../pages/userPages/AddToCart";
 
 import logo from "../../assets/logo-grabfood 1.png";
@@ -22,13 +25,11 @@ import { auth } from "../../firebase";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
-
-// import Search from "../SearchBar";
-// import axios from "axios";
+// import { useSelector } from 'react-redux';
 
 import api from "../../api";
 
-// const server = import.meta.env.VITE_SERVER;
+
 
 interface PropsType {
   user: User | null;
@@ -36,6 +37,14 @@ interface PropsType {
 
 const Navbar = ({ user }: PropsType) => {
   const [cartItems, setCartItems] = useState([]);
+
+
+
+  
+
+ 
+
+  const dispatch = useDispatch();
 
   // const userId = user._id
 
@@ -101,8 +110,12 @@ const Navbar = ({ user }: PropsType) => {
       Cookie.remove("token");
 
       toast.success("Sign Out Successfully");
-
       setIsOpen(false);
+
+      dispatch(userNotExist())
+
+      navigate('/login')
+
     } catch (error) {
       toast.error("Sign Out Fail");
     }
@@ -111,19 +124,19 @@ const Navbar = ({ user }: PropsType) => {
   return (
     <div className="h-[80px] w-full ">
       <nav className="bg-gray-900 h-full  w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 ">
-        <div className="max-w-screen-xl flex flex-wrap items-center  justify-between mx-auto p-4">
-          <div onClick={() => setNav(!nav)}>
+        <div className="  lg:max-w-screen-xl  flex flex-wrap items-center  justify-between mx-auto p-4">
+          {/* <div onClick={() => setNav(!nav)}>
             <AiOutlineMenu size={30} className="text-white cursor-pointer " />
-          </div>
+          </div> */}
           <Link
             to="/"
-            className="flex items-center space-x-3 rtl:space-x-reverse"
+            className="flex items-center pl-20 space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} alt=""></img>
           </Link>
 
           <div
-            className="items-center  justify-between hidden w-full md:flex md:w-auto md:order-1"
+            className="items-center md:hidden  justify-between hidden w-full lg:flex lg:w-auto md:order-1"
             id="navbar-sticky"
           >
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
@@ -144,22 +157,15 @@ const Navbar = ({ user }: PropsType) => {
                   Menu
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/services"
                   className="block py-2 px-3  rounded  md:hover:bg-transparent text-white "
                 >
                   Services
                 </Link>
-              </li>
-              {/* <li>
-                <Link
-                  to="/contact"
-                  className="block py-2 px-3  rounded  md:hover:bg-transparent  text-white "
-                >
-                  Contact
-                </Link>
               </li> */}
+              
             </ul>
           </div>
 
@@ -179,7 +185,7 @@ const Navbar = ({ user }: PropsType) => {
               />
             </div> */}
 
-            <div className="flex justify-center items-center">
+            <div className="hidden  lg:flex justify-center items-center">
               <div className="relative text-gray-600">
                 <form onSubmit={handleSearch}>
                   <input
@@ -215,7 +221,10 @@ const Navbar = ({ user }: PropsType) => {
               </div>
             </div>
 
-            <Link className="" to="/cart">
+            {user?.role == "user" ? (
+
+              
+              <Link className="" to="/cart">
               <div className="relative py-2   ">
                 <div className="t-0 absolute left-3">
                   <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
@@ -225,6 +234,7 @@ const Navbar = ({ user }: PropsType) => {
                 <BsCart3 size={20} className="text-white file: mt-4 h-6 w-6 " />
               </div>
             </Link>
+            ) : <></> }
 
             {user ? (
               <>
@@ -297,7 +307,7 @@ const Navbar = ({ user }: PropsType) => {
 
                           <button
                             onClick={logoutHandler}
-                            className="block w-full flex justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className=" w-full flex justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >
                             Logout
                           </button>

@@ -8,7 +8,7 @@ const walletController = require("../Controllers/walletController");
 const orderControllers = require("../Controllers/orderControllers");
 const cartControllers = require("../Controllers/cartController");
 const { registerMail } = require("../middlewares/mailer");
-const { isUserLoggedIn, isAdminLoggedIn } = require("../middlewares/Auth");
+const { isUserLoggedIn, isAdminLoggedIn , verifyToken } = require("../middlewares/Auth");
 
 const {validateQuantity} = require("../middlewares/Cart");
 const { log } = require("handlebars");
@@ -19,7 +19,7 @@ router.post("/login",  (req, res) => {
   userController.login(req, res);
 });
 
-router.put("/user/edit/:userId",  (req, res) => {
+router.put("/user/edit/:userId", isUserLoggedIn, (req, res) => {
   userController.editUser(req, res);
 });
 
@@ -29,28 +29,29 @@ router.post("/register", (req, res) => {
 });
 
 
-router.post("/user/wishlist/add", (req, res) => {  
+router.post("/user/wishlist/add",isUserLoggedIn,  (req, res) => {  
+
+  
   userController.toggleWishlist(req, res);
 });
 
-router.get("/user/:userId/wishlist", (req, res) => {
+router.get("/user/:userId/wishlist",isUserLoggedIn, (req, res) => {
   userController.getWishlist(req, res);
 });
 
 
-router.put("/wishlist/remove/:userId", (req, res) => {
-  console.log('hi');
+router.put("/wishlist/remove/:userId",isUserLoggedIn, (req, res) => {
   
   userController.removeFromWishlist(req, res);
 });
 
 
-router.put("/cart/add/wishlist/:userId", (req, res) => { 
+router.put("/cart/add/wishlist/:userId",isUserLoggedIn, (req, res) => { 
   cartControllers.addToCartFromWishlist(req, res);
 });
 
 
-router.get("/users/delete/:id",  (req, res) => {
+router.get("/users/delete/:id",isUserLoggedIn,  (req, res) => {
   userController.delete(req, res);
 });
 
@@ -64,7 +65,7 @@ router.post("/user/new", (req, res) => {
 
 router.post("/registerMail", registerMail); //send the email
 
-router.post("/authenticate", userController.verifyUser, (req, res) => {
+router.post("/authenticate", userController.verifyUser,  (req, res) => {
   res.end();
 });
 
@@ -79,11 +80,11 @@ router.post("/authenticate", (req, res) => {
 });
 
 // GET Methods
-router.get("/user/:username", userController.getUser); /* user login  */
+router.get("/user/:username", userController.getUser,isUserLoggedIn,); /* user login  */
 
-router.get("/user/get/:userId", (req, res) => {
+router.get("/user/get/:userId",isUserLoggedIn, (req, res) => {
 
-  console.log('hiii55');
+ 
   
   
   userController.getUserById(req, res);
@@ -98,20 +99,14 @@ router.get("/verifyOTP", userController.verifyUser, userController.verifyOTP);
 
 /* PUT Methods */
 
-// router.put('/updateuser' , userController.auth , userController.updateUser); // is use to update the user profile
-router.put("/updateuser", userController.updateUser); // is use to update the user profile
-// router.put('/updateuser', (req,res)=>{
 
-// userController.updateUser(req, res);
+router.put("/updateuser",isUserLoggedIn, userController.updateUser); 
 
-// })
 router.put("/resetPassword", userController.resetPassword);
 
-// router.post("/user/getAddress", isUserLoggedIn, (req, res) => {
-//   userController.getAddress(req, res);
-// });
 
-router.post("/user/getAddress",   (req, res) => {
+
+router.post("/user/getAddress", isUserLoggedIn,  (req, res) => {
   
   
   userController.getAddress(req, res);
@@ -140,7 +135,7 @@ router.get('/user/:userId/addresses', (req, res) => {
 
 // wallet
 
-router.get('/user/:userId/wallet',isUserLoggedIn, (req, res) => { 
+router.get('/user/:userId/wallet', (req, res) => { 
   walletController.getBalance(req, res);
 });
 

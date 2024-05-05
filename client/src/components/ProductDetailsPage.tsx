@@ -1,16 +1,19 @@
 import  { useEffect, useState } from "react";
-import axios from "axios";
+
 import { useParams } from "react-router-dom";
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
+import api from "../api"
+
 
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState(null);
   const [quantity, setQuantity] = useState(1);
-
+  const server = import.meta.env.VITE_SERVER;
+  
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/product/${productId}`)
+    api.get(`/product/${productId}`)
       .then((res) => {
         if (res.data.success) {
           setProductDetails(res.data.data);
@@ -41,8 +44,10 @@ const ProductDetailsPage = () => {
           <div className="flex-shrink-0 w-full lg:w-1/2">
             <ImageGallery
               items={productDetails.productImage.map((image) => ({
-                original: `http://localhost:5000/${image}`,
-                thumbnail: `http://localhost:5000/${image}`,
+                // original: `http://localhost:5000/${image}`,
+                // thumbnail: `http://localhost:5000/${image}`,
+                original: `${server}/${image}`,
+                thumbnail: `${server}/${image}`,
               }))}
               showPlayButton={false}
               showFullscreenButton={false}

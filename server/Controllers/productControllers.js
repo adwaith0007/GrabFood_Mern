@@ -162,7 +162,7 @@ exports.addProduct = async (req, res) => {
 
 exports.listProduct = async (req, res) => {
   try {
-    // Set default values for page and limit
+    
     const page = parseInt(req.query.page) || 1;
     const limit =  parseInt(req.query.limit) || 10; 
 
@@ -171,7 +171,7 @@ exports.listProduct = async (req, res) => {
     let query = {};
 
     
-    if (req.query.category && req.query.category !== "All Products") {
+    if (req.query.category && req.query.category !== "ALL PRODUCTS") {
       query.category = req.query.category;
     }
 
@@ -200,6 +200,9 @@ exports.listProduct = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
 
 
 // exports.listBestProduct = async (req, res) => {
@@ -293,31 +296,31 @@ exports.listBestProduct = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Aggregate pipeline to find top 10 best-selling products
+    
     const topProducts = await orderModel.aggregate([
-      { $match: { paymentStatus: true } }, // Filter orders with paymentStatus true
-      { $unwind: "$products" }, // Split the products array into separate documents
+      { $match: { paymentStatus: true } }, 
+      { $unwind: "$products" }, 
       {
         $group: {
-          _id: "$products.productId", // Group by product ID
-          totalQuantitySold: { $sum: "$products.quantity" } // Sum the quantity sold
+          _id: "$products.productId", 
+          totalQuantitySold: { $sum: "$products.quantity" } 
         }
       },
-      { $sort: { totalQuantitySold: -1 } }, // Sort by total quantity sold in descending order
-      { $limit: 10 } // Get only the top 10 best-selling products
+      { $sort: { totalQuantitySold: -1 } }, 
+      { $limit: 10 } 
     ]);
 
-    // Extract product IDs from the aggregation result
+    
     const productIds = topProducts.map(product => product._id);
 
-    // Fetch product details from the productModel
+    
     const productDetails = await productModel.find({ _id: { $in: productIds } });
 
-    // Combine product details with total quantity sold
+    
     const combinedProducts = productDetails.map(product => {
       const totalQuantitySold = topProducts.find(item => item._id.equals(product._id))?.totalQuantitySold || 0;
       return {
-        ...product.toObject(), // Convert Mongoose document to plain JavaScript object
+        ...product.toObject(), 
         totalQuantitySold: totalQuantitySold
       };
     });
@@ -325,15 +328,58 @@ exports.listBestProduct = async (req, res) => {
     res.status(200).json({
       success: true,
       data: combinedProducts,
-      totalPages: 1, // Since we're not implementing pagination for best-selling products
-      currentPage: 1, // Since we're not implementing pagination for best-selling products
-      totalCount: combinedProducts.length // Length of combinedProducts array
+      totalPages: 1, 
+      currentPage: 1, 
+      totalCount: combinedProducts.length 
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+
+exports.listLowToHighProduct = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Fetch products sorted by price from low to high
+    const products = await productModel.find().sort({ price: 1 }).skip(skip).limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      totalPages: Math.ceil(products.length / limit),
+      currentPage: page,
+      totalCount: products.length
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+exports.listHighToLowProduct = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    
+    const products = await productModel.find().sort({ price: -1 }).skip(skip).limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      totalPages: Math.ceil(products.length / limit),
+      currentPage: page,
+      totalCount: products.length
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 exports.searchProduct = async (req, res) => {
 
