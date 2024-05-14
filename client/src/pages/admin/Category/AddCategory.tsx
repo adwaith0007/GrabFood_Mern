@@ -45,33 +45,81 @@ const AddCategory = () => {
     }));
   };
 
+
+
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    
+    if (categoryData.name.trim().length < 5) {
+        toast.error("Category name should contain a minimum of 5 letters");
+        return;
+    }
+
+    
+    const containsNumbers = /\d/.test(categoryData.name);
+    if (containsNumbers) {
+        toast.error("Category name should not contain numbers");
+        return;
+    }
+
+    
+    const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+    if (specialChars.test(categoryData.name)) {
+        toast.error("Category name should not contain special characters");
+        return;
+    }
+
+   
+    if ( !categoryData.image) {
+        toast.error("Please attach an image for the category");
+        return;
+    }
+
+   
+    if (categoryData.image) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
+        if (!allowedTypes.includes(categoryData.image.type)) {
+            toast.error("Invalid image type. Please upload a JPEG, PNG, or GIF image");
+            return;
+        }
+    }
+
+    
+    if (categoryData.image) {
+        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+        if (categoryData.image.size > maxSizeInBytes) {
+            toast.error("Image size exceeds the maximum allowed size (5MB)");
+            return;
+        }
+    }
 
     const formData = new FormData();
     formData.append("category", categoryData.name);
 
     if (categoryData.image) {
-      formData.append('file', categoryData.image);
+        formData.append('file', categoryData.image);
     }
 
     try {
-      console.log('clicked')
-      const response = await api.post(`/category/add`,formData);
-       
-      if (response.data.success) {
-        toast.success("Category added");
+        
+        const response = await api.post(`/category/add`, formData);
 
-        navigate("/admin/category");
+        if (response.data.success) {
+            toast.success("Category added");
+            navigate("/admin/category");
+        } else {
 
-      } else {
-        console.log('coming error')
-        toast.error(response.data.message);
-      }
+          console.log(response.data.message)
+            
+            toast.error(response.data.message);
+        }
     } catch (error) {
-        console.log(error ,' error from try catch ')
+        console.log(error, ' error from try catch ');
+        toast.error(error.response.data.message)
     }
-  };
+};
 
   return (
     <div className="admin-container">

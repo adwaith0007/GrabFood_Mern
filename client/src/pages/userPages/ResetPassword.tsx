@@ -67,7 +67,7 @@ const ResetPassword = () => {
      
 
     <div className="container custom-height flex justify-center items-center mx-auto ">
-      <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">
+      <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8 ">
         <div className="  hidden xl:flex w-1/2 ">
           <img
             className=" h-[600px]  rounded-l-[10px]  lg:h-[600px] object-cover w-full "
@@ -77,7 +77,7 @@ const ResetPassword = () => {
         </div>
 
         <div className=" flex justify-center">
-          <div className=" w-full px-10 lg:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
+          <div className=" w-full px-10 h-[500px] lg:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
             <div className="text-center text-lg font-bold text-[30px] mt-[50px]">
               <h1>Reset Password</h1>
             </div>
@@ -132,7 +132,7 @@ const ResetPassword = () => {
 
              
 
-              <div className="flex justify-center w-full px-6 ">
+              <div className="flex justify-center w-full px-6 mt-10 ">
                 <button
                   type="submit"
                   className="  text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm lg:w-full  sm:w-auto px-14 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

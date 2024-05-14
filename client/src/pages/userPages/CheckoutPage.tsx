@@ -104,12 +104,12 @@ const CheckoutPage = () => {
   //   return formattedDateTime;
   // };
 
-  const handleOnPlaceOrder:any = async (totalAmount,discountAmount,couponCode) => {
+  const handleOnPlaceOrder:any = async (totalAmount,discountAmount,couponCode,taxAmount,deliveryAmount,subTotal) => {
     console.log( 'total', totalAmount);
 
-   
+    
 
-    if (!userId || !cartItems || !selectedAddress ) {
+    if (!userId || !cartItems || !selectedAddress || !selectedAddress.street  ) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -121,12 +121,15 @@ const CheckoutPage = () => {
         address: selectedAddress,
         discountAmount,
         couponCode,
+        subTotal,
+        shipping:deliveryAmount,
+        tax:taxAmount,
         // paymentMethod,
         // orderDate: getCurrentDateTime(),
         totalPrice :totalAmount,
       };
 
-      console.log( 'checkoutData', checkoutData);
+      // console.log( 'checkoutData', checkoutData);
 
       navigate("/payment", { state: { checkoutData } });
 
@@ -290,7 +293,8 @@ const CheckoutPage = () => {
             select your address or add a new address.
           </p>
           <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-            {selectedAddress !== undefined ? (
+            {/* {selectedAddress !== undefined ? ( */}
+               {selectedAddress != undefined && selectedAddress != "no_address"  ? (
               <div className="flex justify-between   ">
                 <div>
                   <div className="flex items-center gap-2 mb-2 ">

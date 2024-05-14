@@ -6,7 +6,10 @@ import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import Cookie from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { userNotExist } from "../../redux/reducer/useReducer";
+import { useDispatch } from 'react-redux';
 import api from "../../api";
 // const server = import.meta.env.VITE_SERVER;
 
@@ -16,6 +19,9 @@ const CartPage = () => {
   );
 
   const userId = user._id;
+  const dispatch = useDispatch();
+
+ const navigate = useNavigate();
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +33,14 @@ const CartPage = () => {
         setCartItems(response.data.cart);
       } catch (error) {
         console.error("Error fetching cart items:", error);
+        toast.error(error.response.data.message)
+      if (error.response.data.message === "User is blocked") {
+        Cookie.remove('token')
+        dispatch(userNotExist())
+        navigate("/login");
+
+
+    }
       } finally {
         setLoading(false);
       }
@@ -72,7 +86,7 @@ const CartPage = () => {
         // Display a toast message
         toast.error(`Cannot add more than ${maxQuantity} items to the cart.`);
 
-        return; // Do not update the cart if the maximum quantity is exceeded
+        return; 
       }
 
       // Update the local cart state
@@ -187,12 +201,16 @@ const CartPage = () => {
             </div>
 
             <div className="w-full  mt-10 flex justify-end  text-center ">
-          <Link
-            to="/checkout"
-            className="bg-indigo-500 font-semibold w-[300px] hover:bg-indigo-600 py-3 px-3 text-sm text-white uppercase "
-          >
+
+              {cartItems?.length>0 &&(
+
+                <Link
+                to="/checkout"
+                className="bg-indigo-500 font-semibold w-[300px] hover:bg-indigo-600 py-3 px-3 text-sm text-white uppercase "
+                >
             Checkout
           </Link>
+          )}
         </div>
 
           </div>

@@ -64,7 +64,7 @@ offerInPercentage,
     // }
   };
 
-  console.log('data:',userFavourites);
+  
   
 
  

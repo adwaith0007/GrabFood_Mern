@@ -10,7 +10,7 @@ import { AiFillFileText } from "react-icons/ai";
 import { HiMenuAlt4 } from "react-icons/hi";
 import { IoIosPeople } from "react-icons/io";
 import {
-  // RiCoupon3Fill,
+  RiCoupon3Fill,
   RiDashboardFill,
   RiShoppingBag3Fill,
 } from "react-icons/ri";
@@ -80,6 +80,20 @@ const DivOne = ({ location }: { location: Location }) => (
   <div>
     <h5>User Dashboard</h5>
     <ul>
+
+    <Li
+        url="/"
+        text="Home"
+        Icon={RiCoupon3Fill}
+        location={location}
+      />
+
+<Li
+        url="/menu"
+        text="Menu"
+        Icon={RiDashboardFill}
+        location={location}
+      />
       <Li
         url="/user/profile"
         text="User Profile"

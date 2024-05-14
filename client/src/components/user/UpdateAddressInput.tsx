@@ -1,6 +1,7 @@
 import  { useState } from "react";
-import axios from "axios";
+
 import { AiOutlineClose } from "react-icons/ai";
+import api from '../../api';
 
 const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, onClose }) => {
   const [street, setStreet] = useState(currentAddress.street || "");
@@ -14,6 +15,7 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
     e.preventDefault();
 
     const updatedAddress = {
+      _id:currentAddress._id,
       street,
       city,
       state,
@@ -28,11 +30,13 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
         return;
       }
 
-      await axios.put(`http://localhost:5000/api/user/${userId}/addresses/${currentAddress._id}`, {
+      await api.put(`/user/${userId}/addresses/${currentAddress._id}`, {
         userId,
         addressId: currentAddress._id,
         address: updatedAddress,
       });
+
+      
 
       onhandleUpdateAddress(updatedAddress);
       onClose();
@@ -48,9 +52,30 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
     try {
       setLoading(true);
 
-      await axios.delete(`http://localhost:5000/api/user/${userId}/addresses/${currentAddress._id}`);
+      await api.delete(`/user/${userId}/addresses/${currentAddress._id}`);
 
-      // handleDeleteAddress(currentAddress._id);
+      // const response = await api.get(`/user/${userId}/addresses`);
+
+      api.get(`/user/${userId}/addresses`)
+
+        .then((response) => {
+
+          if(response.data.length!=0){
+
+            
+            const address = response.data[0];
+            
+            
+            
+            onhandleUpdateAddress(address);
+          }else{
+            console.log("no address")
+            onhandleUpdateAddress("no_address");
+          }
+        
+          
+        })
+    
       onClose();
     } catch (error) {
       console.error(error);

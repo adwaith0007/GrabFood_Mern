@@ -1,5 +1,6 @@
 import  { useState } from "react";
-// import axios from "axios";
+
+import toast from "react-hot-toast";
 import { AiOutlineClose } from "react-icons/ai";
 import api from '../api'
 
@@ -26,13 +27,35 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
         return;
       }
 
+      if (!newAddress.city || !newAddress.state || !newAddress.street || !newAddress.zipCode) {
+        toast.error("Please fill in all address fields.");
+        return;
+      }
+
       await api.put(`/addaddresses/${userId}`, {
         userId: userId,
         address: newAddress,
       });
 
-      setAddress(newAddress);
-      // onClose();
+      api.get(`/user/${userId}/addresses`)
+
+      .then((response) => {
+
+        if(response.data.length!=0){
+
+          
+          const address = response.data[0];
+          
+          
+          
+          setAddress(address);
+        }else{
+          console.log(" add no address")
+          // onhandleUpdateAddress("no_address");
+        }})
+
+      
+      onClose();
     } catch (error) {
       console.error(error);
       // Handle error accordingly
@@ -65,7 +88,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
               id="street"
               value={street}
               onChange={(e) => setStreet(e.target.value)}
-              onBlur={handleAddressChange}
+              // onBlur={handleAddressChange}
               className="mt-1 p-2 border rounded-md w-full"
             />
           </div>
@@ -82,7 +105,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
               id="city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              onBlur={handleAddressChange}
+              // onBlur={handleAddressChange}
               className="mt-1 p-2 border rounded-md w-full"
             />
           </div>
@@ -99,7 +122,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
               id="state"
               value={state}
               onChange={(e) => setState(e.target.value)}
-              onBlur={handleAddressChange}
+              // onBlur={handleAddressChange}
               className="mt-1 p-2 border rounded-md w-full"
             />
           </div>
@@ -116,7 +139,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
               id="zipCode"
               value={zipCode}
               onChange={(e) => setZipCode(e.target.value)}
-              onBlur={handleAddressChange}
+              // onBlur={handleAddressChange}
               className="mt-1 p-2 border rounded-md w-full"
             />
           </div>

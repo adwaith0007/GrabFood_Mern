@@ -75,7 +75,7 @@ exports.isUserLoggedIn = async (req, res, next) => {
   }
 
   if (!token.startsWith('Bearer ')) {
-    return res.status(401).send({ auth: false, message: 'Invalid token format.' });
+    return res.status(402).send({ auth: false, message: 'Invalid token format.' });
   }
 
   const tokenValue = token.split(' ')[1];
@@ -98,7 +98,7 @@ exports.isUserLoggedIn = async (req, res, next) => {
     
       next();
     } else {
-      return res.status(401).send({ auth: false, message: 'User is blocked.' }); // Send appropriate response for blocked user
+      return res.status(401).send({ auth: false, message: 'User is blocked' }); // Send appropriate response for blocked user
     }
   } catch (err) {
     if (err.name === 'TokenExpiredError') {

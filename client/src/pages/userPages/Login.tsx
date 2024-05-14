@@ -62,6 +62,10 @@ const Login = () => {
       loginPromise.then((res) => {
         const { token } = res.data;
 
+        console.log(res.data)
+
+        console.log("token:",token)
+
         const userToken :any = jwtDecode(token);
 
         const user:any = {
@@ -133,7 +137,7 @@ const Login = () => {
   return (
     <div className="bg-[#e5d9ca] h-[100vh] w-full ">
       <div className="container custom-height flex justify-center items-center mx-auto ">
-        <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 ">
+        <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8 ">
           <div className="  hidden xl:flex w-1/2 ">
             <img
               className=" h-[600px]  rounded-l-[10px]  lg:h-[600px] object-cover w-full "
@@ -143,15 +147,15 @@ const Login = () => {
           </div>
 
           <div className=" flex justify-center    ">
-            <div className=" w-full px-10 lg:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
+            <div className=" w-full px-10 h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
               <div className="text-center text-lg font-bold text-[30px] mt-[50px]">
                 <h1>Login</h1>
               </div>
 
               <form
                 onSubmit={formik.handleSubmit}
-                className="max-w-sm mx-auto mt-10 "
-              >
+                className="max-w-sm min-w-[280px] mx-auto mt-10 "
+               >
                 <div className="mb-5">
                   <label
                     htmlFor="username"
@@ -189,7 +193,7 @@ const Login = () => {
 
                 <div className="flex flex-row justify-between ">
                   <div className="flex items-start mb-5">
-                    <div className="flex items-center h-5">
+                    <div className="flex items-center h-5 ">
                       <input
                         id="terms"
                         type="checkbox"
@@ -205,12 +209,16 @@ const Login = () => {
                     </label>
                   </div>
 
+                  <div>
+
+
                   <Link
                     to="/forgot_password"
                     className="text-gray-900 hover:underline"
-                  >
+                    >
                     Forgot password?
                   </Link>
+                    </div>
                 </div>
 
                 {/* <div className="flex flex-row gap-5 mb-4 items-center ">
@@ -219,7 +227,7 @@ const Login = () => {
                   <div className="h-[2px] w-[40%] bg-[#D9D9D9]"></div>
                 </div> */}
 
-                <div className="flex justify-center w-full px-6 ">
+                <div className="flex justify-center w-full mt-5 px-6 ">
                   <button
                     type="submit"
                     className="  text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm lg:w-full  sm:w-auto px-14 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

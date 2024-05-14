@@ -47,6 +47,9 @@ exports.checkout = async (req, res) => {
 
     // coupon: couponId,
     // shipping,
+    subTotal:orderDetails.subTotal,
+        shipping:orderDetails.shipping,
+        tax:orderDetails.tax,
     totalPrice: orderDetails.totalPrice,
     userName: user.username,
     address: orderDetails.address,
@@ -88,6 +91,9 @@ exports.orderforWallet = async (req, res) => {
 
     // coupon: couponId,
     // shipping,
+    subTotal:orderDetails.subTotal,
+        shipping:orderDetails.shipping,
+        tax:orderDetails.tax,
     totalPrice: orderDetails.totalPrice,
     userName: user.username,
     address: orderDetails.address,
@@ -103,6 +109,27 @@ exports.orderforWallet = async (req, res) => {
     
   });
   orderDoc.save();
+
+  if (user) {
+
+          
+
+    user.wallet.push({
+      amount: orderDetails.totalPrice,
+      type: "debit",
+      description: `Ordering from wallet ${orderDetails?._id} `,
+      
+     date: formattedDate(),
+    });
+    user.walletBalance -= orderDetails.totalPrice;
+    await user.save();
+  } else {
+    console.error(`User ${userName} not found while debiting from wallet.`);
+    
+  }
+
+
+
 
     if(orderDetails.preOrderId){
 
@@ -152,6 +179,9 @@ exports.orderCOD = async (req, res) => {
 
     // coupon: couponId,
     // shipping,
+    subTotal:orderDetails.subTotal,
+        shipping:orderDetails.shipping,
+        tax:orderDetails.tax,
     totalPrice: orderDetails.totalPrice,
     userName: user.username,
     address: orderDetails.address,
@@ -321,81 +351,189 @@ exports.cancelProduct = async (req, res) => {
 
 
 
-exports.cancelOrder = async (req, res) => {
-  console.log("hiiii");
+// exports.cancelOrder = async (req, res) => {
+//   console.log("hiiii");
 
+//   try {
+//     const orderId = req.params.orderId;
+
+//     const order = await orderModel.findById(orderId);
+
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, error: "Order not found." });
+//     }
+
+  
+//     if (order.orderStatus === "Cancelled") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Order is already cancelled.",
+//       });
+//     }
+
+
+//     if (order.orderStatus === "Delivered") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Order is already delivered and cannot be cancelled.",
+//       });
+//     }
+
+    
+//     if (order.orderStatus === "Processing") {
+//       const updatedOrder = await orderModel.findByIdAndUpdate(
+//         orderId,
+//         { $set: { orderStatus: "Cancelled" } },
+//         { new: true }
+//       );
+
+//       if (
+//        ( order.paymentMethod === "onlinePayment" || order.paymentMethod === "Wallet" ) &&
+//         order.paymentStatus === true
+//       ) {
+//         const user = await UserModel.findOne({ username: order.userName });
+
+//         if (!user) {
+//           return res
+//             .status(404)
+//             .json({ success: false, error: "User not found." });
+//         }
+
+//         user.walletBalance += order.totalPrice;
+//         await user.save();
+//       }
+
+//       return res.status(200).json({
+//         success: true,
+//         message: "Order cancelled successfully.",
+//         updatedOrder: updatedOrder,
+//       });
+//     } else {
+      
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           "Order can only be cancelled if it is in 'Processing' state.",
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error cancelling order:", error);
+//     res.status(500).json({
+//       success: false,
+//       error: "Failed to cancel order. Please try again later.",
+//     });
+//   }
+// };
+
+const ORDER_STATUSES = {
+  CANCELLED: "Cancelled",
+  DELIVERED: "Delivered",
+  PROCESSING: "Processing",
+};
+
+
+exports.cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
     const order = await orderModel.findById(orderId);
 
     if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Order not found." });
+      return res.status(404).json({ success: false, error: "Order not found." });
     }
 
-  
-    if (order.orderStatus === "Cancelled") {
-      return res.status(400).json({
-        success: false,
-        message: "Order is already cancelled.",
-      });
+    const { orderStatus, paymentMethod, userName, totalPrice, paymentStatus } = order;
+
+    if (orderStatus === ORDER_STATUSES.CANCELLED) {
+      return res.status(400).json({ success: false, message: "Order is already cancelled." });
     }
 
-
-    if (order.orderStatus === "Delivered") {
-      return res.status(400).json({
-        success: false,
-        message: "Order is already delivered and cannot be cancelled.",
-      });
+    if (orderStatus === ORDER_STATUSES.DELIVERED) {
+      return res.status(400).json({ success: false, message: "Order is already delivered and cannot be cancelled." });
     }
 
-    
-    if (order.orderStatus === "Processing") {
+    if (orderStatus === ORDER_STATUSES.PROCESSING) {
       const updatedOrder = await orderModel.findByIdAndUpdate(
         orderId,
-        { $set: { orderStatus: "Cancelled" } },
+        { $set: { orderStatus: ORDER_STATUSES.CANCELLED } },
         { new: true }
       );
 
-      if (
-       ( order.paymentMethod === "onlinePayment" || order.paymentMethod === "Wallet" ) &&
-        order.paymentStatus === true
-      ) {
-        const user = await UserModel.findOne({ username: order.userName });
+      if ((paymentMethod === "onlinePayment" || paymentMethod === "Wallet") && paymentStatus === true) {
+        
+        const user = await UserModel.findOne({ username: userName });
 
-        if (!user) {
-          return res
-            .status(404)
-            .json({ success: false, error: "User not found." });
+        if (user) {
+
+          
+
+          user.wallet.push({
+            amount: totalPrice,
+            type: "credit",
+            description: `Refund for cancelled order #${orderId}`,
+            
+           date: formattedDate(),
+          });
+          user.walletBalance += order.totalPrice;
+          await user.save();
+        } else {
+          console.error(`User ${userName} not found while adding credit transaction to wallet.`);
+          
         }
-
-        user.wallet.balance += order.totalPrice;
-        await user.save();
       }
 
-      return res.status(200).json({
-        success: true,
-        message: "Order cancelled successfully.",
-        updatedOrder: updatedOrder,
-      });
+      return res.status(200).json({ success: true, message: "Order cancelled successfully.", updatedOrder });
     } else {
-      
-      return res.status(400).json({
-        success: false,
-        message:
-          "Order can only be cancelled if it is in 'Processing' state.",
-      });
+      return res.status(400).json({ success: false, message: "Order can only be cancelled if it is in 'Processing' state." });
     }
   } catch (error) {
     console.error("Error cancelling order:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to cancel order. Please try again later.",
-    });
+    res.status(500).json({ success: false, error: "Failed to cancel order. Please try again later." });
   }
 };
+
+
+const formattedDate = () => {
+  const currentDate = new Date();
+
+  const month = currentDate.getMonth() + 1;
+  const day = currentDate.getDate();
+  const year = currentDate.getFullYear();
+  let hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  const formattedMonth = month < 10 ? "0" + month : month;
+  const formattedDay = day < 10 ? "0" + day : day;
+  const formattedHours = hours < 10 ? "0" + hours : hours;
+  const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+  const formattedDateTime = `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes} ${ampm}`;
+
+  return formattedDateTime;
+};
+
+exports.getAllTransactionsForUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found." });
+    }
+
+    const transactions = user.wallet; 
+    res.status(200).json({ success: true, transactions });
+  } catch (error) {
+    console.error("Error fetching transactions for user:", error);
+    res.status(500).json({ success: false, error: "Failed to fetch transactions. Please try again later." });
+  }
+};
+
 
 exports.getAllOrders = async (req, res) => {
   try {
@@ -451,6 +589,9 @@ exports.getProductOrders = async (req, res) => {
     // mongoose.connection.close(); // Uncomment this line if you need to close the connection
   }
 };
+
+
+
 
 // exports.getAllOrders = async (req, res) => {
 //   try {
@@ -509,9 +650,10 @@ exports.getOrderProductDetails = async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
+    console.log("orderData",order)
 
     // Extract relevant information
-    const { userName, orderDate, paymentMethod, address, products } = order;
+    const { userName, orderDate, paymentMethod, address, products, } = order;
 
     // Find the product within the order
     const product = products.find((p) => p.productId.toString() === productId);
@@ -560,7 +702,7 @@ exports.getOrderDetailsAdmin = async (req, res) => {
     // Extract relevant information
     const { userName, orderDate, paymentMethod, orderStatus, 
       totalPrice, address, products, paymentStatus ,
-      discountAmount } = order;
+      discountAmount,subTotal, shipping,tax } = order;
 
     // Find the product within the order
     // const product = products.find((p) => p.productId.toString() === productId);
@@ -579,6 +721,9 @@ exports.getOrderDetailsAdmin = async (req, res) => {
       paymentMethod,
       orderStatus,
       products,
+      subTotal,
+       shipping,
+       tax,
       
 discountAmount,
 totalPrice,
@@ -659,9 +804,9 @@ exports.updateProductStatus = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
-  const { status } = req.body;
+  const { status,totalPrice,paymentMethod } = req.body;
 
-  // Validate the status field
+  
   if (!status || typeof status !== "string") {
     return res.status(400).json({ error: "Invalid status value" });
   }
@@ -697,8 +842,15 @@ exports.updateOrderStatus = async (req, res) => {
           .json({ success: false, error: "User not found." });
       }
 
+      user.wallet.push({
+        amount: totalPrice,
+        type: "credit",
+        description: `Admin cancelled the order #${orderId}`,
+        
+       date: formattedDate(),
+      });
       
-      user.wallet.balance += order.totalPrice;
+      user.walletBalance += order.totalPrice;
       await user.save();
 
       order.orderStatus = status;

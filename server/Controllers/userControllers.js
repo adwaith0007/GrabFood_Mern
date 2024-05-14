@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
 
   //check whether blocked
   if (user.isBlocked)
-    return res.json({ success: false, message: "user is blocked" });
+    return res.status(401).json({ success: false, message: "user is blocked" });
 
 
     if (await bcrypt.compare(password, user.password)) { 
@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
           _id: user._id,
           name: user.username,
           email: user.email,
-          photo:"ineedtofix",
+          photo:user.profilePicture,
           role:"user",
           gender:"male",
 
@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
       
 
       return res.status(200).send({
-        msg: "Login Successful...!",
+        message: "Login Successful...!",
         username: user.username,
         token,
       });
@@ -299,6 +299,55 @@ exports.updateCategory = async (req, res) => {
 
 
 
+// exports.editUser = async (req, res) => {
+//   try {
+//     upload.single("profileImage")(req, res, async (err) => {
+//       if (err) {
+//         console.error("Error during file upload:", err);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Internal server error in file upload",
+//         });
+//       }
+
+//       const { userId } = req.params;
+//       const { name, email, phoneNumber } = req.body;
+
+//       console.log("body:", req.body);
+
+//       // Find user by ID
+//       let userToUpdate = await UserModel.findById(userId);
+
+//       if (!userToUpdate) {
+//         return res
+//           .status(404)
+//           .json({ success: false, message: "User not found" });
+//       }
+      
+//       // Set profile picture if file uploaded
+//       let newProfile = userToUpdate.profilePicture;
+//       if (req.file) {
+//         newProfile = req.file.filename;
+//       }
+
+//       // Update user data
+//       userToUpdate.username = name;
+//       userToUpdate.email = email;
+//       userToUpdate.phone = phoneNumber;
+//       userToUpdate.profilePicture = newProfile;
+
+//       // Save updated user
+//       const updatedUser = await userToUpdate.save();
+
+//       res.status(200).json({ success: true, data: updatedUser });
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+
 exports.editUser = async (req, res) => {
   try {
     upload.single("profileImage")(req, res, async (err) => {
@@ -313,36 +362,42 @@ exports.editUser = async (req, res) => {
       const { userId } = req.params;
       const { name, email, phoneNumber } = req.body;
 
-      console.log("body:", req.body);
+      try {
+        // Find user by ID
+        let userToUpdate = await UserModel.findById(userId);
 
-      // Find user by ID
-      let userToUpdate = await UserModel.findById(userId);
+        if (!userToUpdate) {
+          return res
+            .status(404)
+            .json({ success: false, message: "User not found" });
+        }
 
-      if (!userToUpdate) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
+        // Set profile picture if file uploaded
+        let newProfile = userToUpdate.profilePicture;
+        if (req.file) {
+          newProfile = req.file.filename;
+        }
+
+        // Update user data
+        userToUpdate.username = name;
+        userToUpdate.email = email;
+        userToUpdate.phone = phoneNumber;
+        userToUpdate.profilePicture = newProfile;
+
+        // Save updated user
+        const updatedUser = await userToUpdate.save();
+
+        return res.status(200).json({ success: true, data: updatedUser });
+      } catch (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error in user update",
+        });
       }
-      
-      // Set profile picture if file uploaded
-      let newProfile = userToUpdate.profilePicture;
-      if (req.file) {
-        newProfile = req.file.filename;
-      }
-
-      // Update user data
-      userToUpdate.username = name;
-      userToUpdate.email = email;
-      userToUpdate.phone = phoneNumber;
-      userToUpdate.profilePicture = newProfile;
-
-      // Save updated user
-      const updatedUser = await userToUpdate.save();
-
-      res.status(200).json({ success: true, data: updatedUser });
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error editing user:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -689,6 +744,10 @@ exports.updateAddress = async (req, res) => {
   const { userId, addressId } = req.params;
   const { address } = req.body;
 
+  console.log("User ID:", userId);
+console.log("Address ID:", addressId);
+console.log("Updated Address:", address);
+
   try {
     const result = await UserModel.updateOne(
       { _id: userId, "addresses._id": addressId },
@@ -703,7 +762,7 @@ exports.updateAddress = async (req, res) => {
     );
 
     if (result.modifiedCount > 0) {
-      return res.json({ success: true, message: "Address Updated" });
+      return res.json({ success: true, message: "Address Updated", updatedAddress:result });
     } else {
       return res.status(404).json({
         success: false,
@@ -740,6 +799,42 @@ exports.deleteAddress = async (req, res) => {
   }
 };
 
+
+// exports.deleteAddress = async (req, res) => {
+//   const { userId, addressId } = req.params;
+
+//   try {
+//     // Delete the specified address
+//     const result = await UserModel.updateOne(
+//       { _id: userId },
+//       { $pull: { addresses: { _id: addressId } } }
+//     );
+
+//     if (result.modifiedCount > 0) {
+//       // Fetch the updated user object after deletion
+//       const updatedUser = await UserModel.findById(userId);
+
+//       if (!updatedUser) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "User not found after deletion.",
+//         });
+//       }
+
+//       // Send the first address in the array if it exists
+//       const firstAddress = updatedUser.addresses.length > 0 ? updatedUser.addresses[0] : null;
+//       return res.json({ success: true, message: "Address Deleted", firstAddress });
+//     } else {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User or address not found, or no changes made.",
+//       });
+//     }
+//   } catch (error) {
+//     console.error("Error while deleting address", error);
+//     return res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
 
 
 

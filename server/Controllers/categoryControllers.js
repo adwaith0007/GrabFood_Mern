@@ -108,7 +108,7 @@ exports.addCategory = async (req, res) => {
       
     });
 
-    console.log("C_exist:", categoryExist);
+   
 
     if (categoryExist) {
       return res

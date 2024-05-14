@@ -31,23 +31,23 @@ router.get("/search",isUserLoggedIn, (req, res) => {
 });
 
 
-router.post("/add",isUserLoggedIn, (req, res) => {
+router.post("/add",isAdminLoggedIn, (req, res) => {
   productControllers.addProduct(req, res);
 });
 
 router.get("/:productId", productControllers.getProductDetails);
 
 
-router.put("/update/:productId", (req, res) => {
+router.put("/update/:productId",isAdminLoggedIn, (req, res) => {
   productControllers.updateProduct(req, res);
 });
 
 
-router.delete("/deleteImage/:productId", (req, res) => {
+router.delete("/deleteImage/:productId",isAdminLoggedIn, (req, res) => {
   productControllers.deleteImage(req, res);
 });
 
-router.delete("/delete/:productId", (req, res) => {
+router.delete("/delete/:productId",isAdminLoggedIn, (req, res) => {
   productControllers.deleteProduct(req, res);
 });
 

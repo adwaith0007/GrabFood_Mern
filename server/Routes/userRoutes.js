@@ -80,7 +80,7 @@ router.post("/authenticate", (req, res) => {
 });
 
 // GET Methods
-router.get("/user/:username", userController.getUser,isUserLoggedIn,); /* user login  */
+router.get("/user/:username", userController.getUser); /* user login  */
 
 router.get("/user/get/:userId",isUserLoggedIn, (req, res) => {
 
@@ -112,7 +112,7 @@ router.post("/user/getAddress", isUserLoggedIn,  (req, res) => {
   userController.getAddress(req, res);
 });
 
-router.put("/addaddresses/:userId", userController.addAddress);
+router.put("/addaddresses/:userId", isUserLoggedIn, userController.addAddress);
 
 
 
@@ -128,7 +128,7 @@ router.delete("/user/:userId/addresses/:addressId", userController.deleteAddress
 
 
 
-router.get('/user/:userId/addresses', (req, res) => { 
+router.get('/user/:userId/addresses',   (req, res) => { 
   userController.getUserAddresses(req, res);
 });
 

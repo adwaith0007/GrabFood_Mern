@@ -7,31 +7,31 @@ exports.addCoupon = async (req, res) => {
 
     
     if (!couponName || !description || !discount || !couponCode || !expiryDate) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
     
     if (couponName.trim().length < 5) {
-      return res.status(400).json({ error: "Coupon name should be at least 5 characters long" });
+      return res.status(400).json({ success: false, message: "Coupon name should be at least 5 characters long" });
     }
 
     
     const existingCoupon = await couponModel.findOne({ couponName });
     if (existingCoupon) {
-      return res.status(400).json({ error: "A coupon with the same name already exists" });
+      return res.status(400).json({ success: false, message: "A coupon with the same name already exists" });
     }
 
     
     const discountValue = parseFloat(discount);
     if (isNaN(discountValue) || discountValue < 0 || discountValue > 80) {
-      return res.status(400).json({ error: "Discount must be a number between 0 and 100" });
+      return res.status(400).json({ success: false, message: "Discount must be a number between 0 and 100" });
     }
 
     
     const expiryDateObj = new Date(expiryDate);
     const currentDate = new Date();
     if (isNaN(expiryDateObj.getTime()) || expiryDateObj <= currentDate) {
-      return res.status(400).json({ error: "Expiry date must be a valid future date" });
+      return res.status(400).json({ success: false, message: "Expiry date must be a valid future date" });
     }
 
     const couponDoc = new couponModel({

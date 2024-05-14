@@ -1,11 +1,13 @@
 import  { useEffect, useState } from "react";
+import Lottie from 'react-lottie';
+import animationData from '../../assets/lottie/Animation - 1715340919197 (1).json';
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import toast from "react-hot-toast"; // Add this line
 // import PaymentSection from "../../components/user/PaymentSection";
 import axios from "axios";
-import logo from "../../assets/logo-grabfood 1.png";
+import logo from "../../assets/logo/logo-grabfood.png";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api";
@@ -46,6 +48,16 @@ const PaymentPage = () => {
   }, []);
 
 
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
+
+
   const getCurrentDateTime = () => {
     const currentDate = new Date();
 
@@ -81,7 +93,9 @@ const PaymentPage = () => {
         paymentMethod:'Wallet',
         orderDate: getCurrentDateTime(),
         totalPrice :currentOrder.totalPrice,
-        
+        subTotal:currentOrder.subTotal,
+        shipping:currentOrder.shipping,
+        tax:currentOrder.tax,
         preOrderId:currentOrder?._id,
         preOrderStatus:currentOrder?.orderStatus
       }
@@ -125,6 +139,9 @@ const PaymentPage = () => {
         discountAmount:currentOrder.discountAmount,
         couponCode:currentOrder.couponCode,
         paymentMethod:'COD',
+        subTotal:currentOrder.subTotal,
+        shipping:currentOrder.shipping,
+        tax:currentOrder.tax,
         orderDate: getCurrentDateTime(),
         totalPrice :currentOrder.totalPrice,
 
@@ -165,6 +182,9 @@ const PaymentPage = () => {
       couponCode:currentOrder.couponCode,
       paymentMethod:'onlinePayment',
       orderDate: getCurrentDateTime(),
+      subTotal:currentOrder.subTotal,
+        shipping:currentOrder.shipping,
+        tax:currentOrder.tax,
       totalPrice :currentOrder.totalPrice,
       preOrderId:currentOrder?._id,
     }
@@ -341,20 +361,19 @@ const PaymentPage = () => {
       </div>
 
       <div>
-      <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
+      
 
 
       <section className="antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
         <div className="h-full">
           <div>
             <div className="relative px-4 sm:px-6 lg:px-8 max-w-lg mx-auto">
-              <img
-                className="rounded-t shadow-lg"
-                src="https://apploye.com/blog/content/images/2022/07/payment-methods-for-freelancers.png"
-                width="460"
-                height="180"
-                alt="Pay background"
-              />
+             
+<div style={{ backgroundColor: '#5ae4a7', width: '100%', height: '100%' }}>
+      <Lottie options={defaultOptions} height={300} width={400} />
+    </div>
+
+
             </div>
             <div className="relative px-4 sm:px-6 lg:px-8 pb-8 max-w-lg mx-auto">
               <div className="bg-white px-8 pb-6 rounded-b shadow-lg">

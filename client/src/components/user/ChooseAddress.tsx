@@ -1,8 +1,9 @@
-import axios from "axios";
+
 import  { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
+import api from '../../api';
 
 const ChooseAddress = ({ onClose, onAddressSelect }) => {
   const { user } = useSelector(
@@ -16,8 +17,8 @@ const ChooseAddress = ({ onClose, onAddressSelect }) => {
 
   useEffect(() => {
     if (userId) {
-      axios
-        .get(`http://localhost:5000/api/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
         .then((response) => {
           setAddresses(response.data);
         })
@@ -51,9 +52,12 @@ const ChooseAddress = ({ onClose, onAddressSelect }) => {
 
         <h2 className="text-xl font-semibold mb-4">Choose Your Address</h2>
 
-        <form onSubmit={onSubmit} className="mt-5 grid gap-6">
+        <form onSubmit={onSubmit} className="mt-5 grid gap-6   ">
+
+          <div className="h-[300px]    overflow-auto" >
+
           {addresses.map((address, index) => (
-            <div key={index} className="relative">
+            <div key={index} className="relative mb-2 mx-3 ">
               <input
                 className="peer hidden"
                 id={`radio_${index}`}
@@ -75,6 +79,7 @@ const ChooseAddress = ({ onClose, onAddressSelect }) => {
               </label>
             </div>
           ))}
+          </div>
 
           <button
             type="submit"

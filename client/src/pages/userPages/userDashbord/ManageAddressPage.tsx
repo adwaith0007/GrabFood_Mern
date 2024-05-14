@@ -9,6 +9,9 @@ import AddressInput from '../../../components/AddressInput';
 import UpdateAddressInput from '../../../components/user/UpdateAddressInput';
 import ChooseAddress from '../../../components/user/ChooseAddress';
 
+
+
+
 import api from '../../../api';
 // const server = import.meta.env.VITE_SERVER;
 
@@ -19,6 +22,7 @@ const ManageAddressPage = () => {
   );
 
   const userId = user._id;
+  
 
 
   const [addressTab, setAddressTab] = useState(false);
@@ -30,10 +34,16 @@ const ManageAddressPage = () => {
   useEffect(() => {
     if (userId) {
       api
-        .get(`/user/${userId}/addresses`)
+      .get(`/user/${userId}/addresses`)
+      
+      .then((response) => {
+        const address = response.data[0];
+        setSelectedAddress(address);
 
-        .then((response) => {
-          setSelectedAddress(response.data[0]);
+          console.log("fetchAddress:",response.data[0] )
+          
+          
+
         })
         .catch((error) => {
           console.error(error);
@@ -41,26 +51,36 @@ const ManageAddressPage = () => {
     }
   }, [userId]);
 
+  console.log('selectedAddress:',selectedAddress)
+  
   const handleAddressAdded = () => {
     
     if (userId) {
       api
-        .get(`/user/${userId}/addresses`)
-        .then((response) => {
-          setSelectedAddress(response.data[0]);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      .get(`/user/${userId}/addresses`)
+      .then((response) => {
+        setSelectedAddress(response.data[0]);
+        
+        console.log("addedAddress:",response.data[0] )
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     }
   };
-
-  const handleUpdateAddress = (address) => {
+  
+  const handleUpdateAddress = (address:any) => {
+    console.log("handleUpdateAddress:", address);
+    console.log("handleUpdateAddress ID:", address._id); 
     setSelectedAddress(address);
-  };
-
+    // localStorage.setItem('selectedAddressId', address._id);
+};
+  
+  
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
+    // localStorage.setItem('selectedAddressId', address._id);
   };
 
 
@@ -71,7 +91,7 @@ const ManageAddressPage = () => {
       <div className="px-4 pt-5">
           <div className="flex justify-between  ">
             <div className="flex items-center gap-3">
-              {selectedAddress != undefined ? (
+              {selectedAddress != undefined  ? (
                 <FontAwesomeIcon
                   icon={faLocationDot}
                   style={{ color: "#63E6BE" }}
@@ -117,20 +137,21 @@ const ManageAddressPage = () => {
             select your address or add a new address.
           </p>
           <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-            {selectedAddress != undefined ? (
+            {selectedAddress != undefined && selectedAddress != "no_address"  ? (
               <div className="flex justify-between   ">
                 <div>
                   <div className="flex items-center gap-2 mb-2 ">
                     <FontAwesomeIcon icon={faLocationDot} />
 
                     <h3 className="text-[#093bc9] font-semibold ">
-                      {selectedAddress.city}
+                      {selectedAddress?.city}
                     </h3>
                   </div>
 
                   <div className="w-[300px]">
-                    <p>{selectedAddress.street}</p>
-                    <p>{`${selectedAddress.state} - ${selectedAddress.zipCode} `}</p>
+                    <p>{selectedAddress?.street}</p>
+                    
+                    <p>{`${selectedAddress?.state} - ${selectedAddress?.zipCode} `}</p>
                   </div>
 
                   <button onClick={() => {
@@ -150,12 +171,14 @@ const ManageAddressPage = () => {
                 <UpdateAddressInput
                   userId={userId}
                   currentAddress={selectedAddress}
+                  
                   onhandleUpdateAddress={handleUpdateAddress}
                   onClose={() => {
                     setUpdateAddressTab(false);
                   }}
-                />
-              )}
+                  />
+                )}
+               
 
 
                 </div>
@@ -177,7 +200,7 @@ const ManageAddressPage = () => {
                   ""
                 )}
 
-                {chooseaddressTab && (
+                {chooseaddressTab  && (
                   <ChooseAddress
                     onClose={() => {
                       setChooseaddressTab(false);

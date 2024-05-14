@@ -19,7 +19,7 @@ function TableHOC<T extends Object>(
   columns: Column<T>[],
   data: T[],
   containerClassname: string,
-  heading: string,
+  heading: string  ,
   showPagination: boolean = false
 ) {
   return function HOC() {
@@ -60,7 +60,7 @@ function TableHOC<T extends Object>(
 
     return (
       <div className={containerClassname}>
-        <h2 className="heading">{heading}</h2>
+        <h2 className="heading text-xl font-medium">{heading}</h2>
 
         <table className="table" {...getTableProps()}>
           <thead>

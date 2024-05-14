@@ -1,78 +1,13 @@
 const productModel = require("../Models/product");
 const upload = require("../middlewares/multer");
 const orderModel = require("../Models/order");
-
-// const multer = require("multer");
-
-// exports.addProduct = async (req, res) => {
-//   try {
-//     upload.array("images")(req, res, async (err) => {
-//       console.log(req.body);
-//       console.log("ni2");
-//       if (err) {
-//         console.error("Error during file upload:", err);
-//         return res.json({ success: false, message: err.message });
-//       }
-
-//       const images = req.files;
-//       const filenames = images.map((file) => file.filename);
-
-//       const { name, price, desc, category } = req.body;
-//       if (!name || !price || !desc || !category) {
-//         return res.json({ success: false, message: "Please add all fields" });
-//       }
-
-//       try {
-//         const productDoc = new productModel({
-
-//           productName: name,
-//           Description: desc,
-//           price,
-//           category,
-//           productImage: filenames,
-//         });
-
-//         console.log(productDoc);
-
-//         await productDoc.save();
-
-//         res
-//           .status(201)
-//           .json({ success: true, message: "Product added successfully" });
-//       } catch (error) {
-//         res
-//           .status(500)
-//           .json({
-//             success: false,
-//             message: "Internal server error in saving product",
-//           });
-//       }
-//     });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({
-//         success: false,
-//         message: "Internal server error in file upload",
-//       });
-//   }
-// };
+const categoryModel = require("../Models/Category");
 
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/"); // Specify the destination directory for file uploads
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname); // Use the original file name for storing
-//   },
-// });
-
-// const upload = multer({ storage: storage });
 
 exports.addProduct = async (req, res) => {
   try {
-    // Multer middleware for handling file uploads
+    
     upload.array("images")(req, res, async (err) => {
       if (err) {
         console.error("Error during file upload:", err);
@@ -125,6 +60,17 @@ exports.addProduct = async (req, res) => {
         });
       }
 
+      const productExist = await productModel.findOne({
+        productName: { $regex: new RegExp(`^${name}$`, "i") },
+        
+      });
+
+      if (productExist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Product already exists" });
+      }
+
       try {
         const productDoc = new productModel({
           productName: name,
@@ -134,6 +80,9 @@ exports.addProduct = async (req, res) => {
           productImage: filenames,
           createdAt:new Date()
         });
+
+
+       
 
         productDoc.productId = productDoc._id;
 

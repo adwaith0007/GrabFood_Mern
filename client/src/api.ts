@@ -1,5 +1,10 @@
 import axios from 'axios';
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+
+
+
+
+
 
 const instance = axios.create({
   // baseURL: 'http://13.232.169.249/api', 
@@ -27,21 +32,31 @@ instance.interceptors.request.use(
   }
 );
 
-instance.interceptors.response.use(
-  response => {
-    return response;
-  },
-  error => {
+// instance.interceptors.response.use(
+//   response => {
+    
 
-    console.log('Error response:', error.response);
+//     return response;
+//   },
+//   error => {
 
-    if (error.response &&  error.response.data.message === 'User is blocked.') {
-      // Display toast message for blocked user
-      toast.error('Your account is blocked. Please contact support for assistance.');
-    }
-    return Promise.reject(error);
-  }
-);
+//     console.log('Error response:', error.response);
+
+//     if (error.response &&  error.response.data.message === 'User is blocked.') {
+//       // Display toast message for blocked user
+//       toast.error('Your account is blocked. Please contact support for assistance.dfgdfg');
+      
+//       // Cookie.remove("token");
+
+//       // dispatch(userNotExist());
+
+//       // navigate("/login");
+
+      
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 
 export default instance;

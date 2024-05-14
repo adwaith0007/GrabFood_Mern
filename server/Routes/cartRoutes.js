@@ -24,7 +24,7 @@ router.post("/cart/add/:userId",   (req, res) => {
     cartController.deleteCartItems(req, res);
   });
   
-  router.get('/cart/:userId',   cartController.getCartItems);
+  router.get('/cart/:userId',isUserLoggedIn,   cartController.getCartItems);
   
   
   

@@ -379,7 +379,7 @@ const MyOrderPage = () => {
     "dashboard-product-box",
     // <p className="text-xl font-medium">Orders</p>,
 
-    "table"
+    "Orders"
   )();
 
   return (

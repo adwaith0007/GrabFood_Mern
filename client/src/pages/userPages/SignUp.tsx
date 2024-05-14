@@ -66,7 +66,7 @@ const SignUp = () => {
 
       {/* <Toaster position="top-center" reverseOrder={false} ></Toaster> */}
       <div className="container custom-height flex justify-center items-center mx-auto  ">
-      <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   2xl:p-8 xl:bg-gray-600 2xl:bg-black " >
+      <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8   " >
           
           
           <div className="  hidden xl:flex w-1/2  ">
@@ -78,7 +78,7 @@ const SignUp = () => {
           </div>
 
           <div className=" flex justify-center   ">
-            <div className=" w-full px-10 h-[600px] 2xl:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
+            <div className=" w-full px-10 h-[690px] md:h-[600px] 2xl:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
               <div className="text-center text-lg font-bold text-[30px] mt-[20px]">
                 <h1>Register</h1>
               </div>
@@ -224,16 +224,7 @@ const SignUp = () => {
                       Login
                     </Link>
 
-                    <Link
-                      to="/otp"
-                      className="font-medium text-blue-600 hover:underline "
-                    >
-                      <br/>
-                        
-                        otp
-                        
-                    </Link>
-                    .
+                   
                   </p>
                 </div>
               </form>

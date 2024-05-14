@@ -76,6 +76,8 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
   const amount =
     cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) - discountAmount;
 
+    const subTotal=cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) 
+
     const taxAmount = (amount * 0.02).toFixed(2);
 
   const deliveryAmount = 15;
@@ -192,7 +194,7 @@ const CheckoutOrderSummary = ({ orderCartItem, onPlaceOrder }) => {
       </div>
 
       <button
-        onClick={() => onPlaceOrder(totalAmount, discountAmount, couponCode)}
+        onClick={() => onPlaceOrder(totalAmount, discountAmount, couponCode,taxAmount,deliveryAmount,subTotal)}
         className="   bottom-0  w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
       >
         Place Order

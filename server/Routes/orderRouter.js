@@ -65,6 +65,8 @@ const { log } = require("handlebars");
     orderControllers.cancelOrder(req, res);
   });
 
+  router.get('/order/:userId/transactions', orderControllers.getAllTransactionsForUser);
+
 
   router.post("/order/filterDataByDate", (req, res) => {
     orderControllers.filterDataByDate(req, res);

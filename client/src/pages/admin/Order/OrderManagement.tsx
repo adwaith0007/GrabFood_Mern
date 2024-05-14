@@ -31,7 +31,7 @@ const OrderManagement = () => {
       }
     };
 
-    console.log(userOrderDetails);
+    console.log("userOrderDetails",userOrderDetails);
 
     if (orderId) {
       fetchOrderDetails();
@@ -56,7 +56,7 @@ const OrderManagement = () => {
           }));
 
          
-        navigate("/admin/ordersl,");
+        navigate("/admin/orders");
 
         } else {
           toast.error(response.data.message);
@@ -76,7 +76,7 @@ const OrderManagement = () => {
         toast.error("Order is already Cancelled");
       } else {
         const response = await api.put(`/orders/status/${orderId}`, {
-          status: "Cancelled",
+          status: "Cancelled", paymentMethod:userOrderDetails?.paymentMethod, totalPrice:userOrderDetails?.totalPrice
         });
 
         if (response.data.success) {
@@ -107,10 +107,11 @@ const OrderManagement = () => {
           <h2>Order Items</h2>
           <p>Id:{orderId}</p>
           {userOrderDetails?.products.map((product) => (
+
             <ProductCard
               key={product._id} // Assuming '_id' is a unique identifier for each product
               name={product.productName}
-              photo={`${server}/${product.productImage[0]}`} // Accessing the first image URL
+              photo={`${server}/${product.productImage[0]}`} 
               quantity={product.quantity}
               price={product.price}
             />
@@ -121,16 +122,18 @@ const OrderManagement = () => {
           <button className="product-delete-btn">
             <FaTrash />
           </button>
+          
           <h1>Order Info</h1>
           <h5>User Info</h5>
           <p>Name: {userOrderDetails?.userName}</p>
           <p>Address: {userOrderDetails?.address[0]?.street}</p>
           <h5>Amount Info</h5>
-          <p>Subtotal: {userOrderDetails?.subtotal}</p>
-          <p>Shipping Charges: {userOrderDetails?.shippingCharges}</p>
-          <p>Tax: {userOrderDetails?.tax}</p>
-          <p>Discount: {userOrderDetails?.discountAmount}</p>
-          <p>Total: {userOrderDetails?.totalPrice}</p>
+          <p>Payment Method:  {userOrderDetails?.paymentMethod}</p>
+          <p>Subtotal: ₹ {userOrderDetails?.subTotal}</p>
+          <p>Shipping Charges: ₹ {userOrderDetails?.shipping}</p>
+          <p>Tax: ₹ {userOrderDetails?.tax}</p>
+          <p>Discount: ₹ {userOrderDetails?.discountAmount}</p>
+          <p>Total: ₹ {userOrderDetails?.totalPrice}</p>
           <h5>Status Info</h5>
           <p>
             Status:{" "}
@@ -177,10 +180,14 @@ const OrderManagement = () => {
 
 const ProductCard = ({ name, photo, price, quantity }) => (
   <div className="transaction-product-card">
-    <img src={photo} alt={name} />
+    <img src={photo} alt={name} /> 
+  <div className="w-[200px]">
+
+    {name}
+  </div>
     {/* <Link to={`/product/${productId}`}>{name}</Link> */}
     
-    <span>
+    <span  >
       ₹{price} X {quantity} = ₹{price * quantity}
     </span>
   </div>

@@ -101,7 +101,7 @@ const AddCouponPage = () => {
       return formattedDateTime;
     };
 
-    getExpiryDateTime()
+    
 
     
     
@@ -139,7 +139,7 @@ const AddCouponPage = () => {
         toast.error("Coupon creation failed");
       }
     } catch (error) {
-      toast.error("Error creating coupon");
+      toast.error(error.response.data.message);
       console.error("Error creating coupon:", error);
     }
   };

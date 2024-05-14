@@ -29,10 +29,10 @@ exports.getBalance = async (req, res) => {
 try {
     const currentAmount = await UserModel.find(
       { _id: userId },
-      { "wallet.balance": 1, _id: 0 }
+      { "walletBalance": 1, _id: 0 }
     );
 
-    return res.json({ success: true, data: currentAmount[0]?.wallet?.balance });
+    return res.json({ success: true, data: currentAmount[0]?.walletBalance });
   } catch (error) {
     console.log("error while getting balance", error);
     return res.json({ success: false, message: "balance not updated" });

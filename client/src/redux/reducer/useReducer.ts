@@ -17,6 +17,7 @@ export const userReducer = createSlice({
         userExist:(state,action:PayloadAction<User>)=>{
             state.loading = false;
             state.user=action.payload;
+            
         },
         userNotExist:(state)=>{
             state.loading = false;

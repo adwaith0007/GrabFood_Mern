@@ -90,11 +90,36 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
-  wallet: {
-    balance: {
-      type: Number,
-      default: 0,
+  // wallet: {
+  //   balance: {
+  //     type: Number,
+  //     default: 0,
+  //   },
+  // },
+
+  wallet: [
+    {
+      amount: {
+        type: Number,
+        // required: true
+      },
+      type: {
+        type: String,
+        enum: ['credit', 'debit'],
+        // required: true
+      },
+     
+      date: {
+        type: String,
+        // default: Date.now
+      }
     },
+    
+  ],
+
+  walletBalance: { 
+    type: Number,
+    default: 0,
   },
 
   wishlist:[
