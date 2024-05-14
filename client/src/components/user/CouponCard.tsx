@@ -47,7 +47,7 @@ const CouponCard = () => {
                                 </span>
                                 <span
                                     id="cpnBtn"
-                                    className={`  w-40  px-4 py-2 rounded-r cursor-pointer ${copiedIndex === index ? 'bg-black' : 'bg-white  text-purple-600 border-white border '}  `}
+                                    className={`  md:w-40  px-4 py-2 rounded-r cursor-pointer ${copiedIndex === index ? 'bg-black' : 'bg-white  text-purple-600 border-white border '}  `}
                                     onClick={() => {
                                         copyCouponCode(coupon.couponCode);
                                         setCopiedIndex(index);

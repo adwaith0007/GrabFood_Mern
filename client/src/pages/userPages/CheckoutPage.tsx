@@ -241,7 +241,7 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
+      <div className="grid  sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
         {/* <CheckoutOrderSummary /> */}
 
         <div className="px-4 pt-5">
@@ -305,7 +305,7 @@ const CheckoutPage = () => {
                     </h3>
                   </div>
 
-                  <div className="w-[300px]">
+                  <div className=" w-[300px]">
                     <p>{selectedAddress?.street}</p>
                     <p>{`${selectedAddress?.state} - ${selectedAddress?.zipCode} `}</p>
                   </div>

@@ -174,7 +174,7 @@ const CartPage = () => {
               <p>{loading ? "Loading..." : "Your cart is empty"}</p>
             )}
 
-            <div className="flex justify-between border-t ">
+            <div className="flex flex-col-reverse md:flex-row md:justify-between  border-t ">
               <div>
                 <Link
                   to="/menu"
@@ -191,9 +191,9 @@ const CartPage = () => {
               </div>
 
               <div className="">
-                <div className=" w-[320px]   ">
+                <div className=" md:w-[320px]   ">
                   <div className="flex font-semibold justify-between py- mt-10 text-sm uppercase">
-                    <span>Total cost</span>
+                    <span className="text-[12px]" >Total cost</span>
                     <span>₹{totalAmount}</span>
                   </div>
                 </div>

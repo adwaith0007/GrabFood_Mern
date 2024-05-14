@@ -522,9 +522,13 @@ const MenuPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        
+
+        
+
+        <div className="grid grid-cols-1  justify-center  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {productList.map((item) => (
-            <div key={item._id}>
+            <div className="flex"  key={item._id}>
               {item.productImage && item.productImage[0] && (
                 <>
                   <ProductCard
@@ -547,6 +551,8 @@ const MenuPage = () => {
             </div>
           ))}
         </div>
+
+        
       </div>
 
       <div className="flex justify-center pt-2 pb-10 ">

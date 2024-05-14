@@ -9,7 +9,7 @@ import api from "../api"
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  // const [quantity, setQuantity] = useState(1);
   const server = import.meta.env.VITE_SERVER;
   
   useEffect(() => {
@@ -29,12 +29,12 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = () => {
     // Implement logic to add product to cart
-    console.log(`Added ${quantity} ${productDetails.productName} to cart`);
+    // console.log(`Added ${quantity} ${productDetails.productName} to cart`);
   };
 
-  const handleQuantityChange = (event) => {
-    setQuantity(event.target.value);
-  };
+  // const handleQuantityChange = (event) => {
+  //   setQuantity(event.target.value);
+  // };
 
   return (
     <div className="container mx-auto p-8">
@@ -61,7 +61,7 @@ const ProductDetailsPage = () => {
             <p className="text-xl font-bold text-indigo-600 mb-4">₹{productDetails.price}</p>
 
             {/* Quantity Selection */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label htmlFor="quantity" className="text-sm font-medium text-gray-700">Quantity:</label>
               <input
                 type="number"
@@ -71,7 +71,7 @@ const ProductDetailsPage = () => {
                 onChange={handleQuantityChange}
                 className="w-16 border rounded-md p-1.5 text-sm"
               />
-            </div>
+            </div> */}
 
             {/* Action Buttons */}
             <div className="flex gap-4 mb-4">

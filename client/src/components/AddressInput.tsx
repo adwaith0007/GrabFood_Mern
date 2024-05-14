@@ -64,7 +64,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
 
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center">
-      <div className="bg-white p-8 z-50 rounded-md shadow-md w-[400px]">
+      <div className="bg-white p-8 z-50 rounded-md shadow-md md:w-[400px]">
         <div className="flex justify-end">
           <button
             onClick={onClose}

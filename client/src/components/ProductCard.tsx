@@ -236,7 +236,7 @@ offerInPercentage,
           </div>
         </div>
 
-        <div className="px-4 mb-4 overflow-hidden h-10 ">
+        <div className="px-4 mb-4 hidden md:block overflow-hidden h-10 ">
         <p className="text-sm text-slate-900 line-clamp-2">{description}</p>
       </div>
 

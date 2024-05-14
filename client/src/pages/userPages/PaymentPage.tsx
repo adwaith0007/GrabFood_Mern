@@ -369,9 +369,13 @@ const PaymentPage = () => {
           <div>
             <div className="relative px-4 sm:px-6 lg:px-8 max-w-lg mx-auto">
              
-<div style={{ backgroundColor: '#5ae4a7', width: '100%', height: '100%' }}>
+{/* <div style={{ backgroundColor: '#5ae4a7', width: '100%', height: '100%' }}>
       <Lottie options={defaultOptions} height={300} width={400} />
-    </div>
+    </div> */}
+
+<div style={{ backgroundColor: '#5ae4a7', width: '100%', height: '100%', overflow: 'hidden' }}>
+  <Lottie options={defaultOptions} height={300} width={400} />
+</div>
 
 
             </div>
