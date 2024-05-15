@@ -66,6 +66,30 @@ const CategoryManagement = () => {
     e.preventDefault();
     setUpdating(true);
     try {
+
+      if (categoryDetails?.category.trim().length < 5) {
+        toast.error("Category name should contain a minimum of 5 letters");
+        return;
+    }
+
+    
+    const containsNumbers = /\d/.test(categoryDetails?.category);
+    if (containsNumbers) {
+        toast.error("Category name should not contain numbers");
+        return;
+    }
+
+    
+    const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+    if (specialChars.test(categoryDetails?.category)) {
+        toast.error("Category name should not contain special characters");
+        return;
+    }
+
+   
+   
+
+
       const formData = new FormData();
       formData.append("category", categoryDetails?.category || "");
       formData.append("offer", String(offer));
