@@ -14,6 +14,12 @@ const schema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter Name"],
     },
+    otp:{
+      type:Boolean,
+      default:false,
+      required:true
+
+    },
     email: {
       type: String,
       unique: [true, "Email already Exist"],

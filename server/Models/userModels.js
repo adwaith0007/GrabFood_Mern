@@ -14,6 +14,13 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     unique: true,
   },
+
+  otp:{
+    type:Boolean,
+    default:false,
+    required:true
+
+  },
   email: {
     type: String,
     lowercase: true,

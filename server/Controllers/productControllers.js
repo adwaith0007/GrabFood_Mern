@@ -633,6 +633,8 @@ exports.deleteImage = async (req, res) => {
     const productId = req.params.productId;
     const { imageName } = req.body;
 
+    
+
     const existingProduct = await productModel.findById(productId);
 
     const imageIndex = existingProduct.productImage.indexOf(imageName);
@@ -664,6 +666,16 @@ exports.deleteProduct = async (req, res) => {
   const productId = req.params.productId;
 
   try {
+
+
+    // const existingOrder = await orderModel.findById({'products.productId' : productId})
+
+    // if(existingOrder){
+
+    //   res.status(400).json({ success: false , message: "no order " });
+
+    // }
+
     const product = await productModel.findOneAndDelete({ _id: productId });
 
     if (!product) {

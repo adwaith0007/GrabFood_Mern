@@ -90,11 +90,8 @@ router.get("/user/get/:userId",isUserLoggedIn, (req, res) => {
   userController.getUserById(req, res);
 });
 
-router.get(
-  "/generateOTP",
-  userController.localVariables,
-  userController.generateOTP
-); // generate random OTP
+router.get("/generateOTP",userController.localVariables,userController.generateOTP); // generate random OTP
+
 router.get("/verifyOTP", userController.verifyUser, userController.verifyOTP);
 
 /* PUT Methods */

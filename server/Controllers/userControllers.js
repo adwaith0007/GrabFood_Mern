@@ -39,8 +39,23 @@ exports.login = async (req, res) => {
   if (user.isBlocked)
     return res.status(401).json({ success: false, message: "user is blocked" });
 
+    
+    
+
 
     if (await bcrypt.compare(password, user.password)) { 
+
+
+      if(user.otp=== false){
+
+        console.log("f userotp in")
+  
+        return res.status(300).send({ success: false, message: "user is not verified" });
+  
+      }
+
+      console.log("login otp:", user.otp)
+
 
        // create jwt token
        const token = jwt.sign(
@@ -479,20 +494,41 @@ exports.generateOTP = async (req,res) => {
 
  req.app.locals.OTP = await  otpGenerator.generate(6, { lowerCaseAlphabets:false,upperCaseAlphabets:false,specialChars:false})
  res.status(201).send({code:req.app.locals.OTP})
+ setTimeout(() => {
+  delete req.app.locals.OTP;
+}, 60000);
 }
 
 /* GET:http://localhost:5000/api/verifyOTP */
 exports.verifyOTP= async (req,res) => {
-  const { code } = req.query;
+  const { code, username } = req.query;
   console.log(code);
   
   if(parseInt(req.app.locals.OTP) === parseInt(code)){
-    req.app.locals.OTP = null; // reset the OTP value
-    req.app.locals.resetSession = true ; // start session for reset password
-    return res.status(201).send({msg: 'Verify Successfully!'})
+    req.app.locals.OTP = null; 
+    req.app.locals.resetSession = true ; 
+
+    try {
+      
+      const updatedUser = await UserModel.updateOne({  username }, { $set: { otp: true } });
+
+      console.log("updated data", updatedUser)
+
+      if (updatedUser.modifiedCount  === 1) {
+        console.log("otp true mod")
+        return res.status(201).send({ message: 'Verified Successfully!' });
+      } else {
+        return res.status(404).send({ message: 'User not found b' });
+      }
+    } catch (error) {
+      return res.status(500).send({ message: 'Database update failed' });
+    }
+  
+
+   
   }
 
-  return res.status(400).send({error: "Invalid OTP" })
+  return res.status(400).send({message: "Invalid OTP" })
 }
 
 //successfully redirect user when OTP is valid 

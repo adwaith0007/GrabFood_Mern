@@ -1,6 +1,9 @@
 // import axios from "axios";
 
+// import toast from "react-hot-toast";
 import api from "../api"
+
+// import { useNavigate } from "react-router-dom";
 
 
 // axios.defaults.baseURL= 'http://localhost:5000';
@@ -98,23 +101,54 @@ export async function adminVerifyPassword({email, password }) {
     }
     
 }
+// const navigate = useNavigate();
 
 /* login function */
-export async function verifyPassword({username, password }) {
-    try {
+// export async function verifyPassword({username, password }) {
+//     try {
 
-        if(username){
-          //  const {data}= await axios.post(`http://localhost:5000/api/login`, {username,password});
+//         if(username){
+//           //  const {data}= await axios.post(`http://localhost:5000/api/login`, {username,password});
 
-           const {data}= await api.post(`/login`, {username,password});
-           console.log(data.response)
-           return Promise.resolve({data});
-        }
+//            const {data}= await api.post(`/login`, {username,password});
+//            console.log("login verifyPassword:",data)
+//            return Promise.resolve({data});
+//         }
         
-    } catch (error) {
-        return Promise.reject({error:"Password doesn't Match...! "})
-    }
+//     } catch (error) {
+
+//       console.log(error.response     )
+
+//       if (error.response.data.message === "user is not verified") {
+//         toast.error("User is not verified");
+        
+//         // navigate("/otp");
+//         generateOTP(username);
+//     }
+
+//         return Promise.reject({error:"Password doesn't Match...! "})
+//     }
     
+// }
+
+
+
+export async function verifyPassword({ username, password }) {
+  try {
+    if (username) {
+      const { data } = await api.post(`/login`, { username, password });
+      console.log("login verifyPassword:", data);
+      return { success: true, data };
+    }
+  } catch (error) {
+    console.log(error.response);
+
+    if (error.response && error.response.data.message === "user is not verified") {
+      return { verified: false };
+    }
+
+    return { error: "Password doesn't Match...! " };
+  }
 }
 
 // export async function getCustomers(){
@@ -174,6 +208,8 @@ export async function updateUser(response){
 
 /* generate OTP */
 export async function generateOTP(username){
+   
+  console.log("generateOTP called", username )
     try {
       // const {data : {code},status}=  await axios.get('http://localhost:5000/api/generateOTP',{params:{username}});
 
@@ -193,17 +229,34 @@ export async function generateOTP(username){
 }
 
 /* verify OTP */
-export async function verifyOTP({username,code}) {
+// export async function verifyOTP({username,code}) {
 
-    try {
-      // const {data,status} =  await axios.get('http://localhost:5000/api/verifyOTP',{params:{username,code}});
-      const {data,status} =  await api.get('/verifyOTP',{params:{username,code}});
-      return {data,status}
-    } catch (error) {
-        return Promise.reject(error)
+//     try {
+      
+//       const {data,status} =  await api.get('/verifyOTP',{params:{username,code}});
+//       console.log(data)
+//       return {data,status}
+//     } catch (error) {
+//       // toast.error(data)
+//         return Promise.reject(error)
         
-    }
+//     }
     
+// }
+
+export async function verifyOTP({ username, code }) {
+  try {
+    console.log("verifyOTP helper:", username , code  )
+      const { data, status } = await api.get('/verifyOTP', { params: { username, code } });
+      console.log(data);
+      return { data, status };
+  } catch (error) {
+      // toast.error(error.response.)
+      // Log the error for debugging purposes
+      console.error("An error occurred while verifying OTP:", error);
+      // Return a rejected promise with the error
+      return Promise.reject(error);
+  }
 }
 
 /* reset password */
