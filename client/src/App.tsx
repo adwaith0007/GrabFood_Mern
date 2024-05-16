@@ -34,7 +34,7 @@ const Home = lazy(() => import("./pages/userPages/Home"));
 const Otp = lazy(() => import("./pages/userPages/Otp"));
 const SignUp = lazy(() => import("./pages/userPages/SignUp"));
 
-const Demo = lazy(() => import("./pages/Demo"));
+// const Demo = lazy(() => import("./pages/Demo"));
 
 const LoginPage = lazy(() => import("./pages/adminPages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
@@ -51,6 +51,9 @@ function App() {
   const { user, loading } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
+
+
+  console.log("this is the user:", user)
 
   // const [token, setToken] = useState(Cookies.get("token") || "");
   // const [role, setRole] = useState('');
@@ -96,6 +99,8 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Home />}></Route>
+
+          {/* <Route path="/login" element={<Login />}></Route> */}
 
           <Route path="/signup" element={<SignUp />}></Route>
           <Route path="/otp" element={<Otp />}></Route>
@@ -156,11 +161,29 @@ function App() {
 
 
 
-          <Route
-            element={<ProtectedRoute isAuthenticated={user ? true : false} />}
+          {/* <Route
+            element={<ProtectedRoute 
+              // isAuthenticated={user?.role === "user" ? true : false}
+              isAuthenticated={!!user}
+            
+            />}
           >
             <Route path="/*" element={<UserRoutes />} />
-          </Route>
+          </Route> */}
+
+<Route
+              element={
+                <ProtectedRoute
+                  isAuthenticated={!!user}
+                  role={user?.role}
+                  userOnly={true}
+                  // redirectPath="/"
+                />
+              }
+            >
+              <Route path="/*" element={<UserRoutes />} />
+            </Route>
+
         </Routes>
 
         <Routes>
@@ -168,8 +191,12 @@ function App() {
             path="/login"
             element={
               <ProtectedRoute
-                isAuthenticated={user ? false : true}
-                redirect="/"
+                // isAuthenticated={user ? false : true}
+                // isAuthenticated={user ? true :false }
+
+                isAuthenticated={!!user}
+
+                // redirect="/"
               >
                 <Login
                 // setToken={setToken}
@@ -178,7 +205,7 @@ function App() {
             }
           ></Route>
 
-          <Route path="/demo" element={<Demo />}></Route>
+          
         </Routes>
       </Suspense>
 

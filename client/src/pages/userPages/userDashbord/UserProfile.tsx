@@ -457,7 +457,7 @@ const UserProfile = () => {
 
   
   
-  const userId = user._id;
+  const userId = user?._id;
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -514,11 +514,11 @@ const UserProfile = () => {
   const handleSaveClick = async () => {
     try {
       const formData = new FormData();
-      formData.append("name", userData.name);
-      formData.append("gender", userData.gender);
-      formData.append("email", userData.email);
-      formData.append("phoneNumber", userData.phoneNumber);
-      formData.append("profileImage", userData.profileImage);
+      formData.append("name", userData?.name);
+      formData.append("gender", userData?.gender);
+      formData.append("email", userData?.email);
+      formData.append("phoneNumber", userData?.phoneNumber);
+      formData.append("profileImage", userData?.profileImage);
 
       // Perform save operation using axios to update user data on the server
       const response = await api.put(`/user/edit/${userId}`, formData, {
@@ -594,7 +594,7 @@ const UserProfile = () => {
               </label>
             )}
             <div>
-              <div className="font-semibold text-lg">{user.name}</div>
+              <div className="font-semibold text-lg">{user?.name}</div>
             </div>
           </div>
 
@@ -603,13 +603,13 @@ const UserProfile = () => {
               {isEditing ? (
                 <input
                   type="email"
-                  value={userData.email}
+                  value={userData?.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   placeholder="Email"
                 />
               ) : (
-                <span>{userData.email}</span>
+                <span>{userData?.email}</span>
               )}
             </div>
 
@@ -617,7 +617,7 @@ const UserProfile = () => {
               {isEditing ? (
                 <input
                   type="tel"
-                  value={userData.phoneNumber}
+                  value={userData?.phoneNumber}
                   onChange={(e) =>
                     handleInputChange("phoneNumber", e.target.value)
                   }
@@ -625,7 +625,7 @@ const UserProfile = () => {
                   placeholder="Phone Number"
                 />
               ) : (
-                <span>{userData.phoneNumber}</span>
+                <span>{userData?.phoneNumber}</span>
               )}
             </div>
           </div>

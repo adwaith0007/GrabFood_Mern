@@ -77,8 +77,8 @@ const SignUp = () => {
             />
           </div>
 
-          <div className=" flex justify-center   ">
-            <div className=" w-full px-10 h-[690px] md:h-[600px] 2xl:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
+          <div className=" flex justify-center w-full md:w-auto  ">
+            <div className=" w-full px-10  h-[690px] md:h-[600px] 2xl:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
               <div className="text-center text-lg font-bold text-[30px] mt-[20px]">
                 <h1>Register</h1>
               </div>

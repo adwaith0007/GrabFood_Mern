@@ -33,18 +33,54 @@ import { Navigate, Outlet } from "react-router-dom";
 interface Props {
     children?:ReactElement;
     isAuthenticated: boolean;
-    adminOnly?:boolean;
+    role?: string;
+    adminOnly?: boolean;
+    userOnly?: boolean;
     admin?:boolean;
     redirect?:string;
+    isuser?:boolean;
 }
 
-const ProtectedRoute = ({isAuthenticated,  children,adminOnly,admin,redirect="/login"}:Props) => {
+const ProtectedRoute = ({isAuthenticated,  children,adminOnly,role, userOnly, admin, redirect="/"}:Props) => {
 
-    if(!isAuthenticated) return <Navigate to={redirect} />;
+  
+
+    if (isAuthenticated) {
+
+      console.log("location.pathname:",location.pathname)
+
+      if (location.pathname === '/login') {
+        console.log("in")
+        return <Navigate to="/" />;
+      }
+      
+     
+    }
+    else{
+
+      if (location.pathname === '/login'   ) {
+        
+        return children ? children:<Outlet/> ;
+      }
+      
+     
+    }
+
+     if (!isAuthenticated) {
+      console.log("User not authenticated");
+      return <Navigate to="/login" />;
+    }
+      
+
+    if (userOnly  && role !== "user") {
+      return <Navigate to={"/"} />;
+    }
 
     
 
     if(adminOnly && !admin) return <Navigate to={redirect} />;
+
+    console.log("outlet")
 
   return children ? children:<Outlet/> ;
 }

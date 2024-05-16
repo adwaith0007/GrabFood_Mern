@@ -1,8 +1,8 @@
-import  { useState } from "react";
+import { useState } from "react";
 
 import toast from "react-hot-toast";
 import { AiOutlineClose } from "react-icons/ai";
-import api from '../api'
+import api from "../api";
 
 const AddressInput = ({ userId, setAddress, onClose }) => {
   const [street, setStreet] = useState("");
@@ -13,7 +13,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
   // Handle changes in input fields and update the address
   const handleAddressChange = async (e) => {
     e.preventDefault();
-    
+
     const newAddress = {
       street,
       city,
@@ -27,8 +27,28 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
         return;
       }
 
-      if (!newAddress.city || !newAddress.state || !newAddress.street || !newAddress.zipCode) {
+      if (
+        !newAddress.city ||
+        !newAddress.state ||
+        !newAddress.street ||
+        !newAddress.zipCode
+      ) {
         toast.error("Please fill in all address fields.");
+        return;
+      }
+
+      const regex = /^[a-zA-Z0-9\s,'().&\/\-#]+$/; 
+      if (
+        !newAddress.city ||
+        !regex.test(newAddress.city) ||
+        !newAddress.state ||
+        !regex.test(newAddress.state) ||
+        !newAddress.street ||
+        !regex.test(newAddress.street) ||
+        !newAddress.zipCode ||
+        !regex.test(newAddress.zipCode)
+      ) {
+        toast.error("Invalid address.");
         return;
       }
 
@@ -37,24 +57,20 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
         address: newAddress,
       });
 
-      api.get(`/user/${userId}/addresses`)
+      api
+        .get(`/user/${userId}/addresses`)
 
-      .then((response) => {
+        .then((response) => {
+          if (response.data.length != 0) {
+            const address = response.data[0];
 
-        if(response.data.length!=0){
+            setAddress(address);
+          } else {
+            console.log(" add no address");
+            // onhandleUpdateAddress("no_address");
+          }
+        });
 
-          
-          const address = response.data[0];
-          
-          
-          
-          setAddress(address);
-        }else{
-          console.log(" add no address")
-          // onhandleUpdateAddress("no_address");
-        }})
-
-      
       onClose();
     } catch (error) {
       console.error(error);
@@ -75,7 +91,7 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
         </div>
 
         <h2 className="text-xl font-semibold mb-4">Enter Your Address </h2>
-        <form onSubmit={handleAddressChange} >
+        <form onSubmit={handleAddressChange}>
           <div className="mb-2">
             <label
               htmlFor="street"
@@ -146,7 +162,6 @@ const AddressInput = ({ userId, setAddress, onClose }) => {
 
           <button
             type="submit"
-            
             className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Save Address

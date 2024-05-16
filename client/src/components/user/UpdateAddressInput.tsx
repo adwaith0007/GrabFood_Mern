@@ -11,33 +11,82 @@ const UpdateAddressInput = ({ userId, onhandleUpdateAddress,  currentAddress, on
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // const handleAddressChange = async (e) => {
+  //   e.preventDefault();
+
+  //   const updatedAddress = {
+  //     _id:currentAddress._id,
+  //     street,
+  //     city,
+  //     state,
+  //     zipCode,
+  //   };
+
+  //   try {
+  //     setLoading(true);
+
+  //     if (!userId) {
+  //       console.error("User ID is undefined");
+  //       return;
+  //     }
+
+  //     await api.put(`/user/${userId}/addresses/${currentAddress._id}`, {
+  //       userId,
+  //       addressId: currentAddress._id,
+  //       address: updatedAddress,
+  //     });
+
+      
+
+  //     onhandleUpdateAddress(updatedAddress);
+  //     onClose();
+  //   } catch (error) {
+  //     console.error(error);
+  //     setError("Failed to update address. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handleAddressChange = async (e) => {
     e.preventDefault();
-
+  
     const updatedAddress = {
-      _id:currentAddress._id,
+      _id: currentAddress._id,
       street,
       city,
       state,
       zipCode,
     };
-
+  
+   
+    const regex = /^[a-zA-Z0-9\s,'().&\/\-#]+$/; 
+  
+    if (
+      !street || !regex.test(street) ||
+      !city || !regex.test(city) ||
+      !state || !regex.test(state) ||
+      !zipCode || !regex.test(zipCode)
+    ) {
+      setError("Invalid address. Each field must contain at least 3 letters.");
+      return;
+    }
+  
     try {
       setLoading(true);
-
+  
       if (!userId) {
         console.error("User ID is undefined");
         return;
       }
-
+  
       await api.put(`/user/${userId}/addresses/${currentAddress._id}`, {
         userId,
         addressId: currentAddress._id,
         address: updatedAddress,
       });
-
-      
-
+  
       onhandleUpdateAddress(updatedAddress);
       onClose();
     } catch (error) {

@@ -255,7 +255,7 @@ const Otp = () => {
               alt=""
             />
           </div>
-          <div className=" flex justify-center    ">
+          <div className=" flex justify-center h-full lg:h-auto   ">
             <div className=" w-full px-10 lg:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
               <div className="text-center text-lg font-bold text-[30px] mt-[50px]">
                 <h1>OTP Verification</h1>
