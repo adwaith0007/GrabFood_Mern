@@ -492,6 +492,8 @@ exports.updateUser = async (req,res)=>{
 /* GET:http://localhost:5000/api/generateOTP */
 exports.generateOTP = async (req,res) => {
 
+ 
+
  req.app.locals.OTP = await  otpGenerator.generate(6, { lowerCaseAlphabets:false,upperCaseAlphabets:false,specialChars:false})
  res.status(201).send({code:req.app.locals.OTP})
  setTimeout(() => {

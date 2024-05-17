@@ -23,7 +23,7 @@ const MenuPage = () => {
 // const [dropdown setDropdown] = useState(false)
   const navigate = useNavigate();
 
-  const userId = user._id;
+  const userId = user?._id;
   // const navigate = useNavigate();
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get("q");
