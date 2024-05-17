@@ -1,7 +1,7 @@
 // const logo = require("./logo.png");
 
-// const path = require('path');
-// const logoPath = path.join(__dirname, '../../client/src/assets/logo/logo-grabfood.png');
+const path = require('path');
+const logoPath = path.join(__dirname, '../../client/src/assets/logo/logo-grabfood.png');
 
 module.exports = ({
   name,
@@ -37,6 +37,8 @@ module.exports = ({
            <td class="w-full align-top">
              <div>
              <img src="https://raw.githubusercontent.com/templid/email-templates/main/templid-dynamic-templates/invoice-02/brand-sample.png" class="h-12" /> 
+
+            
               
              </div>
            </td>
@@ -165,10 +167,10 @@ module.exports = ({
                             </tr> -->
                             <tr>
                               <td class="bg-main p-3">
-                                <div class="whitespace-nowrap font-bold text-white">Total:</div>
+                                <div class="whitespace-nowrap font-bold text-neutral-700">Total:</div>
                               </td>
                               <td class="bg-main p-3 text-right">
-                                <div class="whitespace-nowrap font-bold text-white">₹${totalPrice}</div>
+                                <div class="whitespace-nowrap font-bold text-neutral-700">₹${totalPrice}</div>
                               </td>
                             </tr>
                           </tbody>
