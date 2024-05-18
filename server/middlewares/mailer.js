@@ -5,19 +5,19 @@ const { param } = require('../Routes/userRoutes');
 let nodeConfig = {
    
   // gmail
-  service: 'gmail',
-  host:"smtp.gmail.com",
+  // service: 'gmail',
+  // host:"smtp.gmail.com",
   // 
   
-  // host:"smtp.ethereal.email",
+  host:"smtp.ethereal.email",
     port:587,
     secure:false, // true for 465,false for other ports
     auth:{
-        user:process.env.EMAIL, 
-        pass:process.env.PASSWORD, 
+        // user:process.env.EMAIL, 
+        // pass:process.env.PASSWORD, 
      
-        // user:'darron.brekke17@ethereal.email',
-        // pass:'yjZxHT3UVnsa8MN3sT'
+        user:'darron.brekke17@ethereal.email',
+        pass:'yjZxHT3UVnsa8MN3sT'
     }
 
 }
