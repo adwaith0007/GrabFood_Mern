@@ -2,13 +2,13 @@
 import { BsSearch } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
 // import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import { BarChart } from "../../components/admin/Charts";
+import AdminSidebar from "../../../components/admin/AdminSidebar";
+import { BarChart } from "../../../components/admin/Charts";
 // import Table from "../../components/admin/DashboardTable";
 // import data from "../../assets/data.json"
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import api from "../../api"
+import api from "../../../api"
 
 const userImg =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
@@ -81,15 +81,15 @@ const Dashboard = () => {
 
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
-      <main className="dashboard">
-        <div className="bar">
+    <div className="h-full" >
+      
+      <main className="dashboard h-full ">
+        {/* <div className="bar">
           <BsSearch />
           <input type="text" placeholder="Search for data, users, docs" />
           <FaRegBell />
           <img src={userImg} alt="User" />
-        </div>
+        </div> */}
 
         <section className="widget-container">
           <WidgetItem
@@ -105,17 +105,12 @@ const Dashboard = () => {
             // color="rgb(0 198 202)"
             heading="Users"
           />
-          {/* <WidgetItem
-            percent={80}
-            value={23000}
-            color="rgb(255 196 0)"
-            heading="Transactions"
-          /> */}
+          
 
           <WidgetItem
-            // percent={30}
+            
             value= {productList.length}
-            // color="rgb(76 0 255)"
+            
             heading="Products"
           />
         </section>

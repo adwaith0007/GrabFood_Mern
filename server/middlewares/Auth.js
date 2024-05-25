@@ -68,7 +68,7 @@ const adminModel = require("../Models/admin");
 exports.isUserLoggedIn = async (req, res, next) => {
   const token = req.headers['authorization'];
 
-  console.log(token);
+  
 
   if (!token) {
     return res.status(403).send({ auth: false, message: 'No token provided.' });

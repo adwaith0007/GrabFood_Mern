@@ -68,93 +68,226 @@ exports.checkout = async (req, res) => {
   });
 };
 
+// exports.checkout = async (req, res) => {
+//   const { orderDetails, userId } = req.body;
+
+//   if (!orderDetails || !userId) {
+//     return res.status(400).json({
+//       success: false,
+//       message: "Order details and user ID are required",
+//     });
+//   }
+
+//   try {
+//     const options = {
+//       amount: Math.round(orderDetails.totalPrice * 100), // convert to smallest currency unit
+//       currency: "INR",
+//       receipt: `order_rcptid_${Date.now()}`,
+//     };
+
+//     const order = await instance.orders.create(options);
+//     console.log(order);
+
+//     const user = await UserModel.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     const orderDoc = new OrderModel({
+//       userId: orderDetails.userId,
+//       products: orderDetails.products.map((product) => ({
+//         productId: product.productId,
+//         productName: product.productName,
+//         productImage: product.productImage,
+//         price: product.price,
+//         quantity: product.quantity,
+//       })),
+//       discountAmount: orderDetails.discountAmount,
+//       couponCode: orderDetails.couponCode,
+//       subTotal: orderDetails.subTotal,
+//       shipping: orderDetails.shipping,
+//       tax: orderDetails.tax,
+//       totalPrice: orderDetails.totalPrice,
+//       userName: user.username,
+//       address: orderDetails.address,
+//       orderDate: orderDetails.orderDate,
+//       paymentMethod: orderDetails.paymentMethod,
+//       phone: user.phone,
+//       razor_orderId: order.id,
+//     });
+
+//     await orderDoc.save();
+
+//     res.status(200).json({
+//       success: true,
+//       order,
+//     });
+//   } catch (error) {
+//     console.error("Error during checkout:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
+
+
+// exports.orderforWallet = async (req, res) => {
+//   const { orderDetails, userId } = req.body;
+
+//   try{
+
+//   const user = await UserModel.findById(userId);
+
+//   const orderDoc = new orderModel({
+//     userId: orderDetails.userId,
+//     products: orderDetails.products.map((product) => ({
+//       productId: product.productId,
+//       productName: product.productName,
+//       productImage: product.productImage,
+//       price: product.price,
+//       quantity: product.quantity,
+//     })),
+
+//     discountAmount: orderDetails.discountAmount,
+//     couponCode: orderDetails.couponCode,
+
+//     // coupon: couponId,
+//     // shipping,
+//     subTotal:orderDetails.subTotal,
+//         shipping:orderDetails.shipping,
+//         tax:orderDetails.tax,
+//     totalPrice: orderDetails.totalPrice,
+//     userName: user.username,
+//     address: orderDetails.address,
+//     orderDate: orderDetails.orderDate,
+//     paymentMethod: orderDetails.paymentMethod,
+//     orderStatus:"Processing",
+//     paymentStatus:true,
+//     phone: user.phone,
+
+//     // preOrderId:orderDetails?._id,
+//     // preOrderStatus:orderDetails?.orderStatus
+
+    
+//   });
+//   orderDoc.save();
+
+//   if (user) {
+
+          
+
+//     user.wallet.push({
+//       amount: orderDetails.totalPrice,
+//       type: "debit",
+//       description: `Ordering from wallet ${orderDetails?._id} `,
+      
+//      date: formattedDate(),
+//     });
+//     user.walletBalance -= orderDetails.totalPrice;
+//     await user.save();
+//   } else {
+//     console.error(`User ${userName} not found while debiting from wallet.`);
+    
+//   }
+
+
+
+
+//     if(orderDetails.preOrderId){
+
+//       console.log('good');
+      
+      
+//       await orderModel.deleteOne({_id:orderDetails.preOrderId})
+
+//     }else{
+
+//       await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
+
+//     }
+
+
+
+
+//     return res
+//       .status(200)
+//       .json({ success: true, message: "Your Order is placed" });
+//   } catch (error) {
+//     console.log("error while adding order for wallet", error);
+//   }
+// };
+
+
 
 exports.orderforWallet = async (req, res) => {
   const { orderDetails, userId } = req.body;
 
-  try{
+  try {
+    const user = await UserModel.findById(userId);
 
-  const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-  const orderDoc = new orderModel({
-    userId: orderDetails.userId,
-    products: orderDetails.products.map((product) => ({
-      productId: product.productId,
-      productName: product.productName,
-      productImage: product.productImage,
-      price: product.price,
-      quantity: product.quantity,
-    })),
+    // Check if the user has enough balance in their wallet
+    if (user.walletBalance < orderDetails.totalPrice) {
+      return res.status(400).json({ success: false, message: "Insufficient wallet balance" });
+    }
 
-    discountAmount: orderDetails.discountAmount,
-    couponCode: orderDetails.couponCode,
-
-    // coupon: couponId,
-    // shipping,
-    subTotal:orderDetails.subTotal,
-        shipping:orderDetails.shipping,
-        tax:orderDetails.tax,
-    totalPrice: orderDetails.totalPrice,
-    userName: user.username,
-    address: orderDetails.address,
-    orderDate: orderDetails.orderDate,
-    paymentMethod: orderDetails.paymentMethod,
-    orderStatus:"Processing",
-    paymentStatus:true,
-    phone: user.phone,
-
-    // preOrderId:orderDetails?._id,
-    // preOrderStatus:orderDetails?.orderStatus
-
+    // Create the order document
+    const orderDoc = new orderModel({
+      userId: orderDetails.userId,
+      products: orderDetails.products.map((product) => ({
+        productId: product.productId,
+        productName: product.productName,
+        productImage: product.productImage,
+        price: product.price,
+        quantity: product.quantity,
+      })),
+      discountAmount: orderDetails.discountAmount,
+      couponCode: orderDetails.couponCode,
+      subTotal: orderDetails.subTotal,
+      shipping: orderDetails.shipping,
+      tax: orderDetails.tax,
+      totalPrice: orderDetails.totalPrice,
+      userName: user.username,
+      address: orderDetails.address,
+      orderDate: orderDetails.orderDate,
+      paymentMethod: orderDetails.paymentMethod,
+      orderStatus: "Processing",
+      paymentStatus: true,
+      phone: user.phone,
+    });
     
-  });
-  orderDoc.save();
+    await orderDoc.save();
 
-  if (user) {
-
-          
-
+    // Update the user's wallet
     user.wallet.push({
       amount: orderDetails.totalPrice,
       type: "debit",
-      description: `Ordering from wallet ${orderDetails?._id} `,
-      
-     date: formattedDate(),
+      description: `Ordering from wallet ${orderDetails?._id}`,
+      date: new Date().toISOString(),
     });
     user.walletBalance -= orderDetails.totalPrice;
     await user.save();
-  } else {
-    console.error(`User ${userName} not found while debiting from wallet.`);
-    
-  }
 
-
-
-
-    if(orderDetails.preOrderId){
-
-      console.log('good');
-      
-      
-      await orderModel.deleteOne({_id:orderDetails.preOrderId})
-
-    }else{
-
+    // Handle pre-order deletion if applicable
+    if (orderDetails.preOrderId) {
+      await orderModel.deleteOne({ _id: orderDetails.preOrderId });
+    } else {
       await UserModel.updateOne({ _id: userId }, { $set: { cart: [] } });
-
     }
 
-
-
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Your Order is placed" });
+    return res.status(200).json({ success: true, message: "Your Order is placed" });
   } catch (error) {
-    console.log("error while adding order for wallet", error);
+    console.error("Error while adding order for wallet:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
 
 
 exports.orderCOD = async (req, res) => {

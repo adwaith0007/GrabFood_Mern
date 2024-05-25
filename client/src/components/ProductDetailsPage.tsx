@@ -4,9 +4,23 @@ import { useParams } from "react-router-dom";
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import api from "../api"
+import { useDispatch, useSelector } from "react-redux";
+import { UserReducerInitialState } from "../types/reducer-types";
+import toast from "react-hot-toast";
 
 
 const ProductDetailsPage = () => {
+
+  const { user } = useSelector(
+    (state: { userReducer: UserReducerInitialState }) => state.userReducer
+  );
+
+  const userId=user._id
+
+  const dispatch = useDispatch();
+
+   const [cartItems, setCartItems] = useState([]);
+
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState(null);
   // const [quantity, setQuantity] = useState(1);
@@ -27,9 +41,82 @@ const ProductDetailsPage = () => {
       });
   }, [productId]);
 
-  const handleAddToCart = () => {
-    // Implement logic to add product to cart
-    // console.log(`Added ${quantity} ${productDetails.productName} to cart`);
+  console.log("productDetails:", productDetails)
+
+  const handleToggleFavorite = async () => {
+    
+
+    try {
+    
+    const userId = user._id;
+
+    
+    
+
+     const response =  await api.post('/user/wishlist/add', {
+
+
+    userId,
+    productId,
+    
+    });
+
+    if(response.data.success){
+
+      // fetchingFavourites();
+
+      toast.success("added to wishlist")
+
+      
+    }
+
+    
+    // onAddToFavorites();
+    } catch (error) {
+      toast.error("alrady added")
+    console.error(error);
+    
+    }
+  };
+
+
+
+
+
+
+  const addToCart = (product) => {
+    api
+      .post(`/cart/add/${userId}`, { product, quantity: 1 })
+      .then((response) => console.log("Product added to cart:", response.data))
+      .catch((error) => console.error("Error adding to cart:", error));
+
+      const existingItem = cartItems.find(
+        (item) => item.productId === product._id
+      );
+
+    if (existingItem) {
+      const updatedCart = cartItems.map((item) =>
+        item.productId === product._id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      setCartItems(updatedCart);
+    } else {
+      // dispatch(addItemToCart(product.productName));
+
+      setCartItems([
+        ...cartItems,
+        {
+          productId: product._id,
+          quantity: 1,
+          name: product.productName,
+          price: product.price,
+          imageUrl: `${server}/${product.productImage[0].replace(/ /g, "%20")}`,
+        },
+      ]);
+    }
+
+    toast.success(`${product.productName} added to cart!`);
   };
 
   // const handleQuantityChange = (event) => {
@@ -76,12 +163,14 @@ const ProductDetailsPage = () => {
             {/* Action Buttons */}
             <div className="flex gap-4 mb-4">
               <button
-                onClick={handleAddToCart}
+                // onClick={handleAddToCart}
+                onClick={()=>addToCart(productDetails)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               >
                 Add to Cart
               </button>
               <button
+              onClick={handleToggleFavorite}
                 className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
               >
                 Add to Wishlist

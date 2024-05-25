@@ -24,15 +24,22 @@ router.put("/user/edit/:userId", isUserLoggedIn, (req, res) => {
 });
 
 
-router.post("/register", (req, res) => {
-  userController.register(req, res);
-});
 
+
+router.post('/register', userController.register);
+
+
+
+router.post("/user/wishlist/toggle_add",isUserLoggedIn,  (req, res) => {  
+
+  
+  userController.toggleWishlist(req, res);
+});
 
 router.post("/user/wishlist/add",isUserLoggedIn,  (req, res) => {  
 
   
-  userController.toggleWishlist(req, res);
+  userController.addToWishlist(req, res);
 });
 
 router.get("/user/:userId/wishlist",isUserLoggedIn, (req, res) => {

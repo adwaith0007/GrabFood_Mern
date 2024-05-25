@@ -1,17 +1,9 @@
-// import axios from "axios";
 
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 import api from "../api"
 
-// import { useNavigate } from "react-router-dom";
 
 
-// axios.defaults.baseURL= 'http://localhost:5000';
-//  process.env.REACT_APP_SERVER_DOMAIN;
-
-/* Make API Requests */
-
-/* authenticate function */
 export async function authenticate(username) {
 
     try {
@@ -39,16 +31,16 @@ export async function getUser({username}) {
 /* register user function */
 export async function registerUser( credentials) {
     try {
-      // const { data : {msg} , status } =  await axios.post(`http://localhost:5000/api/register`, credentials );
+      
 
       const { data : {msg} , status } =  await api.post(`/register`, credentials );
       const {username, email} = credentials;
 
       /* send email */
         if(status===200){
-            console.log('ok');
+            console.log('user registered Status "200"');
             
-            // await axios.post('http://localhost:5000/api/registerMail',{ username , userEmail: email ,text : msg })
+            
 
             await api.post('/registerMail',{ username , userEmail: email ,text : msg })
         }
@@ -56,6 +48,8 @@ export async function registerUser( credentials) {
         return Promise.resolve(msg)
 
     } catch (error) {
+      toast.error(error.response.data.message)
+      
         return Promise.reject({error})
     }
     
@@ -146,6 +140,7 @@ export async function verifyPassword({ username, password }) {
     if (error.response && error.response.data.message === "user is not verified") {
       return { verified: false };
     }
+    toast.error(error.response.data.message)
 
     return { error: "Password doesn't Match...! " };
   }

@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import AdminSidebar from "../../../components/admin/AdminSidebar";
+
+
 import toast from "react-hot-toast";
 import api from "../../../api";
-import ImageUploadModal from "../../../components/admin/ImageUploadModal";
+import ImageCropComponent from "../../../components/admin/ImageCropComponent";
+
+import Lottie from "react-lottie";
+import addProductLottie from "../../../assets/lottie/addProduct.json";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -15,8 +19,7 @@ const AddProduct = () => {
 
   const [categoryList, setCategoryList] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [isImageUploadModalVisible, setImageUploadModalVisible] =
-    useState(false);
+  const [isImageCropModalVisible, setImageCropModalVisible] = useState(false);
 
   useEffect(() => {
     try {
@@ -30,6 +33,15 @@ const AddProduct = () => {
       console.error(error);
     }
   }, []);
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: addProductLottie,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   // const handleImageChange = async (e) => {
   //   const files = e.target.files;
@@ -52,16 +64,20 @@ const AddProduct = () => {
   //   console.log(product.images);
   // };
 
-  const handleImageChange = (croppedImageFile:any, index:any) => {
+  const handleImageChange = (croppedImageFile: any, index: any) => {
     setSelectedImages((prevImages) => {
       const updatedImages = [...prevImages];
       updatedImages[index] = croppedImageFile; // Replace original image with cropped image
       return updatedImages;
     });
-  
+
     setProduct((prevProduct) => ({
       ...prevProduct,
-      images: [...prevProduct.images.slice(0, index), croppedImageFile, ...prevProduct.images.slice(index + 1)],
+      images: [
+        ...prevProduct.images.slice(0, index),
+        croppedImageFile,
+        ...prevProduct.images.slice(index + 1),
+      ],
     }));
   };
 
@@ -128,36 +144,73 @@ const AddProduct = () => {
 
   return (
     <div>
-      {isImageUploadModalVisible && (
+      {isImageCropModalVisible && (
         <div className="bg-gray-500/80 fixed w-full h-screen z-20 top-0 left-0"></div>
       )}
-      <div className="admin-container">
-        <AdminSidebar />
+      <div className="">
+       
         <main className="product-management">
           <section>
+            {!product.category &&
+            !selectedImages[0] &&
+            !product.name &&
+            !product.price &&
+            !product.desc ? (
+              <div
+                className="flex justify-center items-center "
+                style={{ width: "100%", height: "100%", overflow: "hidden" }}
+              >
+                <div>
+                  <Lottie options={defaultOptions} height={300} width={400} />
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
             {/* Display selected category */}
             {product.category && <p>{product.category}</p>}
 
             {/* Display selected images */}
             {selectedImages.length > 0 && (
               <div className="form-group">
-                <div className="grid grid-cols-3 gap-4 mt-1">
-                  {selectedImages.map((image, index) => (
-                    <div key={index} className="relative">
+                <div className="flex flex-col gap-4 mt-1">
+                  {selectedImages.length > 0 && (
+                    <div className="relative">
                       <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index}`}
-                        className="w-full h-32 object-cover rounded-md"
+                        src={URL.createObjectURL(selectedImages[0])}
+                        alt="Preview 0"
+                        className="w-full  object-cover rounded-md"
                       />
                       <button
                         type="button"
                         className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
-                        onClick={() => handleRemoveImage(index)}
+                        onClick={() => handleRemoveImage(0)}
                       >
                         X
                       </button>
                     </div>
-                  ))}
+                  )}
+
+                  {selectedImages.length > 1 && (
+                    <div className="grid grid-cols-3 gap-4">
+                      {selectedImages.slice(1).map((image, index) => (
+                        <div key={index + 1} className="relative">
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-md"
+                          />
+                          <button
+                            type="button"
+                            className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
+                            onClick={() => handleRemoveImage(index + 1)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -247,11 +300,11 @@ const AddProduct = () => {
                     // id="imageInput"
 
                     type="button"
-                    className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                    className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300 "
                     // onChange={handleImageChange}
 
                     onClick={() => {
-                      setImageUploadModalVisible(!isImageUploadModalVisible);
+                      setImageCropModalVisible(!isImageCropModalVisible);
                     }}
                   >
                     Upload Images
@@ -261,20 +314,20 @@ const AddProduct = () => {
 
               <button
                 type="submit"
-                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300"
+                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300 "
               >
                 Create
               </button>
 
-              {isImageUploadModalVisible && (
+              {isImageCropModalVisible && (
                 <div className="">
-                  {" "}
-                  <ImageUploadModal
-                    onClose={() => {
-                      setImageUploadModalVisible(false);
-                    }}
-                    handleSubmit={setImageUploadModalVisible}
+                  
+                  <ImageCropComponent
+                    onClose={() => setImageCropModalVisible(false)}
+                    // handleSubmit={setImageCropModalVisible}
                     handleImageChange={handleImageChange}
+                    aspectRatio={5 / 4}
+                    maxImage={4}
                   />
                 </div>
               )}

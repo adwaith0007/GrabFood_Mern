@@ -50,8 +50,8 @@ const TransactionManagement = () => {
   };
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
+    <div >
+     
       <main className="product-management">
         <section style={{ padding: "2rem" }}>
           <h2>Order Items</h2>

@@ -39,6 +39,7 @@ a {
   background-color: rgb(247, 247, 247);
   > aside {
     width: 100%;
+    
     background-color: white;
     padding: 1rem;
     z-index: 10;
@@ -73,6 +74,8 @@ a {
 .table {
   border-collapse: collapse;
   width: 100%;
+  // background-color: rgba(44, 104, 255, 0.455);
+  
   th,
   td {
     padding: 8px;
@@ -182,6 +185,10 @@ a {
   border-radius: 10px;
 }
 
+
+
+// loader for image
+
 .loader {
   width: 100%;
   height: 100vh;
@@ -271,3 +278,69 @@ a {
     }
 }
 
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+// main loder
+
+.mainloder {
+  width: 5.25em;
+  transform-origin: center;
+  animation: rotate4 2s linear infinite;
+ }
+ 
+ circle {
+  fill: none;
+  stroke: hsl(214, 97%, 59%);
+  stroke-width: 2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite;
+ }
+ 
+ @keyframes rotate4 {
+  100% {
+   transform: rotate(360deg);
+  }
+ }
+ 
+ @keyframes dash4 {
+  0% {
+   stroke-dasharray: 1, 200;
+   stroke-dashoffset: 0;
+  }
+ 
+  50% {
+   stroke-dasharray: 90, 200;
+   stroke-dashoffset: -35px;
+  }
+ 
+  100% {
+   stroke-dashoffset: -125px;
+  }
+ }
+ 

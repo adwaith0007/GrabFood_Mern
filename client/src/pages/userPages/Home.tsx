@@ -10,8 +10,73 @@ import s4_1 from "../../assets/s4_1.png";
 
 import "../../App.scss";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Cookie from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { userNotExist } from "../../redux/reducer/useReducer";
+import { useDispatch } from "react-redux";
+import { addItemToCart } from "../../redux/reducer/cartReducer";
+import api from "../../api";
+import { useSelector } from "react-redux";
+import { UserReducerInitialState } from "../../types/reducer-types";
+
+
 
 const Home = () => {
+
+  const { user } = useSelector(
+    (state: { userReducer: UserReducerInitialState }) => state.userReducer
+  );
+
+  const userId = user?._id;
+  const dispatch = useDispatch();
+
+ const navigate = useNavigate();
+
+
+
+  const [cartItems, setCartItems] = useState([]);
+  // const [loading, setLoading] = useState(true);
+
+
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await api.get(`/cart/${userId}`);
+        setCartItems(response.data.cart);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+        toast.error(error.response?.data?.message || 'An error occurred');
+        if (error.response?.data?.message === "User is blocked") {
+          Cookie.remove('token');
+          dispatch(userNotExist());
+          navigate("/login");
+        }
+      }
+      //  finally {
+      //   setLoading(false);
+      // }
+    };
+
+    fetchCartItems();
+  }, [userId, dispatch, navigate]);
+
+  useEffect(() => {
+    if (cartItems?.length > 0) {
+      cartItems.forEach((item) => {
+        dispatch(addItemToCart({
+          name: item.name,
+          productId: item.productId,
+          price: item.price,
+          // imageUrl: `${server}/${item.productImage[0].replace(/ /g, "%20")}`,
+          quantity: item.quantity,
+        }));
+      });
+    }
+  }, [cartItems, dispatch]);
+
   return (
     <div className=" bg-[#e5d9ca] w-full ">
       <div className="container mx-auto px-4 py-10 xl:px-0">

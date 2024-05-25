@@ -68,9 +68,9 @@ const CouponPage = () => {
   };
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
-      <main className="dashboard-app-container">
+    <div className="h-full" >
+      
+      <main className="dashboard-app-container h-full ">
         <Link to="/admin/coupon/add" className="create-product-btn">
           <FaPlus />
         </Link>

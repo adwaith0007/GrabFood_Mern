@@ -318,7 +318,7 @@ const Login: React.FC = () => {
       dispatch(userExist(user));
       Cookie.set("token", token, { path: '/',  sameSite: 'Lax' });
       toast.success(<b>Login Successfully...</b>);
-      navigate("/");
+      navigate("/home");
     } else if (verified === false) {
      // @ts-ignore
       dispatch(registerUserStore(values.username))
@@ -381,6 +381,8 @@ const Login: React.FC = () => {
                     placeholder="username"
                   />
                 </div>
+
+                
 
                 <div className="mb-5">
                   <label

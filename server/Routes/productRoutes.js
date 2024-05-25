@@ -3,11 +3,15 @@ const router = express.Router();
 const productControllers = require("../Controllers/productControllers");
 const { isUserLoggedIn, isAdminLoggedIn , verifyToken } = require("../middlewares/Auth");
 
+router.get("/get/user", (req, res) => {
+  console.log("all p")
+  productControllers.listProductUserSide(req, res);
+});
+
 router.get("/get", (req, res) => {
   console.log("all p")
   productControllers.listProduct(req, res);
 });
-
 router.get("/get_best", isUserLoggedIn, (req, res) => {
   console.log('inn');
   
@@ -49,6 +53,10 @@ router.delete("/deleteImage/:productId",isAdminLoggedIn, (req, res) => {
 
 router.delete("/delete/:productId",isAdminLoggedIn, (req, res) => {
   productControllers.deleteProduct(req, res);
+});
+
+router.put("/softDelete/:productId", (req, res) => {
+  productControllers.softDeleteProduct(req, res);
 });
 
 module.exports = router;

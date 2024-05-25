@@ -1,12 +1,240 @@
-import {  useState } from "react";
-import AdminSidebar from "../../../components/admin/AdminSidebar";
-import {  useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-// import axios from "axios";
-// import foodimg from "../../../assets/login_food.png";
+// import {  useState } from "react";
 
+// import {  useNavigate } from "react-router-dom";
+// import toast from "react-hot-toast";
+// // import axios from "axios";
+// // import foodimg from "../../../assets/login_food.png";
+
+// import api from '../../../api';
+// // const server = import.meta.env.VITE_SERVER;
+
+// const AddCategory = () => {
+//   const [categoryData, setCategoryData] = useState({
+//     name: "",
+//     image: null,
+//   });
+
+//   const [selectedImage, setSelectedImage] = useState(null);
+
+//   const navigate = useNavigate();
+
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0];
+
+    
+
+//     if (file) {
+//       // Check if the uploaded file is an image
+//       if (file.type.startsWith("image/")) {
+//         setSelectedImage(file);
+//         setCategoryData((prevData) => ({
+//           ...prevData,
+//           image: file,
+//         }));
+//       } else {
+//         toast.error("Please select a valid image file.");
+//       }
+//     }
+//   };
+
+//   const handleRemoveImage = () => {
+//     setSelectedImage(null);
+//     setCategoryData((prevData) => ({
+//       ...prevData,
+//       image: null,
+//     }));
+//   };
+
+
+
+
+//   const handleFormSubmit = async (e) => {
+//     e.preventDefault();
+
+    
+//     if (categoryData.name.trim().length < 5) {
+//         toast.error("Category name should contain a minimum of 5 letters");
+//         return;
+//     }
+
+    
+//     const containsNumbers = /\d/.test(categoryData.name);
+//     if (containsNumbers) {
+//         toast.error("Category name should not contain numbers");
+//         return;
+//     }
+
+    
+//     const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+//     if (specialChars.test(categoryData.name)) {
+//         toast.error("Category name should not contain special characters");
+//         return;
+//     }
+
+   
+//     if ( !categoryData.image) {
+//         toast.error("Please attach an image for the category");
+//         return;
+//     }
+
+   
+//     if (categoryData.image) {
+//         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
+//         if (!allowedTypes.includes(categoryData.image.type)) {
+//             toast.error("Invalid image type. Please upload a JPEG, PNG, or GIF image");
+//             return;
+//         }
+//     }
+
+    
+//     if (categoryData.image) {
+//         const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+//         if (categoryData.image.size > maxSizeInBytes) {
+//             toast.error("Image size exceeds the maximum allowed size (5MB)");
+//             return;
+//         }
+//     }
+
+//     const formData = new FormData();
+//     formData.append("category", categoryData.name);
+
+//     if (categoryData.image) {
+//         formData.append('file', categoryData.image);
+//     }
+
+//     try {
+        
+//         const response = await api.post(`/category/add`, formData);
+
+//         if (response.data.success) {
+//             toast.success("Category added");
+//             navigate("/admin/category");
+//         } else {
+
+//           console.log(response.data.message)
+            
+//             toast.error(response.data.message);
+//         }
+//     } catch (error) {
+//         console.log(error, ' error from try catch ');
+//         toast.error(error.response.data.message)
+//     }
+// };
+
+//   return (
+//     <div >
+//       {/* <AdminSidebar /> */}
+//       {isImageCropModalVisible && (
+//         <div className="bg-gray-500/80 fixed w-full h-screen z-20 top-0 left-0"></div>
+//       )}
+//       <main className="product-management">
+//         <section>
+//           {selectedImage && (
+//             <div className="form-group">
+//               <div className="relative">
+//                 <img
+//                   src={URL.createObjectURL(selectedImage)}
+//                   alt={`Preview`}
+//                   className="w-full h-32 object-cover rounded-md"
+//                 />
+//                 <button
+//                   type="button"
+//                   className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-300"
+//                   onClick={handleRemoveImage}
+//                 >
+//                   X
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+
+//           {categoryData.name.length > 0 && <p>{` ${categoryData.name}`}</p>}
+//         </section>
+
+//         <article>
+//           <form onSubmit={handleFormSubmit}>
+//             <h2>New Category</h2>
+//             <div className="form-group">
+//               <label htmlFor="productName">Name</label>
+//               <input
+//                 type="text"
+//                 placeholder="Name"
+//                 name="name"
+//                 onChange={(e) =>
+//                   setCategoryData({ ...categoryData, name: e.target.value })
+//                 }
+//               />
+//             </div>
+
+//             <div className="form-group">
+//               <label>Photo</label>
+//               <div className="flex items-center">
+//                 {/* <label
+//                   htmlFor="imageInput"
+//                   className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+//                 >
+//                   Upload Image
+//                 </label>
+//                 <input
+//                   type="file"
+//                   id="imageInput"
+//                   accept="image/*"
+//                   className="hidden"
+//                   onChange={handleImageChange}
+//                 /> */}
+
+// <button
+//                     // id="imageInput"
+
+//                     type="button"
+//                     className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300 "
+//                     // onChange={handleImageChange}
+
+//                     onClick={() => {
+//                       setImageCropModalVisible(!isImageCropModalVisible);
+//                     }}
+//                   >
+//                     Upload Images
+//                   </button>
+//               </div>
+//             </div>
+
+//             <button
+//               type="submit"
+//               className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-all duration-300"
+//             >
+//               Create
+//             </button>
+//           </form>
+//         </article>
+//       </main>
+
+//       {isImageCropModalVisible && (
+//                 <div className="">
+                  
+//                   <ImageCropComponent
+//                     onClose={() => setImageCropModalVisible(false)}
+//                     // handleSubmit={setImageCropModalVisible}
+//                     handleImageChange={handleImageChange}
+//                     aspectRatio={5 / 4}
+//                     maxImage={4}
+//                   />
+//                 </div>
+//               )}
+//     </div>
+//   );
+// };
+
+// export default AddCategory;
+
+
+
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from '../../../api';
-// const server = import.meta.env.VITE_SERVER;
+import ImageCropComponent from "../../../components/admin/ImageCropComponent";
 
 const AddCategory = () => {
   const [categoryData, setCategoryData] = useState({
@@ -15,26 +243,16 @@ const AddCategory = () => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isImageCropModalVisible, setImageCropModalVisible] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-
-    
-
-    if (file) {
-      // Check if the uploaded file is an image
-      if (file.type.startsWith("image/")) {
-        setSelectedImage(file);
-        setCategoryData((prevData) => ({
-          ...prevData,
-          image: file,
-        }));
-      } else {
-        toast.error("Please select a valid image file.");
-      }
-    }
+  const handleImageChange = (croppedImageFile) => {
+    setSelectedImage(croppedImageFile);
+    setCategoryData((prevData) => ({
+      ...prevData,
+      image: croppedImageFile,
+    }));
   };
 
   const handleRemoveImage = () => {
@@ -45,85 +263,75 @@ const AddCategory = () => {
     }));
   };
 
-
-
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    
     if (categoryData.name.trim().length < 5) {
-        toast.error("Category name should contain a minimum of 5 letters");
-        return;
+      toast.error("Category name should contain a minimum of 5 letters");
+      return;
     }
 
-    
     const containsNumbers = /\d/.test(categoryData.name);
     if (containsNumbers) {
-        toast.error("Category name should not contain numbers");
-        return;
+      toast.error("Category name should not contain numbers");
+      return;
     }
 
-    
     const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
     if (specialChars.test(categoryData.name)) {
-        toast.error("Category name should not contain special characters");
-        return;
+      toast.error("Category name should not contain special characters");
+      return;
     }
 
-   
-    if ( !categoryData.image) {
-        toast.error("Please attach an image for the category");
-        return;
+    if (!categoryData.image) {
+      toast.error("Please attach an image for the category");
+      return;
     }
 
-   
     if (categoryData.image) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
-        if (!allowedTypes.includes(categoryData.image.type)) {
-            toast.error("Invalid image type. Please upload a JPEG, PNG, or GIF image");
-            return;
-        }
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(categoryData.image.type)) {
+        toast.error("Invalid image type. Please upload a JPEG, PNG, or GIF image");
+        return;
+      }
     }
 
-    
     if (categoryData.image) {
-        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-        if (categoryData.image.size > maxSizeInBytes) {
-            toast.error("Image size exceeds the maximum allowed size (5MB)");
-            return;
-        }
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (categoryData.image.size > maxSizeInBytes) {
+        toast.error("Image size exceeds the maximum allowed size (5MB)");
+        return;
+      }
     }
 
     const formData = new FormData();
     formData.append("category", categoryData.name);
 
     if (categoryData.image) {
-        formData.append('file', categoryData.image);
+      formData.append('file', categoryData.image);
     }
 
     try {
-        
-        const response = await api.post(`/category/add`, formData);
+      const response = await api.post(`/category/add`, formData);
 
-        if (response.data.success) {
-            toast.success("Category added");
-            navigate("/admin/category");
-        } else {
-
-          console.log(response.data.message)
-            
-            toast.error(response.data.message);
-        }
+      if (response.data.success) {
+        toast.success("Category added");
+        navigate("/admin/category");
+      } else {
+        console.log(response.data.message);
+        toast.error(response.data.message);
+      }
     } catch (error) {
-        console.log(error, ' error from try catch ');
-        toast.error(error.response.data.message)
+      console.log(error, ' error from try catch ');
+      toast.error(error.response.data.message);
     }
-};
+  };
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
+    <div>
+      {isImageCropModalVisible && (
+        <div className="bg-gray-500/80 fixed w-full h-screen z-20 top-0 left-0"></div>
+      )}
       <main className="product-management">
         <section>
           {selectedImage && (
@@ -131,7 +339,7 @@ const AddCategory = () => {
               <div className="relative">
                 <img
                   src={URL.createObjectURL(selectedImage)}
-                  alt={`Preview`}
+                  alt="Preview"
                   className="w-full h-32 object-cover rounded-md"
                 />
                 <button
@@ -144,7 +352,6 @@ const AddCategory = () => {
               </div>
             </div>
           )}
-
           {categoryData.name.length > 0 && <p>{` ${categoryData.name}`}</p>}
         </section>
 
@@ -166,19 +373,15 @@ const AddCategory = () => {
             <div className="form-group">
               <label>Photo</label>
               <div className="flex items-center">
-                <label
-                  htmlFor="imageInput"
+                <button
+                  type="button"
                   className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                  onClick={() => {
+                    setImageCropModalVisible(!isImageCropModalVisible);
+                  }}
                 >
-                  Upload Image
-                </label>
-                <input
-                  type="file"
-                  id="imageInput"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
+                  Upload Images
+                </button>
               </div>
             </div>
 
@@ -191,6 +394,17 @@ const AddCategory = () => {
           </form>
         </article>
       </main>
+
+      {isImageCropModalVisible && (
+        <div className="">
+          <ImageCropComponent
+            onClose={() => setImageCropModalVisible(false)}
+            handleImageChange={handleImageChange}
+            aspectRatio={5 / 4}
+            maxImage={1}
+          />
+        </div>
+      )}
     </div>
   );
 };

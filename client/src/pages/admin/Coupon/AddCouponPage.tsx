@@ -149,9 +149,9 @@ const AddCouponPage = () => {
   }, [coupon]);
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
-      <main className="dashboard-app-container">
+    <div className="h-full">
+      
+      <main className="dashboard-app-container h-full ">
         <h1>Coupon</h1>
         <section>
           <form className="coupon-form" onSubmit={submitHandler}>

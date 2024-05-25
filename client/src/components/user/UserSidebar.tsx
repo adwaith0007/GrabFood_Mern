@@ -38,6 +38,8 @@ const UserSidebar = () => {
     };
   }, []);
 
+ 
+
   return (
     <>
       {phoneActive && (
@@ -82,7 +84,7 @@ const DivOne = ({ location }: { location: Location }) => (
     <ul>
 
     <Li
-        url="/"
+        url="/home"
         text="Home"
         Icon={RiCoupon3Fill}
         location={location}

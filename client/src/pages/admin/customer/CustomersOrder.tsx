@@ -225,7 +225,7 @@ interface OrderData {
   paymentMethod: string;
   totalPrice:number;
   paymentStatus: boolean;
-  status: string;
+  orderStatus: string;
   createdAt: string;
 }
 
@@ -352,11 +352,11 @@ const CustomersOrder = () => {
 
             
             </div> ) ,
-        totalPrice:(<div className=' flex justify-center' >₹{order.totalPrice}</div> ),
+        totalPrice:(<div className=' flex justify-center' >₹{order?.totalPrice}</div> ),
         
-        status: (<div className='flex justify-center ' >{order.status}</div> ) ,
+        status: (<div className='flex justify-center ' >{order?.orderStatus}</div> ) ,
 
-        orderDetails: <Link className='flex justify-center'  to={`/admin/customer/${userId}/order/${order._id}/product`}>View</Link>,
+        orderDetails: <Link className='flex justify-center'  to={`/admin/customer/${userId}/order/${order?._id}/product`}>View</Link>,
 
 
         
@@ -374,11 +374,14 @@ const CustomersOrder = () => {
   const Table = TableHOC<DataType>(columns, rows, 'dashboard-product-box', 'Orders', rows.length > 6)();
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
-      <main>{Table}</main>
+    
       
-    </div>
+
+     
+      
+      <main className='h-full' >{Table}</main>
+      
+    
   );
 };
 

@@ -100,8 +100,8 @@ const OrderManagement = () => {
   };
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
+    <div className="">
+      
       <main className="product-management">
         <section style={{ padding: "2rem" }}>
           <h2>Order Items</h2>

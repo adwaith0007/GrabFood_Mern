@@ -153,10 +153,10 @@ const OrderProductPage = () => {
   const Table = TableHOC<DataType>(columns, rows, 'dashboard-product-box', 'Orders', rows.length > 6)();
 
   return (
-    <div className="admin-container">
+    <div className="h-full">
       
-      <UserSidebar />
-      <main>{Table}</main>
+      
+      <main className='h-full' >{Table}</main>
       {productDeletePopUp && (
         <DeletePopeUp
           onClose={handlePopUpCancel}

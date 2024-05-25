@@ -24,7 +24,10 @@ exports.addProduct = async (req, res) => {
           .json({ success: false, message: "No images uploaded" });
       }
 
-      const filenames = images.map((file) => file.filename);
+      const filenames = images.map((file) => file.filename
+    
+    );
+    console.log("filenames:", filenames)
 
       let { name, price, desc, category } = req.body;
       if (!name || !price || !desc || !category) {
@@ -146,6 +149,49 @@ exports.listProduct = async (req, res) => {
       totalCount: totalCount
     });
   } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+exports.listProductUserSide = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Initialize the query object with deleted set to false
+    let query = { deleted: false };
+
+    // Add category condition if provided and not "ALL PRODUCTS"
+    if (req.query.category && req.query.category !== "ALL PRODUCTS") {
+      query.category = req.query.category;
+    }
+
+    // Get the total count of products matching the query
+    const totalCount = await productModel.countDocuments(query);
+
+    // Fetch the products based on the query with pagination
+    const products = await productModel
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Send the response with the products and pagination info
+    res.status(200).json({
+      success: true,
+      data: products,
+      totalPages: totalPages,
+      currentPage: page,
+      totalCount: totalCount
+    });
+  } catch (error) {
+    // Handle errors and send a 500 response with the error message
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -622,6 +668,73 @@ exports.updateProduct = async (req, res) => {
 };
 
 
+
+
+// exports.softDeleteProduct = async (req, res) => {
+//   const { productId } = req.params;
+
+  
+
+//   try {
+//     const product = await productModel.findById(productId);
+
+//     console.log("softDeletePro:", product )
+
+//     if (!product) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Product not found" });
+//     }
+
+//     product.deleted = !product.deleted;
+
+//     await product.save();
+
+//     return res.status(200).json({ success: true, data: product });
+//   } catch (error) {
+//     console.error("Error soft deleting product:", error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
+
+
+exports.softDeleteProduct = async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const product = await productModel.findById(productId);
+
+    console.log("Product fetched:", product);
+
+    if (!product) {
+      console.log("Product not found for ID:", productId);
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    if (product.deleted === undefined) {
+      console.error("Product does not have a 'deleted' field.");
+      return res.status(500).json({ success: false, message: "Product schema error" });
+    }
+
+    product.deleted = !product.deleted;
+
+    try {
+      await product.save();
+      console.log("Product after toggle:", product);
+      return res.status(200).json({ success: true, data: product });
+    } catch (saveError) {
+      console.error("Error saving product:", saveError);
+      return res.status(500).json({ success: false, message: "Error saving product" });
+    }
+
+  } catch (error) {
+    console.error("Error soft deleting product:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
 
 
 

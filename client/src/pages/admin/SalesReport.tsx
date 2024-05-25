@@ -1,22 +1,16 @@
-import { useEffect, useState, } from "react";
+import { useEffect, useState } from "react";
 import { ReactElement } from "react";
-// import { FaPlus } from "react-icons/fa";
+
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import TableHOC from "../../components/admin/TableHOC";
-// import { useSelector } from "react-redux";
-// import { UserReducerInitialState } from "../../types/reducer-types";
+
 import api from "../../api";
-// import UserSidebar from "../../components/user/UserSidebar";
-// import { TbShoppingCartCancel } from "react-icons/tb";
-import AdminSidebar from "../../components/admin/AdminSidebar";
 
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
-
-// const server = import.meta.env.VITE_SERVER;
 
 interface Address {
   street: string;
@@ -36,8 +30,8 @@ interface Product {
 
 interface OrderData {
   _id: string;
-  userName:string;
-  phone:string;
+  userName: string;
+  phone: string;
   userId: string;
   orderDate: string;
   products: Product[];
@@ -55,8 +49,8 @@ interface DataType {
   order: string;
   totalPrice: number;
   status: string;
-  
-paymentMethod: ReactElement;
+
+  paymentMethod: ReactElement;
   manageAction: ReactElement;
   action: ReactElement;
 }
@@ -85,11 +79,6 @@ const columns: Column<DataType>[] = [
   },
 ];
 const SalesReport = () => {
-  // const { user } = useSelector(
-  //   (state: { userReducer: UserReducerInitialState }) => state.userReducer
-  // );
-  // const userId = user._id;
-
   const [rows, setRows] = useState<any>([]);
   const [userOrders, setUserOrders] = useState<OrderData[]>([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -98,19 +87,18 @@ const SalesReport = () => {
   // const [orders, setOrders] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(new Date());
-  
 
   function filterDataByDate() {
     try {
-
       const today = new Date();
-      
+
       if (startDate > today || endDate > today) {
         toast.error("Please select valid dates.");
-        return; 
+        return;
       }
 
-      api.post('/order/filterDataByDate', { startDate, endDate })
+      api
+        .post("/order/filterDataByDate", { startDate, endDate })
         .then((res) => {
           if (res.data.success) {
             setUserOrders(res.data.data);
@@ -124,7 +112,7 @@ const SalesReport = () => {
   }
 
   const downloadPDF = () => {
-    const pdf:any = new jsPDF();
+    const pdf: any = new jsPDF();
 
     const deliveredOrders = userOrders.filter(
       (order) => order.orderStatus === "Delivered"
@@ -139,7 +127,12 @@ const SalesReport = () => {
     // Create a table
     pdf.autoTable({
       head: [["Name", "Phone", "Total", "Status"]],
-      body: userOrders.map((row) => [row.userName, row.phone, row.totalPrice, row.orderStatus]),
+      body: userOrders.map((row) => [
+        row.userName,
+        row.phone,
+        row.totalPrice,
+        row.orderStatus,
+      ]),
       startY: 25,
     });
 
@@ -177,30 +170,11 @@ const SalesReport = () => {
     };
   }, [activeDropdown]);
 
-
-
-  
-
-  // const fetchUserOrders = async () => {
-  //   try {
-  //     const response = await api.get(`/orders`);
-  //     if (response.data.success) {
-  //       setUserOrders(response.data.allOrders);
-  //     } else {
-  //       console.error("Failed to fetch user orders:", response.data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user orders:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Processing":
         return "purple";
-        case "Cancel":
+      case "Cancel":
         return "red";
       case "Shipped":
         return "green";
@@ -239,25 +213,18 @@ const SalesReport = () => {
           </span>
         </p>
       ),
-      
-paymentMethod: (
-        
 
+      paymentMethod: (
         <div className="flex flex-col justify-center gap-1">
-        <div className="flex justify-center"> {order?.paymentMethod}</div>
+          <div className="flex justify-center"> {order?.paymentMethod}</div>
         </div>
-       
       ),
 
-      action:(<div className="flex justify-center" >
-
-
+      action: (
+        <div className="flex justify-center">
           <Link to={`/admin/orders/${order._id}`}>Manage</Link>
-      </div>
-      ) 
-
-
-    
+        </div>
+      ),
     }));
 
     setRows(newRows);
@@ -272,14 +239,10 @@ paymentMethod: (
   )();
 
   return (
-    <div className="admin-container">
-      <AdminSidebar />
-
-      <div>
-
-
-      <div className="flex justify-between items-center w-full px-5">
-          <div>
+    <div>
+      <div className="h-screen">
+        <div className="flex justify-between bg-white   rounded items-center w-full px-5">
+          <div className="mt-2">
             <input
               type="date"
               onChange={(e) => {
@@ -296,49 +259,37 @@ paymentMethod: (
               value={endDate.toISOString().slice(0, 10)}
               className="border border-black rounded-md px-1 mx-2"
             />
-            {/* <button
-              className="border px-1 mx-2 rounded-md bg-[#BBE1FA] border-gray-400 hover:border-black"
+
+            <button
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               onClick={filterDataByDate}
             >
               Go
-            </button> */}
-
-            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"   onClick={filterDataByDate}
-            >
-              Go
             </button>
-
-              
-
-            {/* <button
-              className="border border-gray-500 rounded-md px-2 "
-              onClick={() => {
-                setStartDate(null);
-              }}
-            >
-              reset
-            </button> */}
-
           </div>
           <div className="flex ">
-            
-
-            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={downloadPDF}
+            <button
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              onClick={downloadPDF}
             >
-              Download Pdf</button>
-            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"onClick={downloadXL}
-              >
-              Download xl</button>
-          
+              Download Pdf
+            </button>
+            <button
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              onClick={downloadXL}
+            >
+              Download xl
+            </button>
           </div>
         </div>
 
-
-      <main>{Table}</main>
-              </div>
+        <main className="h-full">{Table}</main>
+      </div>
     </div>
   );
 };
 
 export default SalesReport;
-

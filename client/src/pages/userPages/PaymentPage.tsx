@@ -76,52 +76,95 @@ const PaymentPage = () => {
   };
 
   
+  // const handleWalletPayment = async (amount) => {
+  //   try {
+  //     const response = await api.post("/wallet/deduct", { userId, amount });
+  
+  //     if (!response.data.success) {
+  //       return toast.error(response.data.message);
+  //     }
+
+  //     const orderDetails ={
+  //       userId:currentOrder.userId,
+  //       products: currentOrder.products,
+  //       address: currentOrder.address,
+  //       discountAmount:currentOrder.discountAmount,
+  //       couponCode:currentOrder.couponCode,
+  //       paymentMethod:'Wallet',
+  //       orderDate: getCurrentDateTime(),
+  //       totalPrice :currentOrder.totalPrice,
+  //       subTotal:currentOrder.subTotal,
+  //       shipping:currentOrder.shipping,
+  //       tax:currentOrder.tax,
+  //       preOrderId:currentOrder?._id,
+  //       preOrderStatus:currentOrder?.orderStatus
+  //     }
+  
+  //     api
+  //       .post(`/order/wallet`,
+  //         {
+            
+  //           orderDetails,userId
+  //         },
+          
+  //       )
+  //       .then((res) => {
+  //         if (res.data.success) {
+  //           // toast.success(res.data.message);
+  //           // navigate("/home");
+  //           setOrderSuccess(true);
+  //         } else {
+  //           toast.error(res.data.message);
+  //         }
+  //       });
+  //   } catch (error) {
+  //     console.log("error while processing payment via wallet", error);
+  //   }
+  // };
+
+
   const handleWalletPayment = async (amount) => {
     try {
+      // Deduct the amount from the wallet
       const response = await api.post("/wallet/deduct", { userId, amount });
   
       if (!response.data.success) {
         return toast.error(response.data.message);
       }
-
-      const orderDetails ={
-        userId:currentOrder.userId,
+  
+      // Prepare order details
+      const orderDetails = {
+        userId: currentOrder.userId,
         products: currentOrder.products,
         address: currentOrder.address,
-        discountAmount:currentOrder.discountAmount,
-        couponCode:currentOrder.couponCode,
-        paymentMethod:'Wallet',
+        discountAmount: currentOrder.discountAmount,
+        couponCode: currentOrder.couponCode,
+        paymentMethod: 'Wallet',
         orderDate: getCurrentDateTime(),
-        totalPrice :currentOrder.totalPrice,
-        subTotal:currentOrder.subTotal,
-        shipping:currentOrder.shipping,
-        tax:currentOrder.tax,
-        preOrderId:currentOrder?._id,
-        preOrderStatus:currentOrder?.orderStatus
-      }
+        totalPrice: currentOrder.totalPrice,
+        subTotal: currentOrder.subTotal,
+        shipping: currentOrder.shipping,
+        tax: currentOrder.tax,
+        preOrderId: currentOrder?._id,
+        preOrderStatus: currentOrder?.orderStatus
+      };
   
-      api
-        .post(`/order/wallet`,
-          {
-            
-            orderDetails,userId
-          },
-          
-        )
-        .then((res) => {
-          if (res.data.success) {
-            // toast.success(res.data.message);
-            // navigate("/home");
-            setOrderSuccess(true);
-          } else {
-            toast.error(res.data.message);
-          }
-        });
+      // Place the order
+      const orderResponse = await api.post("/order/wallet", { orderDetails, userId });
+  
+      if (orderResponse.data.success) {
+        setOrderSuccess(true);
+        toast.success(orderResponse.data.message);
+        // navigate("/home"); // Uncomment if you want to navigate to home
+      } else {
+        toast.error(orderResponse.data.message);
+      }
     } catch (error) {
-      console.log("error while processing payment via wallet", error);
+      console.error("Error while processing payment via wallet:", error);
+     
+      toast.error(error.response.data.message);
     }
   };
-
 
   
   const handleCOD = async () => {
@@ -172,90 +215,173 @@ const PaymentPage = () => {
 
 
 
-  const handleRazorpayPayment = async () => {
+//   const handleRazorpayPayment = async () => {
     
-    const orderDetails ={
-      userId:currentOrder.userId,
+//     const orderDetails ={
+//       userId:currentOrder.userId,
+//       products: currentOrder.products,
+//       address: currentOrder.address,
+//       discountAmount:currentOrder.discountAmount,
+//       couponCode:currentOrder.couponCode,
+//       paymentMethod:'onlinePayment',
+//       orderDate: getCurrentDateTime(),
+//       subTotal:currentOrder.subTotal,
+//         shipping:currentOrder.shipping,
+//         tax:currentOrder.tax,
+//       totalPrice :currentOrder.totalPrice,
+//       preOrderId:currentOrder?._id,
+//     }
+//     console.log('orderDetails',orderDetails);
+    
+//     try {
+//         const response = await api.post("/checkout", {
+//             amount: orderDetails.totalPrice,
+//             orderDetails,
+//             userId,
+//         });
+//         const order = response.data.order;
+
+//         console.log(order);
+
+//         const options = {
+//             key: "rzp_test_teFGtG1SVP604p", 
+//             amount: order.amount,
+//             currency: "INR",
+//             order_id: order.id,
+//             name: "GrabFood",
+//             description: "Payment for purchase",
+//             image: {logo},
+
+//             // callback_url: `${server}/api/paymentverification`,
+
+//             handler: async function (response) {
+//               console.log('Response data:', response);
+//                 try {
+//                     const verificationResponse = await axios.post(
+//                         `${server}/api/paymentverification`,{ ...response , orderDetails });
+//                     if (verificationResponse.data.success) {
+//                          setOrderSuccess(true);
+//                         // navigate("/home");
+//                         toast.success("Your order is on the move");
+//                     } else {
+//                         toast.error("Payment verification failed");
+//                     }
+//                 } catch (error) {
+//                     console.error("Error verifying payment:", error);
+//                     toast.error("Failed to verify payment. Please try again later.");
+//                 }
+//             },
+//             prefill: {
+//                 name: "Gaurav Kumar",
+//                 email: "gaurav.kumar@example.com",
+//                 contact: "9000090000",
+//             },
+//             notes: {
+//                 address: "Razorpay Corporate Office",
+//             },
+//             theme: {
+//                 color: "#3399cc",
+//             },
+//         };
+
+//         //@ts-ignore
+//         const rzp1 = new window.Razorpay(options);
+//         rzp1.on("payment.failed", function (response) {
+
+//           console.log(response)
+
+//             console.error("Payment failed:", response.error.code);
+//             toast.error("Payment failed");
+//             navigate("/cart");
+//         });
+//         rzp1.open();
+//     } catch (error) {
+//         console.error("Error initiating payment:", error);
+//         toast.error("Failed to initiate payment. Please try again later.");
+//     }
+// };
+
+const handleRazorpayPayment = async () => {
+  const orderDetails = {
+      userId: currentOrder.userId,
       products: currentOrder.products,
       address: currentOrder.address,
-      discountAmount:currentOrder.discountAmount,
-      couponCode:currentOrder.couponCode,
-      paymentMethod:'onlinePayment',
+      discountAmount: currentOrder.discountAmount,
+      couponCode: currentOrder.couponCode,
+      paymentMethod: 'onlinePayment',
       orderDate: getCurrentDateTime(),
-      subTotal:currentOrder.subTotal,
-        shipping:currentOrder.shipping,
-        tax:currentOrder.tax,
-      totalPrice :currentOrder.totalPrice,
-      preOrderId:currentOrder?._id,
-    }
-    console.log('orderDetails',orderDetails);
-    
-    try {
-        const response = await api.post("/checkout", {
-            amount: orderDetails.totalPrice,
-            orderDetails,
-            userId,
-        });
-        const order = response.data.order;
+      subTotal: currentOrder.subTotal,
+      shipping: currentOrder.shipping,
+      tax: currentOrder.tax,
+      totalPrice: currentOrder.totalPrice,
+      preOrderId: currentOrder?._id,
+  };
 
-        console.log(order);
+  console.log('orderDetails', orderDetails);
 
-        const options = {
-            key: "rzp_test_teFGtG1SVP604p", 
-            amount: order.amount,
-            currency: "INR",
-            order_id: order.id,
-            name: "GrabFood",
-            description: "Payment for purchase",
-            image: {logo},
+  try {
+      const response = await api.post("/checkout", {
+          amount: orderDetails.totalPrice,
+          orderDetails,
+          userId: orderDetails.userId,
+      });
 
-            // callback_url: `${server}/api/paymentverification`,
+      const order = response.data.order;
+      console.log(order);
 
-            handler: async function (response) {
+      const options = {
+          key: "rzp_test_teFGtG1SVP604p",
+          amount: order.amount,
+          currency: "INR",
+          order_id: order.id,
+          name: "GrabFood",
+          description: "Payment for purchase",
+          image: { logo },
+          handler: async (response) => {
               console.log('Response data:', response);
-                try {
-                    const verificationResponse = await axios.post(
-                        `${server}/api/paymentverification`,{ ...response , orderDetails });
-                    if (verificationResponse.data.success) {
-                         setOrderSuccess(true);
-                        // navigate("/home");
-                        toast.success("Your order is on the move");
-                    } else {
-                        toast.error("Payment verification failed");
-                    }
-                } catch (error) {
-                    console.error("Error verifying payment:", error);
-                    toast.error("Failed to verify payment. Please try again later.");
-                }
-            },
-            prefill: {
-                name: "Gaurav Kumar",
-                email: "gaurav.kumar@example.com",
-                contact: "9000090000",
-            },
-            notes: {
-                address: "Razorpay Corporate Office",
-            },
-            theme: {
-                color: "#3399cc",
-            },
-        };
+              try {
+                  const verificationResponse = await axios.post(`${server}/api/paymentverification`, {
+                      ...response,
+                      orderDetails,
+                  });
+                  if (verificationResponse.data.success) {
+                      setOrderSuccess(true);
+                      toast.success("Your order is on the move");
+                  } else {
+                      toast.error("Payment verification failed");
+                  }
+              } catch (error) {
+                  console.error("Error verifying payment:", error);
+                  toast.error("Failed to verify payment. Please try again later.");
+              }
+          },
+          prefill: {
+              name: "Gaurav Kumar",
+              email: "gaurav.kumar@example.com",
+              contact: "9000090000",
+          },
+          notes: {
+              address: "Razorpay Corporate Office",
+          },
+          theme: {
+              color: "#3399cc",
+          },
+      };
 
-        //@ts-ignore
-        const rzp1 = new window.Razorpay(options);
-        rzp1.on("payment.failed", function (response) {
+      // @ts-ignore
+      const rzp1 = new window.Razorpay(options);
+      rzp1.on("payment.failed", (response) => {
+          console.error("Payment failed:", response.error.code);
+          toast.error("Payment failed");
+          navigate("/cart");
+      });
 
-          console.log(response)
-
-            console.error("Payment failed:", response.error.code);
-            toast.error("Payment failed");
-            navigate("/cart");
-        });
-        rzp1.open();
-    } catch (error) {
-        console.error("Error initiating payment:", error);
-        toast.error("Failed to initiate payment. Please try again later.");
-    }
+      rzp1.open();
+  } catch (error) {
+      console.error("Error initiating payment:", error);
+      // toast.error("Failed to initiate payment. Please try again later.");
+      toast.error(error.response.data.message)
+  }
 };
 
   if (loading) {

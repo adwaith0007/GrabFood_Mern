@@ -33,6 +33,7 @@
     "puppeteer": "^22.9.0",
     "puppeteer-core": "^22.7.1",
     "razorpay": "^2.9.2",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "winston": "^3.13.0"
   }
 }

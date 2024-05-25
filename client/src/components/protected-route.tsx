@@ -41,7 +41,7 @@ interface Props {
     isuser?:boolean;
 }
 
-const ProtectedRoute = ({isAuthenticated,  children,adminOnly,role, userOnly, admin, redirect="/"}:Props) => {
+const ProtectedRoute = ({isAuthenticated,  children,adminOnly,role, userOnly, admin, redirect="/home"}:Props) => {
 
   
 
@@ -49,9 +49,9 @@ const ProtectedRoute = ({isAuthenticated,  children,adminOnly,role, userOnly, ad
 
       console.log("location.pathname:",location.pathname)
 
-      if (location.pathname === '/login') {
-        console.log("in")
-        return <Navigate to="/" />;
+      if (location.pathname === '/login'|| location.pathname === '/signup' || location.pathname === '/' ) {
+       
+        return <Navigate to="/home" />;
       }
       
      
@@ -73,7 +73,7 @@ const ProtectedRoute = ({isAuthenticated,  children,adminOnly,role, userOnly, ad
       
 
     if (userOnly  && role !== "user") {
-      return <Navigate to={"/"} />;
+      return <Navigate to={"/home"} />;
     }
 
     

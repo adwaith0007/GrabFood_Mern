@@ -10,7 +10,7 @@ const couponRouter = require("./Routes/couponRouter.js");
 const orderRouter = require("./Routes/orderRouter.js");
 const cartRoutes = require("./Routes/cartRoutes.js");
 
-
+const logger = require('./logger.js');
 
 
 
@@ -92,6 +92,7 @@ mongoose
   // .connect("mongodb://localhost:27017/grabfoodmern")
   .then(() => {
     console.log("Db connection established");
+   
   })
   .catch((err) => {
     console.log("connection error: " + err);

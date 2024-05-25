@@ -2,12 +2,18 @@ const UserModel = require("../Models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const otpGenerator= require('otp-generator');
+const { body, validationResult } = require('express-validator');
 
 const upload = require("../middlewares/multer");
 
 const productModel = require("../Models/product");
+require("dotenv").config();
+
+
+
 
 /* POST: http://localhost:5000/api/login */
+
 exports.login = async (req, res) => {
 
   
@@ -18,6 +24,17 @@ exports.login = async (req, res) => {
   if (!username || !password) {
     return res.json({ success: false, message: "enter username and password" });
   }
+
+
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return res.status(400).json({ success: false, message: "Invalid username format" });
+  }
+
+  
+  if (!/^.{6,}$/.test(password)) {
+    return res.status(400).json({ success: false, message: "Password must be at least 6 characters long" });
+  }
+
 
   try {
    const user = await UserModel.findOne({ username });
@@ -122,37 +139,55 @@ exports.login = async (req, res) => {
 
 
 
-// demo
 
 
 
+module.exports.register = [
+  // Validation rules
+  body('username').isLength({ min: 3 }).withMessage('Username must be at least 3 characters long'),
+  body('email').isEmail().withMessage('Enter a valid email address'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('phone').isMobilePhone().withMessage('Enter a valid phone number'),
 
-/* POST: http://localhost:5000/api/register */
-exports.register = async (req, res) => {
-  const {  username, email, password, phone } = req.body;
+  // Middleware to handle the request
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { username, email, password, phone } = req.body;
 
-    const newUser = new UserModel({
-     
-      username,
-      email,
-      password: hashedPassword,
-      phone,
-    });
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    await newUser.save();
+      const newUser = new UserModel({
+        username,
+        email,
+        password: hashedPassword,
+        phone,
+      });
 
-    console.log("New user registered:", newUser);
+      await newUser.save();
 
-    res.json({ message: "Registration successful", user: newUser });
-  } catch (error) {
-    console.error("Error while Registration:", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+      console.log("New user registered:", newUser);
+
+      res.json({ message: "Registration successful", user: newUser });
+    } catch (error) {
+      if (error.code === 11000) {
+        if (error.keyPattern && error.keyPattern.username) {
+          
+          return res.status(400).json({ success: false, message: "Username already exists. Please choose a different username." });
+        } else if (error.keyPattern && error.keyPattern.email) {
+         
+          return res.status(400).json({ success: false, message: "Email already exists. Please use a different email address." });
+        }
+      }
+      console.error("Error while Registration:", error.message);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
   }
-};
-
+];
 
 
 exports.verify = async (req, res) => {
@@ -649,6 +684,50 @@ exports.toggleWishlist = async (req, res) => {
       user.wishlist.splice(existingProductIndex, 1);
       await user.save();
       return res.status(200).json({ success: true, message: "Product removed from the wishlist" });
+    } else {
+     
+      const newWishlistItem = {
+        productId: productId,
+        productName: product.productName,
+        productImage: product.productImage[0],
+        price: product.discountPrice ? product.discountPrice : product.price
+      };
+      user.wishlist.push(newWishlistItem);
+      await user.save();
+      return res.status(200).json({ success: true, message: "Product added to the wishlist" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+
+
+exports.addToWishlist = async (req, res) => {
+
+  
+  const { userId, productId } = req.body;
+
+  try {
+    
+    let user = await UserModel.findById(userId);
+
+    let product = await productModel.findById(productId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    
+    const existingProductIndex = user.wishlist.findIndex(item => item.productId === productId);
+
+    if (existingProductIndex !== -1) {
+      
+     
+      return res.status(300).json({ success: true, message: "Product alrady added to wishlist" });
     } else {
      
       const newWishlistItem = {

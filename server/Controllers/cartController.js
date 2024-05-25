@@ -330,6 +330,8 @@ exports.remove = async (req, res) => {
 exports.getCartItems = async (req, res) => {
   const { userId } = req.params;
 
+  console.log("getCartItems", userId )
+
   try {
     const user = await UserModel.findById(userId);
     if (!user) {

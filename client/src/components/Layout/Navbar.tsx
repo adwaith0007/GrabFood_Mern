@@ -30,6 +30,8 @@ import {
   RiShoppingBag3Fill,
 } from "react-icons/ri";
 
+import { useSelector } from "react-redux";
+
 import { User } from "../../types/types";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -45,7 +47,13 @@ interface PropsType {
   user: User | null;
 }
 
+const selectUniqueItemCount = (state) => state.cart.items.length;
+
 const Navbar = ({ user }: PropsType) => {
+  const uniqueItemCount = useSelector(selectUniqueItemCount);
+
+  console.log("uniqueItemCount:", uniqueItemCount);
+
   const [cartItems, setCartItems] = useState([]);
 
   const [nav, setNav] = useState<boolean>(false);
@@ -55,12 +63,8 @@ const Navbar = ({ user }: PropsType) => {
   const [isOpenUser, setIsOpenUser] = useState(false);
 
   const dropdownRef = useRef(null);
-  
 
   const navigate = useNavigate();
-
-
-
 
   const server = import.meta.env.VITE_SERVER;
 
@@ -85,8 +89,6 @@ const Navbar = ({ user }: PropsType) => {
 
     fetchCartItems();
   }, [user]);
-
-  
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -123,7 +125,6 @@ const Navbar = ({ user }: PropsType) => {
 
       toast.success("Sign Out Successfully");
       setIsOpenUser(false);
-      
 
       dispatch(userNotExist());
 
@@ -146,39 +147,41 @@ const Navbar = ({ user }: PropsType) => {
             <AiOutlineMenu size={30} className="text-white cursor-pointer " />
           </div>
           <Link
-            to="/"
+            to="/home"
             className=" hidden md:flex items-center  space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} alt=""></img>
           </Link>
 
-          <div
-            className="items-center md:hidden  justify-between hidden w-full lg:flex lg:w-auto "
-            id="navbar-sticky"
-          >
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
-              <li>
-                <Link
-                  to="/"
-                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent "
-                  aria-current="page"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu"
-                  className="block py-2 px-3  rounded hover:bg-gray-100 md:hover:bg-transparent text-white  "
-                >
-                  Menu
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {user?.role == "user" && (
+            <div
+              className="items-center md:hidden  justify-between hidden w-full lg:flex lg:w-auto "
+              id="navbar-sticky"
+            >
+              <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0  bg-gray-900 dark:border-gray-700">
+                <li>
+                  <Link
+                    to="/home"
+                    className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent "
+                    aria-current="page"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/menu"
+                    className="block py-2 px-3  rounded hover:bg-gray-100 md:hover:bg-transparent text-white  "
+                  >
+                    Menu
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
 
           <div className="flex flex-row items-center justify-between  b space-x-3 gap-14 md:space-x-0 ">
-            {user && (
+            {user?.role == "user" && (
               <div className="hidden  lg:flex justify-center items-center">
                 <div className="relative text-gray-600">
                   <form onSubmit={handleSearch}>
@@ -220,7 +223,7 @@ const Navbar = ({ user }: PropsType) => {
                 <div className="relative py-2   ">
                   <div className="t-0 absolute left-3">
                     <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">
-                      {cartItems.length}
+                      {uniqueItemCount}
                     </p>
                   </div>
                   <BsCart3
@@ -233,12 +236,9 @@ const Navbar = ({ user }: PropsType) => {
               <></>
             )}
 
-            
             <div>
               <div className="relative  text-left flex " ref={dropdownRef}>
                 <button
-                  
-
                   onClick={toggleDropdown}
                   className="flex justify-center items-center w-9 h-9 text-sm bg-gray-800  rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                   type="button"
@@ -251,16 +251,11 @@ const Navbar = ({ user }: PropsType) => {
                   />
                 </button>
 
-                
-
                 {isOpenUser && (
                   <div className="absolute z-10 mt-11 lg:w-36 right-0 lg:right-5   ring-1 ring-black ring-opacity-5 space-y-2 bg-white border border-gray-300 rounded-md shadow-lg">
                     {user ? (
                       <>
-                        <div
-                          
-                          className="z-40  bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-                         >
+                        <div className="z-40  bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                           <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                             <div>{user?.name}</div>
                           </div>
@@ -313,55 +308,39 @@ const Navbar = ({ user }: PropsType) => {
                             </li>
                           </ul>
                         </div>
-
-                        
                       </>
-                    ):(
-                      <div
-                          
-                          className="z-40  bg-white divide-y divide-gray-100 rounded-lg shadow w-36 md:w-44 dark:bg-gray-700 dark:divide-gray-600"
-                         >
-                          
+                    ) : (
+                      <div className="z-40  bg-white divide-y divide-gray-100 rounded-lg shadow w-36 md:w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        <ul
+                          className="py-2 text-sm text-gray-700 dark:text-gray-200"
+                          aria-labelledby="dropdownUserAvatarButton"
+                        >
+                          <li>
+                            <Link
+                              to={"/login"}
+                              onClick={() => setIsOpenUser(!isOpenUser)}
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            >
+                              Login
+                            </Link>
+                          </li>
 
-                          <ul
-                            className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                            aria-labelledby="dropdownUserAvatarButton"
-                          >
-                            
-                                <li>
-                                  <Link
-                                    to={"/login"}
-                                    onClick={() => setIsOpenUser(!isOpenUser)}
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                  >
-                                     Login
-                                  </Link>
-                                </li>
-
-                                <li>
-                                  <Link
-
-                                    to={"/signup"}
-                                    onClick={() => setIsOpenUser(!isOpenUser)}
-                                    className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                  >
-                                     Sign Up
-                                  </Link>
-                                </li>
-                              
-
-                            
-                          </ul>
-                        </div>
+                          <li>
+                            <Link
+                              to={"/signup"}
+                              onClick={() => setIsOpenUser(!isOpenUser)}
+                              className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Sign Up
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
                     )}
-
-
-
                   </div>
                 )}
               </div>
             </div>
-            
           </div>
         </div>
 
