@@ -9,7 +9,7 @@ import { BarChart } from "../../../components/admin/Charts";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import api from "../../../api"
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 // const userImg ="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
 

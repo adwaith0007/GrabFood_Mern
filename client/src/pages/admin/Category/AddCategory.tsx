@@ -336,11 +336,11 @@ const AddCategory = () => {
         <section>
           {selectedImage && (
             <div className="form-group">
-              <div className="relative">
+              <div className="relative h-auto ">
                 <img
                   src={URL.createObjectURL(selectedImage)}
                   alt="Preview"
-                  className="w-full h-32 object-cover rounded-md"
+                  className="w-full h-[300px] object-cover rounded-md"
                 />
                 <button
                   type="button"
@@ -400,7 +400,7 @@ const AddCategory = () => {
           <ImageCropComponent
             onClose={() => setImageCropModalVisible(false)}
             handleImageChange={handleImageChange}
-            aspectRatio={5 / 4}
+            aspectRatio={1/1}
             maxImage={1}
           />
         </div>

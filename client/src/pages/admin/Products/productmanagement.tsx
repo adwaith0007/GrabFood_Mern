@@ -223,9 +223,28 @@ const ProductManagement = () => {
         <section>
           <strong>ID - {productDetails?._id}</strong>
           {productDetails?.productImage && productDetails.productImage.length > 0 && (
-            <div className="w-full form-group">
+
+<div className="w-full form-group">
+
+
+{productDetails.productImage.length > 0 && (
+  <div className="relative">
+    <img
+    src={`${server}/${productDetails.productImage[0]}`}
+      
+      alt="Preview 0"
+      className="w-full  object-cover rounded-md"
+    />
+   
+  </div>
+)}
+
+            
               <div className="w-full grid grid-cols-3 border-2 rounded-xl shadow p-3 gap-4 mt-1">
                 {productDetails.productImage.map((image, index) => (
+
+                  
+
                   <div key={index} className="relative">
                     <img
                       src={`${server}/${image}`}
@@ -352,7 +371,7 @@ const ProductManagement = () => {
                 )}
               </div>
 
-              {addOfferBox && productDetails?.discountPrice && (
+              {addOfferBox &&  (
                 <div>
                   <input
                     onChange={(e) => setOffer(parseInt(e.target.value, 10))}

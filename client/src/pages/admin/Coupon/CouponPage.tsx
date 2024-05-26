@@ -9,7 +9,7 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 
 import expired from "../../../assets/expired.png";
 
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 // import expired from "../../../assets/expired_black.png";
 const CouponPage = () => {

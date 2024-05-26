@@ -10,7 +10,7 @@ import { userExist } from "../../redux/reducer/useReducer";
 import Cookie from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { registerUserStore } from '../../redux/reducer/useReducer';
-import log from '../../../logger';
+import {log} from '../../../logger';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();

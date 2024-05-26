@@ -8,7 +8,7 @@ import {  useSelector } from "react-redux";
 import { UserReducerInitialState } from "../types/reducer-types";
 import toast from "react-hot-toast";
 
-import log from '../../logger';
+import {log} from '../../logger';
 
 
 const ProductDetailsPage = () => {

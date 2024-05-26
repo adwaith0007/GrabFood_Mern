@@ -7,7 +7,7 @@ import { FaTrash } from "react-icons/fa";
 // import { Link } from "react-router-dom";
 // import { OrderItem } from "../../../models/types";
 import { useNavigate } from "react-router-dom";
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 const server = import.meta.env.VITE_SERVER;
 import api from "../../../api";

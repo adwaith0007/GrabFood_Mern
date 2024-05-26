@@ -7,9 +7,9 @@ import PaymentPage from "../pages/userPages/cart/PaymentPage";
 import MyOrderPage from "../pages/userPages/userDashbord/MyOrderPage";
 import OrderProductPage from "../pages/userPages/userDashbord/management/OrderProductPage";
 
-import MenuPage from "../pages/userPages/MenuPage";
-import UserLayout from "../components/Layout/UserLayout";
 
+import UserLayout from "../components/Layout/UserLayout";
+const MenuPage = lazy(() => import("../pages/userPages/MenuPage"));
 const CartPage = lazy(() => import("../pages/userPages/cart/CartPage"));
 const CheckoutPage = lazy(() => import("../pages/userPages/cart/CheckoutPage"));
 const ProductDetailsPage = lazy(() => import("../components/ProductDetailsPage"));

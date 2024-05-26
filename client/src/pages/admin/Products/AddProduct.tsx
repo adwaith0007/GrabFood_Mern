@@ -8,7 +8,7 @@ import ImageCropComponent from "../../../components/admin/ImageCropComponent";
 import Lottie from "react-lottie";
 import addProductLottie from "../../../assets/lottie/addProduct.json";
 
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 const AddProduct = () => {
   const [product, setProduct] = useState({

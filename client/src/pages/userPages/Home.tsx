@@ -41,7 +41,10 @@ const Home = () => {
         setCartItems(response.data.cart);
       } catch (error) {
         console.error("Error fetching cart items:", error);
-        toast.error(error.response?.data?.message || "An error occurred");
+        if(user.role=="user"){
+
+          toast.error(error.response?.data?.message || "An error occurred");
+        }
         if (error.response?.data?.message === "User is blocked") {
           Cookie.remove("token");
           dispatch(userNotExist());

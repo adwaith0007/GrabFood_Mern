@@ -10,7 +10,7 @@ import { ReactElement } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Column } from 'react-table';
 import TableHOC from '../../../components/admin/TableHOC';
-import log from '../../../../logger';
+import { log } from '../../../../logger';
 // import { useSelector } from 'react-redux';
 // import { UserReducerInitialState } from '../../../types/reducer-types';
 

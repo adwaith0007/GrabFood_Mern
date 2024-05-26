@@ -9,7 +9,7 @@ import toast from "react-hot-toast"; // Add this line
 import axios from "axios";
 import logo from "../../../assets/logo/logo-grabfood.png";
 import { useNavigate } from "react-router-dom";
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 import api from "../../../api";
 // import OrderSuccess from "./OrderSuccess";

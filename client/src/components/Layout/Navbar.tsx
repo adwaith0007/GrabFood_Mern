@@ -52,7 +52,7 @@ const selectUniqueItemCount = (state) => state.cart.items.length;
 const Navbar = ({ user }: PropsType) => {
   const uniqueItemCount = useSelector(selectUniqueItemCount);
 
-  console.log("uniqueItemCount:", uniqueItemCount);
+ 
 
   // const [cartItems, setCartItems] = useState([]);
 
@@ -72,7 +72,7 @@ const Navbar = ({ user }: PropsType) => {
 
   const dispatch = useDispatch();
 
-  console.log("user:", user);
+  
 
   // useEffect(() => {
   //   const fetchCartItems = async () => {
@@ -112,7 +112,7 @@ const Navbar = ({ user }: PropsType) => {
 
   const toggleDropdown = () => {
     setIsOpenUser(!isOpenUser);
-    console.log("isOpenUser:", isOpenUser);
+    
   };
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -373,7 +373,7 @@ const Navbar = ({ user }: PropsType) => {
           <nav>
             <ul className="flex flex-col p-4 text-gray-800">
               <Link
-                to={"/"}
+                to={"/home"}
                 onClick={() => setNav(!nav)}
                 className="text-xl py-4 flex"
               >

@@ -229,7 +229,7 @@ const CategoryManagement = () => {
           <ImageCropComponent
             onClose={() => setImageCropModalVisible(false)}
             handleImageChange={handleImageChange}
-            aspectRatio={5 / 4}
+            aspectRatio={1/1}
             maxImage={1}
           />
         </div>

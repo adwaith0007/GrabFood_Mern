@@ -31,7 +31,8 @@ const CategoryCards = ({
         <button onClick={handleClick} >
 
         <div className='w-[200px] h-[192px]  rounded-[100%] flex justify-center overflow-hidden shadow-md' >
-            <img className='object-cover cursor-pointer ' src={imageUrl} alt='' ></img>
+            {/* <img className='object-cover cursor-pointer ' src={imageUrl} alt='' ></img> */}
+            <img className='object-fit object-cover w-full h-full rounded-[100%] cursor-pointer' src={imageUrl} alt='' />
         </div>
         <h3 className='font-bold' >{name}</h3>
 

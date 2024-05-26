@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { userNotExist } from "../../../redux/reducer/useReducer";
 
 import api from "../../../api";
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 // const server = import.meta.env.VITE_SERVER;
 
 const CartPage = () => {

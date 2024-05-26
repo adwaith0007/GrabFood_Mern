@@ -12,7 +12,7 @@ import { registerUser } from "../../helper/helper";
 import { useDispatch } from "react-redux";
 
 import { registerUserStore } from "../../redux/reducer/useReducer";
-import log from "../../../logger";
+import {log} from "../../../logger";
 
 // import { setUser } from './../../redux/userSlice';
 

@@ -219,6 +219,9 @@ import { userExist, userNotExist } from "./redux/reducer/useReducer";
 import { getUser } from "./redux/api/userAPI";
 import { UserReducerInitialState } from "./types/reducer-types";
 import ProtectedRoute from "./Routes/protected-route";
+// import { Navigate } from 'react-router-dom';
+
+import { log } from '../logger';
 
 const ResetPasswordOtp = lazy(
   () => import("./pages/userPages/ResetPasswordOtp")
@@ -244,34 +247,35 @@ function App() {
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
 
-  console.log("this is the user:", user);
+ 
 
+  
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     const token = Cookies.get("token");
-
+    
     if (token) {
       const user = jwtDecode(token);
-
-      console.log(user);
-
+      
+      log.info("Info message: this is the user:", user);
+     
       // setRole(user.role)
 
-      console.log("Logged In");
+     
       dispatch(userExist(jwtDecode(token)));
 
       // i have to fix this
     } else {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          console.log(user);
+          
           const data = await getUser(user.uid);
-          console.log("Logged In");
+          
           dispatch(userExist(data.user));
         } else {
           dispatch(userNotExist());
-          console.log(" Not Logged In");
+          log.error(" Not Logged In");
         }
       });
     }
@@ -283,6 +287,7 @@ function App() {
       <Navbar user={user} />
       <Suspense fallback={<Loader />}>
         <Routes>
+        <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/otp" element={<Otp />} />

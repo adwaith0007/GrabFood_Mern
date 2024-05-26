@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { FaTrash } from "react-icons/fa";
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 // import { OrderItem } from "../../../models/types";
 

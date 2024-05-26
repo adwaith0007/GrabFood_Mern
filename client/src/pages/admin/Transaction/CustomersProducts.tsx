@@ -9,7 +9,7 @@ import TableHOC from '../../../components/admin/TableHOC';
 import DeletePopeUp from '../../../components/DeletePopeUp';
 // import UserSidebar from '../../../components/user/UserSidebar';
 
-import log from '../../../../logger';
+import {log} from '../../../../logger';
 
 import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
