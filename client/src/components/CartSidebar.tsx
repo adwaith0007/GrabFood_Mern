@@ -8,6 +8,8 @@ import PaymentAddressInputPopup from "../components/PaymentAddressInputPopup";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../types/reducer-types";
 
+import log from '../../logger';
+
 
 
 const CartItem = ({ item, onRemove, onIncrease, onDecrease }) => {
@@ -72,13 +74,13 @@ const CartSidebar = ({ cartItems, closeCart, onRemove, onIncrease, onDecrease,  
   
 
   useEffect(() => {
-    console.log('effect');
+    
     
     // Fetch cart items when the component mounts
     axios.get(`http://localhost:5000/api/cart/${user_id}`) // Replace with actual userId
       .then((response) => {
         // setCartItems(response.data);
-        console.log(`data: ${response.data}`);
+        log.debug(`data: ${response.data}`);
         
       })
       .catch((error) => {

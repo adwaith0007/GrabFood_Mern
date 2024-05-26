@@ -1,5 +1,5 @@
 import  { useEffect, useState } from "react";
-import AdminSidebar from "../../../components/admin/AdminSidebar";
+
 import toast from "react-hot-toast";
 import api from "../../../api";
 
@@ -9,20 +9,22 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 
 import expired from "../../../assets/expired.png";
 
+import log from '../../../../logger';
+
 // import expired from "../../../assets/expired_black.png";
 const CouponPage = () => {
   const [couponData, setCouponData] = useState([]);
 
   const currentDate = new Date();
 
-  console.log("currentDate:",currentDate);
+  log.debug("currentDate:",currentDate);
   
 
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
         const response = await api.get("/coupon/admin/get");
-        console.log(response.data.data);
+        log.debug( "fetchCoupons:", response.data.data);
         setCouponData(response.data.data);
       } catch (error) {
         console.error(error);
@@ -34,8 +36,8 @@ const CouponPage = () => {
 
   const copyCouponCode = (code) => {
     navigator.clipboard.writeText(code);
-    // You can add additional UI feedback here if needed
-    console.log("Coupon code copied to clipboard:", code);
+   
+   
   };
 
   const [copiedIndex, setCopiedIndex] = useState(-1);
@@ -46,7 +48,7 @@ const CouponPage = () => {
     );
     if (confirmDeletion) {
       try {
-        console.log(couponId);
+        log.debug( "deleteHandler:", couponId);
 
         const response = await api.delete(`/coupon/delete/${couponId}`);
 
@@ -56,12 +58,12 @@ const CouponPage = () => {
           setCouponData(response.data.data);
         } else {
           console.error("Error deleting Coupon");
-          // setError("Failed to delete Coupon");
+          
           toast.error("Failed to delete Coupon");
         }
       } catch (error) {
         console.error("Error deleting Coupon", error);
-        // setError("Failed to delete Coupon");
+       
         toast.error("Failed to delete Coupon");
       }
     }
@@ -137,7 +139,7 @@ const CouponPage = () => {
               </div>
             ))}
 
-          {/* <CouponCard /> */}
+          
         </div>
       </main>
     </div>

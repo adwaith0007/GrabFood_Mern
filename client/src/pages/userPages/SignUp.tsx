@@ -1,74 +1,59 @@
-
-
-// import axios from "axios";
-
-
-import '../../index.css'
+import "../../index.css";
 import foodimg from "../../assets/login_food.png";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
 
-import { registerValidation } from '../../helper/validate'
-    
+import { registerValidation } from "../../helper/validate";
+
 import { registerUser } from "../../helper/helper";
 
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
-
-import { registerUserStore } from '../../redux/reducer/useReducer';
+import { registerUserStore } from "../../redux/reducer/useReducer";
+import log from "../../../logger";
 
 // import { setUser } from './../../redux/userSlice';
 
-
-
 const SignUp = () => {
-
-  
   const dispatch = useDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-
-    const formik = useFormik({
-        initialValues : {
-            fname:"",
-            lname:"",
-            username:"",
-            email:"",
-            password:"",
-            phone:"",
-            userid:"",
-        },
-        validate: registerValidation,
-        validateOnBlur:false,
-        validateOnChange:false,
-        onSubmit: async values => {
-          console.log(values);
-          const registerPromise=registerUser(values);
-          toast.promise(registerPromise,{
-            loading:"Creating...",
-            success:<b>Register Successfully...!</b>,
-            error:<b>Could not Register.</b>
-          })
-          dispatch(registerUserStore(values.username));
-          registerPromise.then(function(){navigate('/otp')})
-          
-        }
-      })
-
-
+  const formik = useFormik({
+    initialValues: {
+      fname: "",
+      lname: "",
+      username: "",
+      email: "",
+      password: "",
+      phone: "",
+      userid: "",
+    },
+    validate: registerValidation,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: async (values) => {
+      log.debug("signUp:", values);
+      const registerPromise = registerUser(values);
+      toast.promise(registerPromise, {
+        loading: "Creating...",
+        success: <b>Register Successfully...!</b>,
+        error: <b>Could not Register.</b>,
+      });
+      dispatch(registerUserStore(values.username));
+      registerPromise.then(function () {
+        navigate("/otp");
+      });
+    },
+  });
 
   return (
     <div className="bg-[#e5d9ca] h-[100vh]    w-full ">
-     
-
-      {/* <Toaster position="top-center" reverseOrder={false} ></Toaster> */}
+      
       <div className="container custom-height flex justify-center items-center mx-auto  ">
-      <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8   " >
-          
-          
+        <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8   ">
           <div className="  hidden xl:flex w-1/2  ">
             <img
               className=" h-[600px]  rounded-l-[10px]  2xl:h-[600px] object-cover w-full  "
@@ -83,9 +68,11 @@ const SignUp = () => {
                 <h1>Register</h1>
               </div>
 
-              <form onSubmit={formik.handleSubmit}  className="max-w-sm mx-auto mt-5 ">
-
-              <div className="grid md:grid-cols-2 md:gap-6">
+              <form
+                onSubmit={formik.handleSubmit}
+                className="max-w-sm mx-auto mt-5 "
+              >
+                <div className="grid md:grid-cols-2 md:gap-6">
                   <div className="mb-2">
                     <label
                       htmlFor="fname"
@@ -122,7 +109,6 @@ const SignUp = () => {
                     />
                   </div>
                 </div>
-                
 
                 <div className="mb-3">
                   <label
@@ -132,12 +118,11 @@ const SignUp = () => {
                     User name
                   </label>
                   <input
-                     type="text"
-                     id="username"
-                     name="username"
-                     onChange={formik.handleChange}
-                     value={formik.values.username}
-                    
+                    type="text"
+                    id="username"
+                    name="username"
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     // required
                   />
@@ -156,7 +141,6 @@ const SignUp = () => {
                     name="email"
                     onChange={formik.handleChange}
                     value={formik.values.email}
-                   
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     placeholder="name@gmail.com"
                     // required
@@ -176,13 +160,10 @@ const SignUp = () => {
                     name="password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
-                   
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     required
                   />
                 </div>
-
-                
 
                 <div className="mb-5">
                   <label
@@ -223,8 +204,6 @@ const SignUp = () => {
                     >
                       Login
                     </Link>
-
-                   
                   </p>
                 </div>
               </form>
@@ -237,5 +216,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-

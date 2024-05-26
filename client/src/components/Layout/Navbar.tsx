@@ -41,7 +41,7 @@ import Cookie from "js-cookie";
 // import { useSelector } from 'react-redux';
 import defimg from "../../assets/profile.png";
 
-import api from "../../api";
+
 
 interface PropsType {
   user: User | null;
@@ -54,7 +54,7 @@ const Navbar = ({ user }: PropsType) => {
 
   console.log("uniqueItemCount:", uniqueItemCount);
 
-  const [cartItems, setCartItems] = useState([]);
+  // const [cartItems, setCartItems] = useState([]);
 
   const [nav, setNav] = useState<boolean>(false);
 
@@ -74,21 +74,21 @@ const Navbar = ({ user }: PropsType) => {
 
   console.log("user:", user);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        if (user && user._id) {
-          const response = await api.get(`/cart/${user._id}`);
-          console.log("Cart Items:", response.data.cart);
-          setCartItems(response.data.cart);
-        }
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCartItems = async () => {
+  //     try {
+  //       if (user && user._id) {
+  //         const response = await api.get(`/cart/${user._id}`);
+  //         console.log("Cart Items:", response.data.cart);
+  //         // setCartItems(response.data.cart);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching cart items:", error);
+  //     }
+  //   };
 
-    fetchCartItems();
-  }, [user]);
+  //   fetchCartItems();
+  // }, [user]);
 
   const handleSearch = (e) => {
     e.preventDefault();

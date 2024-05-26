@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { FaTrash } from "react-icons/fa";
-import AdminSidebar from "../../../components/admin/AdminSidebar";
+import log from '../../../../logger';
 
 // import { OrderItem } from "../../../models/types";
 
@@ -19,7 +19,7 @@ const TransactionManagement = () => {
         const response = await api.get(`/orders/${orderId}/${productId}`);
         const orderDetails = response.data;
         setUserOrderDetails(orderDetails);
-        console.log(orderDetails);
+        log.debug( 'Order details:', orderDetails);
       } catch (error) {
         console.error('Error fetching order details:', error.response ? error.response.data : error.message);
       }

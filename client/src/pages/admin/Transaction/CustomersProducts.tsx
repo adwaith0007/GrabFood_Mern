@@ -8,7 +8,8 @@ import TableHOC from '../../../components/admin/TableHOC';
 // import { UserReducerInitialState } from '../../../types/reducer-types';
 import DeletePopeUp from '../../../components/DeletePopeUp';
 // import UserSidebar from '../../../components/user/UserSidebar';
-import AdminSidebar from '../../../components/admin/AdminSidebar';
+
+import log from '../../../../logger';
 
 import api from '../../../api';
 const server = import.meta.env.VITE_SERVER;
@@ -122,7 +123,7 @@ const CustomersProducts = () => {
         `/order/cancel/${selectedOrderId}/product/${selectedProductId}`
       );
       if (response.data.success) {
-        console.log('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
+        log.debug('Product canceled:', selectedProductId, 'from order:', selectedOrderId);
         fetchUserOrders();
       } else {
         console.error('Failed to cancel product:', response.data.error);
@@ -143,7 +144,7 @@ const CustomersProducts = () => {
   useEffect(() => {
     const singleOrder = userOrders.find((order) => order._id === orderId);
 
-    console.log(singleOrder);
+    log.debug(singleOrder);
     
 
     if (singleOrder) {
@@ -184,9 +185,9 @@ const CustomersProducts = () => {
   const Table = TableHOC<DataType>(columns, rows, 'dashboard-product-box', 'Orders', rows.length > 6)();
 
   return (
-    <div className="admin-container">
+    <div className="">
       
-      <AdminSidebar />
+      {/* <AdminSidebar /> */}
       <main>{Table}</main>
       {productDeletePopUp && (
         <DeletePopeUp

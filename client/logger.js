@@ -1,6 +1,6 @@
 import log from 'loglevel';
 
 
-log.setLevel(process.env.REACT_APP_LOG_LEVEL || 'info');
+log.setLevel(import.meta.env.DEV ? 'debug' : 'info');
 
 export default log;

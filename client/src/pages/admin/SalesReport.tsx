@@ -107,7 +107,7 @@ const SalesReport = () => {
           }
         });
     } catch (error) {
-      console.log("error while filtering", error);
+      console.error("error while filtering", error);
     }
   }
 

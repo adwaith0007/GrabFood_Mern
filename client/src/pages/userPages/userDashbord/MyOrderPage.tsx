@@ -1473,16 +1473,31 @@ interface OrderData {
   createdAt: string;
 }
 
+// interface DataType {
+//   orderId: string;
+//   no: number;
+//   order: string;
+//   totalPrice: number;
+//   status: string;
+//   orderDetails: ReactElement;
+//   manageAction?: ReactElement;
+//   action: ReactElement;
+// }
+
+
+
 interface DataType {
-  orderId: string;
-  no: number;
-  order: string;
-  totalPrice: number;
-  status: string;
+  orderId?: string;
+  no: number | JSX.Element; 
+  order: string | JSX.Element; 
+  totalPrice: number | JSX.Element; 
+  status: string | JSX.Element; 
   orderDetails: ReactElement;
-  manageAction: ReactElement;
+  manageAction?: ReactElement;
   action: ReactElement;
 }
+
+
 
 const columns: Column<DataType>[] = [
   { Header: <div className="flex justify-center ">S.NO</div>, accessor: "no" },

@@ -4,6 +4,8 @@ import AddressInput from "./AddressInput";
 import CartItem from "./CartItem";
 import { AiOutlineClose } from "react-icons/ai";
 
+import log from '../../logger';
+
 
 
 // import Cookies from 'js-cookie'
@@ -16,7 +18,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
 
   
 
-  console.log(userId);
+ 
 
   
 
@@ -39,13 +41,7 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
   }, [userId]);
 
 
-  console.log(addresses);
 
-  console.log("sdhj");
-
-  console.log(selectedAddress);
-
-  console.log(selectedPaymentMethod);
   
   
   
@@ -60,8 +56,8 @@ const PaymentAddressInputPopup = ({ cartItems, userId, onClose }) => {
 
   const handleProceedToPayment = () => {
     // Implement the logic to proceed to payment with the selected address and payment method
-    console.log("Proceeding to payment with address:", selectedAddress);
-    console.log("Selected Payment Method:", selectedPaymentMethod);
+    log.debug("Proceeding to payment with address:", selectedAddress);
+    log.debug("Selected Payment Method:", selectedPaymentMethod);
     onClose(); // Close the popup after proceeding to payment
   };
 

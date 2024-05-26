@@ -7,7 +7,7 @@ import TableHOC from '../../../../components/admin/TableHOC';
 import { useSelector } from 'react-redux';
 import { UserReducerInitialState } from '../../../../types/reducer-types';
 import DeletePopeUp from '../../../../components/DeletePopeUp';
-import UserSidebar from '../../../../components/user/UserSidebar';
+
 
 import api from '../../../../api';
 const server = import.meta.env.VITE_SERVER;

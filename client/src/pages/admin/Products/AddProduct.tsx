@@ -8,6 +8,8 @@ import ImageCropComponent from "../../../components/admin/ImageCropComponent";
 import Lottie from "react-lottie";
 import addProductLottie from "../../../assets/lottie/addProduct.json";
 
+import log from '../../../../logger';
+
 const AddProduct = () => {
   const [product, setProduct] = useState({
     name: "",
@@ -93,9 +95,7 @@ const AddProduct = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(product.images);
-
-    console.log(product.images.forEach((file) => file));
+   
 
     try {
       const formData = new FormData();
@@ -109,7 +109,7 @@ const AddProduct = () => {
 
       product.images.forEach((file) => {
         formData.append(`images`, file);
-        console.log("Appended file:", file);
+        log.debug("Appended file:", file);
       });
 
       // product.images.forEach((file) => {
@@ -118,7 +118,7 @@ const AddProduct = () => {
       // });
 
       // Log FormData object just before the request is sent
-      console.log("FormData:", formData);
+      log.debug("FormData:", formData);
 
       const response = await api.post(`/product/add`, formData);
 

@@ -218,7 +218,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExist, userNotExist } from "./redux/reducer/useReducer";
 import { getUser } from "./redux/api/userAPI";
 import { UserReducerInitialState } from "./types/reducer-types";
-import ProtectedRoute from "./components/protected-route";
+import ProtectedRoute from "./Routes/protected-route";
 
 const ResetPasswordOtp = lazy(
   () => import("./pages/userPages/ResetPasswordOtp")
@@ -231,8 +231,8 @@ const Home = lazy(() => import("./pages/userPages/Home"));
 const Otp = lazy(() => import("./pages/userPages/Otp"));
 const SignUp = lazy(() => import("./pages/userPages/SignUp"));
 
-const LoginPage = lazy(() => import("./pages/adminPages/LoginPage"));
-const SignupPage = lazy(() => import("./pages/adminPages/SignupPage"));
+const LoginPage = lazy(() => import("./pages/adminLogin/LoginPage"));
+const SignupPage = lazy(() => import("./pages/adminLogin/SignupPage"));
 
 import Cookies from "js-cookie";
 

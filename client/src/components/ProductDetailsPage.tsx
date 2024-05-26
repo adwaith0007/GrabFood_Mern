@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import api from "../api"
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { UserReducerInitialState } from "../types/reducer-types";
 import toast from "react-hot-toast";
+
+import log from '../../logger';
 
 
 const ProductDetailsPage = () => {
@@ -17,7 +19,7 @@ const ProductDetailsPage = () => {
 
   const userId=user._id
 
-  const dispatch = useDispatch();
+  
 
    const [cartItems, setCartItems] = useState([]);
 
@@ -37,11 +39,11 @@ const ProductDetailsPage = () => {
       })
       .catch((error) => {
         // Handle error
-        console.log(error)
+        console.error(error)
       });
   }, [productId]);
 
-  console.log("productDetails:", productDetails)
+  log.debug("productDetails:", productDetails)
 
   const handleToggleFavorite = async () => {
     
@@ -87,7 +89,7 @@ const ProductDetailsPage = () => {
   const addToCart = (product) => {
     api
       .post(`/cart/add/${userId}`, { product, quantity: 1 })
-      .then((response) => console.log("Product added to cart:", response.data))
+      .then((response) => log.debug("Product added to cart:", response.data))
       .catch((error) => console.error("Error adding to cart:", error));
 
       const existingItem = cartItems.find(

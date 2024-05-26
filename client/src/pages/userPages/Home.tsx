@@ -21,10 +21,7 @@ import api from "../../api";
 import { useSelector } from "react-redux";
 import { UserReducerInitialState } from "../../types/reducer-types";
 
-
-
 const Home = () => {
-
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
@@ -32,14 +29,10 @@ const Home = () => {
   const userId = user?._id;
   const dispatch = useDispatch();
 
- const navigate = useNavigate();
-
-
+  const navigate = useNavigate();
 
   const [cartItems, setCartItems] = useState([]);
   // const [loading, setLoading] = useState(true);
-
-
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -48,9 +41,9 @@ const Home = () => {
         setCartItems(response.data.cart);
       } catch (error) {
         console.error("Error fetching cart items:", error);
-        toast.error(error.response?.data?.message || 'An error occurred');
+        toast.error(error.response?.data?.message || "An error occurred");
         if (error.response?.data?.message === "User is blocked") {
-          Cookie.remove('token');
+          Cookie.remove("token");
           dispatch(userNotExist());
           navigate("/login");
         }
@@ -66,13 +59,15 @@ const Home = () => {
   useEffect(() => {
     if (cartItems?.length > 0) {
       cartItems.forEach((item) => {
-        dispatch(addItemToCart({
-          name: item.name,
-          productId: item.productId,
-          price: item.price,
-          // imageUrl: `${server}/${item.productImage[0].replace(/ /g, "%20")}`,
-          quantity: item.quantity,
-        }));
+        dispatch(
+          addItemToCart({
+            name: item.name,
+            productId: item.productId,
+            price: item.price,
+            // imageUrl: `${server}/${item.productImage[0].replace(/ /g, "%20")}`,
+            quantity: item.quantity,
+          })
+        );
       });
     }
   }, [cartItems, dispatch]);
@@ -188,39 +183,50 @@ const Home = () => {
           </div>
         </div>
 
-       
+        <div className="  max-w-screen-xl md:mx-auto px-4 py-10 xl:px-0 flex justify-center items-center ">
+          <div className="flex flex-col md:flex-row w-full  mt-3 md:gap-[30px] lg:gap-[100px] ">
+            <div className="hidden md:block">
+              <img
+                className=" sm:h-auto md:h-auto xl:h-[500px] w-full object-cover "
+                src={s3}
+                alt="s3"
+              ></img>
+            </div>
 
-<div className="  max-w-screen-xl md:mx-auto px-4 py-10 xl:px-0 flex justify-center items-center ">
-  <div className="flex flex-col md:flex-row w-full  mt-3 md:gap-[30px] lg:gap-[100px] ">
-    <div className="hidden md:block">
-      <img className=" sm:h-auto md:h-auto xl:h-[500px] w-full object-cover " src={s3} alt="s3"></img>
-    </div>
+            <div className="mt-5 flex flex-col items-center md:items-start ">
+              <div className=" text-[20px] md:text-[40px] text-center md:text-left font-bold ">
+                <h3>We Deliver Anywhere</h3>
+              </div>
 
-    <div className="mt-5 flex flex-col items-center md:items-start ">
-      <div className=" text-[20px] md:text-[40px] text-center md:text-left font-bold ">
-        <h3>We Deliver Anywhere</h3>
-      </div>
+              <div className="block md:hidden mt-4">
+                <img
+                  className="h-[300px]  w-full object-cover"
+                  src={s3}
+                  alt="s3"
+                ></img>
+              </div>
 
-      <div className="block md:hidden mt-4">
-        <img className="h-[300px]  w-full object-cover" src={s3} alt="s3"></img>
-      </div>
+              <div className="w-full md:w-[450px] mt-5">
+                <p className="text-center md:text-left">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Vivamus in lorem augue. Cras facilisis lacus nibh, volutpat
+                  varius neque imperdiet sit amet.
+                </p>
+              </div>
 
-      <div className="w-full md:w-[450px] mt-5">
-        <p className="text-center md:text-left">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in lorem augue. Cras facilisis lacus nibh, volutpat varius neque imperdiet sit amet.
-        </p>
-      </div>
-
-      <div className="flex gap-5 mt-5">
-        <div>
-          <Link to={"/menu"} className="border bg-[#ffb73a] font-medium px-6 py-2 rounded-[50px]">
-            Order Now
-          </Link>
+              <div className="flex gap-5 mt-5">
+                <div>
+                  <Link
+                    to={"/menu"}
+                    className="border bg-[#ffb73a] font-medium px-6 py-2 rounded-[50px]"
+                  >
+                    Order Now
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
         <div className="h-[100vh] hidden">
           <div className="text-[40px] font-bold ">

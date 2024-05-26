@@ -3,10 +3,11 @@ import {  useParams } from "react-router-dom";
 // import axios from "axios";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
-import AdminSidebar from "../../../components/admin/AdminSidebar";
+// import AdminSidebar from "../../../components/admin/AdminSidebar";
 // import { Link } from "react-router-dom";
 // import { OrderItem } from "../../../models/types";
 import { useNavigate } from "react-router-dom";
+import log from '../../../../logger';
 
 const server = import.meta.env.VITE_SERVER;
 import api from "../../../api";
@@ -22,7 +23,7 @@ const OrderManagement = () => {
         const response = await api.get(`/orders/${orderId}`);
         const orderDetails = response.data;
         setUserOrderDetails(orderDetails);
-        console.log(orderDetails);
+        log.debug(orderDetails);
       } catch (error) {
         console.error(
           "Error fetching order details:",
@@ -31,7 +32,7 @@ const OrderManagement = () => {
       }
     };
 
-    console.log("userOrderDetails",userOrderDetails);
+    log.debug("userOrderDetails",userOrderDetails);
 
     if (orderId) {
       fetchOrderDetails();
