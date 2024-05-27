@@ -23,13 +23,16 @@ const Login: React.FC = () => {
     });
 
     if (success) {
-      const { token } = data;
+      const { token,photo , email } = data;
       const userToken: any = jwtDecode(token);
       const user: any = {
         _id: userToken._id,
         name: userToken.name,
-        email: userToken.email,
-        photo: userToken.photo,
+        // email: userToken.email,
+        // photo: userToken.photo,
+        photo,
+        email,
+
         role: userToken.role,
         gender: userToken.gender,
         token,

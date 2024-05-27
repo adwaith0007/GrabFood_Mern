@@ -40,9 +40,9 @@ import { useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
 // import { useSelector } from 'react-redux';
 import defimg from "../../assets/profile.png";
-
-
-
+// import { UserReducerInitialState } from "../../types/reducer-types";
+import {updateUserPhoto} from "../../../src/redux/reducer/useReducer";
+import api from "../../../src/api";
 interface PropsType {
   user: User | null;
 }
@@ -52,9 +52,13 @@ const selectUniqueItemCount = (state) => state.cart.items.length;
 const Navbar = ({ user }: PropsType) => {
   const uniqueItemCount = useSelector(selectUniqueItemCount);
 
- 
+  
 
-  // const [cartItems, setCartItems] = useState([]);
+  const userId = user?._id;
+  const dispatch = useDispatch();
+
+  
+ 
 
   const [nav, setNav] = useState<boolean>(false);
 
@@ -68,27 +72,27 @@ const Navbar = ({ user }: PropsType) => {
 
   const server = import.meta.env.VITE_SERVER;
 
-  // const location = useLocation();
-
-  const dispatch = useDispatch();
-
   
 
-  // useEffect(() => {
-  //   const fetchCartItems = async () => {
-  //     try {
-  //       if (user && user._id) {
-  //         const response = await api.get(`/cart/${user._id}`);
-  //         console.log("Cart Items:", response.data.cart);
-  //         // setCartItems(response.data.cart);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching cart items:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      
+      try {
+        const response = await api.get(`/user/get/${userId}`);
+        if (response && response.data) {
+         
+          dispatch(updateUserPhoto(response.data.data.profilePicture));
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      
+      }
+    };
 
-  //   fetchCartItems();
-  // }, [user]);
+    fetchUserData();
+  }, [userId]);
+
+  
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -96,23 +100,22 @@ const Navbar = ({ user }: PropsType) => {
     navigate(`/menu?q=${searchQuery}`);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpenUser(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setIsOpenUser(false);
+  //     }
+  //   };
 
-    window.addEventListener("click", handleClickOutside);
+  //   window.addEventListener("click", handleClickOutside);
 
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, []);
 
   const toggleDropdown = () => {
     setIsOpenUser(!isOpenUser);
-    
   };
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -134,10 +137,15 @@ const Navbar = ({ user }: PropsType) => {
     }
   };
 
+  // const image =
+  //   typeof user?.photo === "string"
+  //     ? `${server}/${user.photo.replace(/ /g, "%20")}`
+  //     : ` ${userData?.photo} || ${defimg} `;
+
   const image =
     typeof user?.photo === "string"
       ? `${server}/${user.photo.replace(/ /g, "%20")}`
-      : `${defimg}`;
+      : defimg;
 
   return (
     <div className="h-[80px] w-full ">
@@ -401,13 +409,11 @@ const Navbar = ({ user }: PropsType) => {
                 My Wallet
               </Link>
 
-
               <Link to={"/user/favourites"} className="text-xl py-4 flex">
                 <MdFavorite size={25} className="mr-4" />
                 Favourites
               </Link>
 
-              
               <Link to={"/user/orders"} className="text-xl py-4 flex">
                 <TbTruckDelivery size={25} className="mr-4" />
                 My Orders

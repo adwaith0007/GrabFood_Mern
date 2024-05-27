@@ -80,7 +80,7 @@ exports.login = async (req, res) => {
           _id: user._id,
           name: user.username,
           email: user.email,
-          photo:user.profilePicture,
+          
           role:"user",
           gender:"male",
 
@@ -105,6 +105,8 @@ exports.login = async (req, res) => {
       return res.status(200).send({
         message: "Login Successful...!",
         username: user.username,
+        photo:user.profilePicture,
+        email: user.email,
         token,
       });
 

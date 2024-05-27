@@ -90,14 +90,10 @@
 //     if (field === "profileImage") {
 //       setUserData({ ...userData, [field]: value[0] });
 
-    
-
 //     } else {
 //       setUserData({ ...userData, [field]: value });
 //     }
 //   };
-
- 
 
 //   const image =
 //     typeof userData.profileImage === "string"
@@ -135,7 +131,7 @@
 //             )}
 //             <div>
 //               <div className="font-semibold text-lg">{user.name}</div>
-              
+
 //             </div>
 //           </div>
 
@@ -171,7 +167,7 @@
 //                 <span>{userData.phoneNumber}</span>
 //               )}
 //             </div>
-           
+
 //           </div>
 
 //           <div className="flex items-center justify-between mt-10 ">
@@ -210,10 +206,6 @@
 // };
 
 // export default UserProfile;
-
-
-
-
 
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
@@ -426,9 +418,6 @@
 
 // export default UserProfile;
 
-
-
-
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
 // import { useSelector } from "react-redux";
@@ -440,8 +429,6 @@
 // import { useNavigate } from "react-router-dom";
 // import { userNotExist } from "../../../redux/reducer/useReducer";
 // import ImageCropComponent from "../../../components/admin/ImageCropComponent";
-
-
 
 // import UserSidebar from "../../../components/user/UserSidebar";
 
@@ -457,10 +444,8 @@
 //     (state: { userReducer: UserReducerInitialState }) => state.userReducer
 //   );
 
-  
-  
 //   const userId = user?._id;
-  
+
 //   const navigate = useNavigate();
 //   const dispatch = useDispatch();
 
@@ -502,7 +487,6 @@
 //         dispatch(userNotExist())
 //         navigate("/login");
 
-
 //     }
 //       }
 //     };
@@ -538,8 +522,6 @@
 //           profileImage: response.data.data.profilePicture,
 //         }));
 
-
-        
 //       } else {
 //         console.error("Error updating user profile");
 //       }
@@ -592,8 +574,6 @@
 //         <div className="bg-gray-500/80 fixed w-full h-screen z-20 top-0 left-0"></div>
 //       )}
 
-    
-      
 //       <div className="container flex flex-col items-center h-full  mx-auto  p-6 bg-white rounded-md shadow-md">
 //         <div className=" flex flex-col justify-center items-center border-2 rounded-[10px] shadow w-[350px] h-[450px] mt-5 ">
 //           <div className="flex flex-col items-center  ">
@@ -614,7 +594,7 @@
 //               //     onChange={(e) =>
 //               //       handleInputChange("profileImage", e.target.files)
 //               //     }
-                  
+
 //               //   />
 //               //   <span className="p-1  bg-blue-500 text-white rounded-full">
 //               //     Change Image
@@ -698,10 +678,9 @@
 //         </div>
 //       </div>
 
-
 //       {isImageCropModalVisible && (
 //                 <div className="">
-                  
+
 //                   <ImageCropComponent
 //                     onClose={() => setImageCropModalVisible(false)}
 //                     // handleSubmit={setImageCropModalVisible}
@@ -713,13 +692,11 @@
 //               )}
 
 //                   </div>
-    
+
 //   );
 // };
 
 // export default UserProfile;
-
-
 
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
@@ -739,7 +716,7 @@
 //   const { user } = useSelector(
 //     (state: { userReducer: UserReducerInitialState }) => state.userReducer
 //   );
-  
+
 //   const userId = user?._id;
 //   const navigate = useNavigate();
 //   const dispatch = useDispatch();
@@ -939,8 +916,6 @@
 
 // export default UserProfile;
 
-
-
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
 // import { useSelector, useDispatch } from "react-redux";
@@ -959,7 +934,7 @@
 //   const { user } = useSelector(
 //     (state: { userReducer: UserReducerInitialState }) => state.userReducer
 //   );
-  
+
 //   const userId = user?._id;
 //   const navigate = useNavigate();
 //   const dispatch = useDispatch();
@@ -1162,10 +1137,6 @@
 
 // export default UserProfile;
 
-
-
-
-
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
 // import { useSelector, useDispatch } from "react-redux";
@@ -1276,7 +1247,7 @@
 
 //   const handleImageChange = (croppedImageFile) => {
 //     console.log("croppedImageFile:", croppedImageFile);
-    
+
 //     setImageFile(croppedImageFile);
 //     setUserData((prevUserData) => ({
 //       ...prevUserData,
@@ -1387,9 +1358,6 @@
 // };
 
 // export default UserProfile;
-
-
-
 
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
@@ -1613,9 +1581,6 @@
 // };
 
 // export default UserProfile;
-
-
-
 
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
@@ -1860,9 +1825,6 @@
 // };
 
 // export default UserProfile;
-
-
-
 
 // import { useState, useEffect } from "react";
 // import { MdEdit, MdSave, MdCancel } from "react-icons/md";
@@ -2120,15 +2082,15 @@
 
 // export default UserProfile;
 
-
-
-
 import { useState, useEffect } from "react";
 import { MdEdit, MdSave, MdCancel } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import Cookie from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { userNotExist } from "../../../redux/reducer/useReducer";
+import {
+  updateUserPhoto,
+  userNotExist,
+} from "../../../redux/reducer/useReducer";
 import ImageCropComponent from "../../../components/admin/ImageCropComponent";
 import defimg from "../../../assets/profile.png";
 import api from "../../../api";
@@ -2179,7 +2141,7 @@ const UserProfile = () => {
         console.error("Error fetching user data:", error);
         toast.error(error.response.data.message);
         if (error.response.data.message === "User is blocked") {
-          Cookie.remove('token');
+          Cookie.remove("token");
           dispatch(userNotExist());
           navigate("/login");
         }
@@ -2238,6 +2200,16 @@ const UserProfile = () => {
           ...prevUserData,
           profileImage: response.data.data.profilePicture,
         }));
+        // const user: any = {
+        //   _id: userId,
+        //   name: userData?.name,
+        //   role: "user",
+        //   email: userData?.email,
+        //   photo: response.data.data.profilePicture,
+        // };
+        dispatch(updateUserPhoto(response.data.data.profilePicture));
+
+        // dispatch(userExist(user));
       } else {
         console.error("Error updating user profile");
       }
@@ -2267,7 +2239,7 @@ const UserProfile = () => {
 
   const image =
     typeof userData.profileImage === "string"
-      ? userData.profileImage.startsWith('blob:')
+      ? userData.profileImage.startsWith("blob:")
         ? userData.profileImage
         : `${server}/${userData.profileImage.replace(/ /g, "%20")}`
       : defimg;
@@ -2298,7 +2270,9 @@ const UserProfile = () => {
                 </div>
                 {isEditing && (
                   <button
-                    onClick={() => setImageCropModalVisible(!isImageCropModalVisible)}
+                    onClick={() =>
+                      setImageCropModalVisible(!isImageCropModalVisible)
+                    }
                     className="p-1 bg-blue-500 text-white rounded-full"
                   >
                     Change Image
@@ -2314,7 +2288,9 @@ const UserProfile = () => {
                     <input
                       type="email"
                       value={userData?.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       placeholder="Email"
                     />
@@ -2327,7 +2303,9 @@ const UserProfile = () => {
                     <input
                       type="tel"
                       value={userData?.phoneNumber}
-                      onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phoneNumber", e.target.value)
+                      }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       placeholder="Phone Number"
                     />

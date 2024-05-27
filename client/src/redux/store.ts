@@ -23,7 +23,7 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 // import { productAPI } from "./api/productAPI";
-import { userAPI } from "./api/userAPI";
+// import { userAPI } from "./api/userAPI";
 import { userReducer } from "../redux/reducer/useReducer"
 import  cartReducer  from "./reducer/cartReducer";
 // import { orderApi } from "./api/orderAPI";
@@ -33,7 +33,7 @@ export const server = import.meta.env.VITE_SERVER;
 
 export const store = configureStore({
   reducer: {
-    [userAPI.reducerPath]: userAPI.reducer,
+    // [userAPI.reducerPath]: userAPI.reducer,
     [userReducer.name]: userReducer.reducer,
     // [productAPI.reducerPath]: productAPI.reducer,
     // [orderApi.reducerPath]: orderApi.reducer,

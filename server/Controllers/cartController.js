@@ -338,12 +338,57 @@ exports.getCartItems = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const cartItems = {
+      
+    }
+
     return res.status(200).json({ cart: user.cart });
   } catch (error) {
     console.error("Error fetching cart items:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+
+
+// exports.getCartItems = async (req, res) => {
+//   const { userId } = req.params;
+
+//   console.log("getCartItems", userId )
+
+//   try {
+//     const user = await UserModel.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Fetch latest details for each product in the user's cart
+//     const updatedCart = await Promise.all(user.cart.map(async (item) => {
+//       const product = await prodModel.findById(item.productId);
+//       if (product) {
+//         // Update the price and images in the cart item
+//         return {
+//           ...item.toObject(),
+//           price: product.price,
+//           productImage: product.images,
+//         };
+//       } else {
+//         // If product not found, keep the cart item as it is
+//         return item;
+//       }
+//     }));
+
+//     // Update the user's cart with the latest details
+//     user.cart = updatedCart;
+//     await user.save();
+
+//     return res.status(200).json({ cart: updatedCart });
+//   } catch (error) {
+//     console.error("Error fetching cart items:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
 
 
 exports.deleteCartItems =  async (req, res) => {
