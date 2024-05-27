@@ -401,11 +401,13 @@ const Navbar = ({ user }: PropsType) => {
                 My Wallet
               </Link>
 
+
               <Link to={"/user/favourites"} className="text-xl py-4 flex">
                 <MdFavorite size={25} className="mr-4" />
                 Favourites
               </Link>
 
+              
               <Link to={"/user/orders"} className="text-xl py-4 flex">
                 <TbTruckDelivery size={25} className="mr-4" />
                 My Orders
