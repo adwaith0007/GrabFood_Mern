@@ -100,19 +100,19 @@ const Navbar = ({ user }: PropsType) => {
     navigate(`/menu?q=${searchQuery}`);
   };
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setIsOpenUser(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpenUser(false);
+      }
+    };
 
-  //   window.addEventListener("click", handleClickOutside);
+    window.addEventListener("click", handleClickOutside);
 
-  //   return () => {
-  //     window.removeEventListener("click", handleClickOutside);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const toggleDropdown = () => {
     setIsOpenUser(!isOpenUser);

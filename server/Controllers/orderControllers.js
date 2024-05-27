@@ -19,54 +19,124 @@ const instance = new Razorpay({
 
 
 
+// exports.checkout = async (req, res) => {
+//   const { orderDetails, userId } = req.body;
+
+//   console.log(orderDetails);
+
+//   const options = {
+//     amount: Number(orderDetails.totalPrice * 100),
+//     currency: "INR",
+//     receipt: "order_rcptid_11",
+//   };
+//   const order = await instance.orders.create(options);
+//   console.log(order);
+
+//   const user = await UserModel.findById(userId);
+
+//   const orderDoc = new orderModel({
+//     userId: orderDetails.userId,
+//     products: orderDetails.products.map((product) => ({
+//       productId: product.productId,
+//       productName: product.productName,
+//       productImage: product.productImage,
+//       price: product.price,
+//       quantity: product.quantity,
+//     })),
+
+//     discountAmount: orderDetails.discountAmount,
+//     couponCode: orderDetails.couponCode,
+
+//     // coupon: couponId,
+//     // shipping,
+//     subTotal:orderDetails.subTotal,
+//         shipping:orderDetails.shipping,
+//         tax:orderDetails.tax,
+//     totalPrice: orderDetails.totalPrice,
+//     userName: user.username,
+//     address: orderDetails.address,
+//     orderDate: orderDetails.orderDate,
+//     paymentMethod: orderDetails.paymentMethod,
+
+//     phone: user.phone,
+
+//     razor_orderId: order.id,
+//   });
+//   orderDoc.save();
+
+//   res.status(200).json({
+//     success: true,
+//     order,
+//   });
+// };
+
+
+
+
 exports.checkout = async (req, res) => {
-  const { orderDetails, userId } = req.body;
+  try {
+    const { orderDetails, userId } = req.body;
 
-  const options = {
-    amount: Number(orderDetails.totalPrice * 100),
-    currency: "INR",
-    receipt: "order_rcptid_11",
-  };
-  const order = await instance.orders.create(options);
-  console.log(order);
+    console.log(orderDetails);
 
-  const user = await UserModel.findById(userId);
+    // const options = {
+    //   amount: Number(orderDetails.totalPrice * 100),
+    //   currency: "INR",
+    //   receipt: "order_rcptid_11",
+    // };
 
-  const orderDoc = new orderModel({
-    userId: orderDetails.userId,
-    products: orderDetails.products.map((product) => ({
-      productId: product.productId,
-      productName: product.productName,
-      productImage: product.productImage,
-      price: product.price,
-      quantity: product.quantity,
-    })),
+    const options = {
+      amount: Math.ceil(orderDetails.totalPrice * 100), 
+      currency: "INR",
+      receipt: "order_rcptid_11",
+    };
+    const order = await instance.orders.create(options);
+    console.log(order);
 
-    discountAmount: orderDetails.discountAmount,
-    couponCode: orderDetails.couponCode,
+    const user = await UserModel.findById(userId);
 
-    // coupon: couponId,
-    // shipping,
-    subTotal:orderDetails.subTotal,
-        shipping:orderDetails.shipping,
-        tax:orderDetails.tax,
-    totalPrice: orderDetails.totalPrice,
-    userName: user.username,
-    address: orderDetails.address,
-    orderDate: orderDetails.orderDate,
-    paymentMethod: orderDetails.paymentMethod,
+    const orderDoc = new orderModel({
+      userId: orderDetails.userId,
+      products: orderDetails.products.map((product) => ({
+        productId: product.productId,
+        productName: product.productName,
+        productImage: product.productImage,
+        price: product.price,
+        quantity: product.quantity,
+      })),
 
-    phone: user.phone,
+      discountAmount: orderDetails.discountAmount,
+      couponCode: orderDetails.couponCode,
 
-    razor_orderId: order.id,
-  });
-  orderDoc.save();
+      // coupon: couponId,
+      // shipping,
+      subTotal:orderDetails.subTotal,
+          shipping:orderDetails.shipping,
+          tax:orderDetails.tax,
+      totalPrice: orderDetails.totalPrice,
+      userName: user.username,
+      address: orderDetails.address,
+      orderDate: orderDetails.orderDate,
+      paymentMethod: orderDetails.paymentMethod,
 
-  res.status(200).json({
-    success: true,
-    order,
-  });
+      phone: user.phone,
+
+      razor_orderId: order.id,
+    });
+    await orderDoc.save();
+
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    res.status(500).json({ success: false, error: "An error occurred during checkout" });
+  }
 };
+
+
+
 
 // exports.checkout = async (req, res) => {
 //   const { orderDetails, userId } = req.body;

@@ -338,9 +338,7 @@ exports.getCartItems = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const cartItems = {
-      
-    }
+    
 
     return res.status(200).json({ cart: user.cart });
   } catch (error) {
