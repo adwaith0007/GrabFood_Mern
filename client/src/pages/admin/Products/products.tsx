@@ -7,7 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import api from "../../../api";
 import TableHOC from "../../../components/admin/TableHOC";
 import Skeleton from "react-loading-skeleton";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+
 
 const server = import.meta.env.VITE_SERVER;
 
@@ -70,7 +70,7 @@ const Products = () => {
     // Update rows with the data from productList
     const newRows = productList.map((item) => ({
       photo: (
-        <LazyLoadImage
+        <img
         loading="lazy"
           src={`${server}/${item.productImage[0]?.replace(/ /g, "%20")}`}
           alt={item.name}
