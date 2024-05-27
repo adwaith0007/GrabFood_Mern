@@ -21,7 +21,7 @@ function ImageCropComponent({
   const previewCanvasRef = useRef(null);
   const inputRef = useRef(null);
 
-  const MAX_IMAGE_SIZE_MB = 5;
+  const MAX_IMAGE_SIZE_MB = 0.244;
 
   const generatePreview = (imageSrc, canvas, crop) => {
     const ctx = canvas.getContext("2d");
@@ -73,7 +73,7 @@ function ImageCropComponent({
     }
 
     if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-      toast.error(`Image size should not exceed ${MAX_IMAGE_SIZE_MB}MB.`);
+      toast.error(`Image size should not exceed ${MAX_IMAGE_SIZE_MB * 1024}KB.`);
       return;
     }
 

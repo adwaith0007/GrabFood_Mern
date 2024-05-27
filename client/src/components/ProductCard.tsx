@@ -89,7 +89,7 @@ ProductCardProps) => {
         className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
         to={`/product/${productId}`}
       >
-        <img className="object-cover" src={imageUrl} alt="product image" />
+        <img className="object-cover"   src={imageUrl} alt="product image" loading="lazy" />
 
         {offerInPercentage && (
           <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">

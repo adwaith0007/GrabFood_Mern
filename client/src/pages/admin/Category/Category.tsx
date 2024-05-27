@@ -1,6 +1,3 @@
-
-
-
 import { useEffect, useState, useMemo } from "react";
 import { Column } from "react-table";
 import { Link } from "react-router-dom";
@@ -64,7 +61,7 @@ const Category = () => {
         .map(() => ({
           photo: (
             <div className="flex justify-start items-center">
-              <Skeleton  height={50} width={50} />
+              <Skeleton height={50} width={50} />
             </div>
           ),
           name: <Skeleton width={100} />,
@@ -80,6 +77,7 @@ const Category = () => {
           photo: (
             <img
               src={`${server}/${item.categoryImage[0]?.replace(/ /g, "%20")}`}
+              loading="lazy"
               alt={item.category}
               className="w-12 h-12 object-cover rounded-full"
             />

@@ -10,7 +10,7 @@ import {
 } from "react-icons/ai";
 import { BsCart3 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
-// import { MdFavorite, MdHelp } from "react-icons/md";
+import { MdFavorite } from "react-icons/md";
 import { FaUser, FaWallet } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { userNotExist } from "../../redux/reducer/useReducer";
@@ -399,6 +399,11 @@ const Navbar = ({ user }: PropsType) => {
               <Link to={"/user/wallet"} className="text-xl py-4 flex">
                 <FaWallet size={25} className="mr-4" />
                 My Wallet
+              </Link>
+
+              <Link to={"/user/favourites"} className="text-xl py-4 flex">
+                <MdFavorite size={25} className="mr-4" />
+                Favourites
               </Link>
 
               <Link to={"/user/orders"} className="text-xl py-4 flex">
