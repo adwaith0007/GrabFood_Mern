@@ -33,6 +33,7 @@ const ProductManagement = () => {
         const res = await api.get(`/category/get`);
         if (res.data.success) {
           setCategoryList(res.data.data);
+          
         }
       } catch (error) {
         toast.error("Error while loading categories");
@@ -48,6 +49,9 @@ const ProductManagement = () => {
         const response = await api.get(`/product/${id}`);
         if (response.data.success) {
           setProductDetails(response.data.data);
+
+          setOffer(response.data.data.offerInPercentage)
+
         } else {
           setError(response.data.message || "Failed to fetch product details");
         }
@@ -60,6 +64,10 @@ const ProductManagement = () => {
 
     fetchProductDetails();
   }, [id]);
+
+  console.log("productDetails:", productDetails)
+
+
 
   const handleImageChange = (croppedImageFile: File) => {
     setSelectedImages((prevImages) => [...prevImages, croppedImageFile]);
@@ -337,7 +345,7 @@ const ProductManagement = () => {
                 id="category"
                 value={productDetails?.category}
                 onChange={(e) => setProductDetails({ ...productDetails, category: e.target.value })}
-                className="min-w-[180px] w-[20vw] border border-teal-700 rounded-xl p-2 text-sm"
+                className="min-w-[180px] w-[340px] border border-teal-700 rounded-xl p-2 text-sm"
               >
                 <option value="">{productDetails?.category}</option>
                 {categoryList.map((item, index) => (
@@ -348,15 +356,16 @@ const ProductManagement = () => {
               </select>
             </div>
 
-            <div className="flex w-full">
-              <div>
-                {productDetails?.discountPrice < productDetails?.price && productDetails?.discountPrice ? (
+            <div className="flex w-full items-center ">
+              <div className="w-full" >
+                {  productDetails?.discountPrice ? (
                   <button
                     type="button"
                     onClick={handleCancelOffer}
-                    className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                    className="cursor-pointer w-[300px] bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-all duration-300"
                   >
-                    Cancel Offer
+                    
+                    Cancel {offer}% Offer
                   </button>
                 ) : (
                   <button
@@ -364,7 +373,7 @@ const ProductManagement = () => {
                     onClick={() => {
                       setAddOfferBox(!addOfferBox);
                     }}
-                    className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                    className="cursor-pointer w-full bg-blue-500 text-white py-2 px-4 rounded- hover:bg-blue-600 transition-all duration-300"
                   >
                     Add Offer
                   </button>
@@ -383,8 +392,8 @@ const ProductManagement = () => {
               )}
             </div>
 
-            <div className="form-group flex gap-5">
-              <div className="flex items-center">
+            <div className="form-group flex justify-between w-full">
+              <div className="flex items-center w-1/2 ">
                 <button
                   type="button"
                   className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
@@ -396,10 +405,10 @@ const ProductManagement = () => {
                 </button>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex  w-1/2 ">
                 <button
                   type="button"
-                  className={`py-2 px-4 cursor-pointer ${productDetails?.deleted ? "bg-red-500 text-white" : "bg-green-500 text-white"}`}
+                  className={`py-2 px-7 cursor-pointer rounded-md ${productDetails?.deleted ? "bg-red-500 text-white" : "bg-green-500 text-white"}`}
                   onClick={handleSoftDelete}
                   disabled={updating}
                 >

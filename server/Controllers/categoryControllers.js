@@ -75,40 +75,31 @@ exports.addCategory = async (req, res) => {
     category = category.trim().toUpperCase();
 
     if (category.length < 3) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Category should be at least 3 characters long",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Category should be at least 3 characters long",
+      });
     }
 
     const categoryLettersRegex = /^[A-Z ]+$/;
     if (!categoryLettersRegex.test(category)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Category should contain only letters and spaces",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Category should contain only letters and spaces",
+      });
     }
 
     const categoryStartsWithLetterRegex = /^[A-Z]/;
     if (!categoryStartsWithLetterRegex.test(category)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Category should start with a letter",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Category should start with a letter",
+      });
     }
 
     const categoryExist = await categoryModel.findOne({
       category: { $regex: new RegExp(`^${category}$`, "i") },
-      
     });
-
-   
 
     if (categoryExist) {
       return res
@@ -127,11 +118,11 @@ exports.addCategory = async (req, res) => {
     const categoryDoc = new categoryModel({
       category,
       categoryImage: image.originalname,
-      createdAt:new Date ()
+      createdAt: new Date(),
     });
 
     await categoryDoc.save();
-    console.log('worked')
+    console.log("worked");
     res
       .status(201)
       .json({ success: true, message: "Category added successfully" });
@@ -143,7 +134,7 @@ exports.addCategory = async (req, res) => {
 
 exports.adminListCategory = async (req, res) => {
   try {
-    const data = await categoryModel.find({}).sort({ createdAt: -1 }); 
+    const data = await categoryModel.find({}).sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: data });
   } catch (error) {
@@ -179,9 +170,295 @@ exports.getcategoryDetails = async (req, res) => {
   }
 };
 
+// exports.updateCategory = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         console.error("Error during file upload:", err);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Internal server error in file upload",
+//         });
+//       }
 
+//       console.log("Updating category...");
 
+//       const categoryId = req.params.categoryId;
+//       let { category , offer } = req.body;
 
+//       console.log("Received category id:", categoryId, "with offer:", offer,"category:", category);
+
+//       if (!category) {
+//         console.error("Category name is missing");
+//         return res
+//           .status(400)
+//           .json({ success: false, message: "Category name is required" });
+//       }
+
+//       category = category.trim().toUpperCase();
+
+//       console.log("Received category name:", category);
+
+//       if (category.length < 3) {
+//         console.error("Category name is too short");
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "Category should be at least 3 characters long",
+//           });
+//       }
+
+//       const similarCategory = await categoryModel.findOne({
+//         category: { $regex: new RegExp(`^${category}$`, "i") },
+//         _id: { $ne: categoryId }
+//       });
+
+//       if (similarCategory) {
+//         console.error("A similar category already exists:", similarCategory);
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "A similar category already exists",
+//           });
+//       }
+
+//       let categoryToUpdate = await categoryModel.findById(categoryId);
+
+//       if (!categoryToUpdate) {
+//         console.error("Category not found");
+//         return res
+//           .status(404)
+//           .json({ success: false, message: "Category not found" });
+//       }
+
+//       categoryToUpdate.category = category;
+
+//       if (offer !== undefined) {
+
+//         if (isNaN(offer) || offer < 0 || offer >= 90) {
+//           console.error("Invalid offer value:", offer);
+//           return res.status(400).json({
+//             success: false,
+//             message: "Offer should be a number between 0 and 89",
+//           });
+//         }
+
+//         // await categoryModel.updateOne(
+//         //   { _id: _id },
+//         //   { $set: { offerInPercentage: discount } }
+//         // );
+
+//         categoryToUpdate.offerInPercentage = offer;
+
+//         if(offer > 0){
+
+//           categoryToUpdate.discountPrice= Math.floor( price - (price * offer) / 100);
+//           categoryToUpdate.categoryWiseOffer = true;
+
+//           const products = await productModel.aggregate([
+//             { $match: { category } },
+//             ]);
+//           console.log(products);
+
+//           for (const product of products) {
+//             if (!product.productWiseOffer) {
+//               console.log("here");
+//               await productModel.updateOne(
+//                 { _id: product?._id },
+//                 {
+//                   $set: {
+//                     categoryWiseOffer: true,
+//                     offerInPercentage:offer,
+//                     discountPrice: Math.floor(
+//                       product?.price - (product?.price * offer) / 100
+//                     ),
+//                   },
+//                 }
+//               );
+//             }
+//           }
+
+//         }else{
+
+//           categoryToUpdate.discountPrice=0;
+
+//           categoryToUpdate.productWiseOffer = false;
+
+//           const products = await productModel.aggregate([
+//             { $match: { category } },
+//             ]);
+//           console.log(products);
+
+//           for (const product of products) {
+//             if (!product.productWiseOffer) {
+//               console.log("here");
+//               await productModel.updateOne(
+//                 { _id: product?._id },
+//                 {
+//                   $set: {
+//                     categoryWiseOffer: false,
+//                     offerInPercentage:offer,
+//                     discountPrice: 0
+//                   },
+//                 }
+//               );
+//             }
+//           }
+
+//         }
+
+//       }
+
+//       if (req.file) {
+//         categoryToUpdate.categoryImage = [req.file.filename];
+//       }
+
+//       const updatedCategory = await categoryToUpdate.save();
+
+//       console.log("Category updated successfully:", updatedCategory);
+
+//       res.status(200).json({
+//         success: true,
+//         data: updatedCategory,
+//         message: "Category updated successfully",
+//       });
+//     });
+//   } catch (error) {
+//     console.error("Internal server error:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+// exports.updateCategory = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         console.error("Error during file upload:", err);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Internal server error in file upload",
+//         });
+//       }
+
+//       console.log("Updating category...");
+
+//       const categoryId = req.params.categoryId;
+//       let { category, offer } = req.body;
+
+//       console.log("Received category id:", categoryId, "with offer:", offer, "category:", category);
+
+//       if (!category) {
+//         console.error("Category name is missing");
+//         return res.status(400).json({ success: false, message: "Category name is required" });
+//       }
+
+//       category = category.trim().toUpperCase();
+
+//       console.log("Received category name:", category);
+
+//       if (category.length < 3) {
+//         console.error("Category name is too short");
+//         return res.status(400).json({
+//           success: false,
+//           message: "Category should be at least 3 characters long",
+//         });
+//       }
+
+//       const similarCategory = await categoryModel.findOne({
+//         category: { $regex: new RegExp(`^${category}$`, "i") },
+//         _id: { $ne: categoryId }
+//       });
+
+//       if (similarCategory) {
+//         console.error("A similar category already exists:", similarCategory);
+//         return res.status(400).json({
+//           success: false,
+//           message: "A similar category already exists",
+//         });
+//       }
+
+//       let categoryToUpdate = await categoryModel.findById(categoryId);
+
+//       if (!categoryToUpdate) {
+//         console.error("Category not found");
+//         return res.status(404).json({ success: false, message: "Category not found" });
+//       }
+
+//       categoryToUpdate.category = category;
+
+//       if (offer !== undefined) {
+//         if (isNaN(offer) || offer < 0 || offer >= 90) {
+//           console.error("Invalid offer value:", offer);
+//           return res.status(400).json({
+//             success: false,
+//             message: "Offer should be a number between 0 and 89",
+//           });
+//         }
+
+//         categoryToUpdate.offerInPercentage = offer;
+
+//         if (offer > 0) {
+//           const products = await productModel.find({ category: category });
+
+//           for (const product of products) {
+
+//             console.log( "burgers:", product);
+
+//             if (!product.productWiseOffer) {
+//               const discountPrice = Math.floor(product.price - (product.price * offer) / 100);
+//               await productModel.updateOne(
+//                 { _id: product._id },
+//                 {
+//                   $set: {
+//                     categoryWiseOffer: true,
+//                     offerInPercentage: offer,
+//                     discountPrice: discountPrice,
+//                   },
+//                 }
+//               );
+//             }
+//             console.log( "products:", products  );
+//           }
+//         } else {
+//           const products = await productModel.find({ category: categoryId });
+//           for (const product of products) {
+//             if (!product.productWiseOffer) {
+//               await productModel.updateOne(
+//                 { _id: product._id },
+//                 {
+//                   $set: {
+//                     categoryWiseOffer: false,
+//                     offerInPercentage: offer,
+//                     discountPrice: 0,
+//                   },
+//                 }
+//               );
+//             }
+//           }
+//         }
+//       }
+
+//       if (req.file) {
+//         categoryToUpdate.categoryImage = [req.file.filename];
+//       }
+
+//       const updatedCategory = await categoryToUpdate.save();
+
+//       console.log("Category updated successfully:", updatedCategory);
+
+//       res.status(200).json({
+//         success: true,
+//         data: updatedCategory,
+//         message: "Category updated successfully",
+//       });
+//     });
+//   } catch (error) {
+//     console.error("Internal server error:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
 
 exports.updateCategory = async (req, res) => {
   try {
@@ -197,7 +474,16 @@ exports.updateCategory = async (req, res) => {
       console.log("Updating category...");
 
       const categoryId = req.params.categoryId;
-      let { category , offer } = req.body;
+      let { category, offer } = req.body;
+
+      console.log(
+        "Received category id:",
+        categoryId,
+        "with offer:",
+        offer,
+        "category:",
+        category
+      );
 
       if (!category) {
         console.error("Category name is missing");
@@ -212,28 +498,23 @@ exports.updateCategory = async (req, res) => {
 
       if (category.length < 3) {
         console.error("Category name is too short");
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Category should be at least 3 characters long",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Category should be at least 3 characters long",
+        });
       }
 
-      
       const similarCategory = await categoryModel.findOne({
         category: { $regex: new RegExp(`^${category}$`, "i") },
-        _id: { $ne: categoryId }
+        _id: { $ne: categoryId },
       });
 
       if (similarCategory) {
         console.error("A similar category already exists:", similarCategory);
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "A similar category already exists",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "A similar category already exists",
+        });
       }
 
       let categoryToUpdate = await categoryModel.findById(categoryId);
@@ -248,7 +529,6 @@ exports.updateCategory = async (req, res) => {
       categoryToUpdate.category = category;
 
       if (offer !== undefined) {
-       
         if (isNaN(offer) || offer < 0 || offer >= 90) {
           console.error("Invalid offer value:", offer);
           return res.status(400).json({
@@ -257,41 +537,77 @@ exports.updateCategory = async (req, res) => {
           });
         }
 
-        // await categoryModel.updateOne(
-        //   { _id: _id },
-        //   { $set: { offerInPercentage: discount } }
-        // );
-
         categoryToUpdate.offerInPercentage = offer;
 
-        const products = await productModel.aggregate([
-          { $match: { category } },
-        ]);
-        console.log(products);
+        const products = await productModel.find({ category: category });
+
+        // for (const product of products) {
+        //   if (!product.productWiseOffer) {
+        //     const discountPrice = Math.floor(product.price - (product.price * offer) / 100);
+        //     await productModel.updateOne(
+        //       { _id: product._id },
+        //       {
+        //         $set: {
+        //           categoryWiseOffer: true,
+        //           offerInPercentage: offer,
+        //           discountPrice: discountPrice,
+        //         },
+        //       }
+        //     );
+        //   }
+        // }
+      }
+
+      // s
+
+      console.log("offer:", offer);
+
+      if (offer > 0) {
+        const products = await productModel.find({ category: category });
 
         for (const product of products) {
-          if (!product.productWiseOffer) {
-            console.log("here");
+          // if (!product.productWiseOffer) {
+          const discountPrice = Math.floor(
+            product.price - (product.price * offer) / 100
+          );
+          await productModel.updateOne(
+            { _id: product._id },
+            {
+              $set: {
+                categoryWiseOffer: true,
+                offerInPercentage: offer,
+                discountPrice: discountPrice,
+              },
+            }
+          );
+          // }
+        }
+      } else {
+
+
+        const products = await productModel.find({ category: category });
+
+        for (const product of products) {
+          // if (!product.productWiseOffer) {
+            // const discountPrice = Math.floor(
+            //   product.price - (product.price * offer) / 100
+            // );
             await productModel.updateOne(
-              { _id: product?._id },
+              { _id: product._id },
               {
                 $set: {
-                  categoryWiseOffer: true,
-                  offerInPercentage:offer,
-                  discountPrice: Math.floor(
-                    product?.price - (product?.price * offer) / 100
-                  ),
+                  categoryWiseOffer: false,
+                  offerInPercentage: offer,
+                  discountPrice: 0,
                 },
               }
             );
-          }
+          // }
         }
-        // return res.status(200).json({ success: true, message: "Offer Applied" });
-
-        
       }
+      // }
 
-      
+      // e
 
       if (req.file) {
         categoryToUpdate.categoryImage = [req.file.filename];
@@ -313,8 +629,121 @@ exports.updateCategory = async (req, res) => {
   }
 };
 
+// exports.updateCategory = async (req, res) => {
+//   try {
+//     upload.single("photo")(req, res, async (err) => {
+//       if (err) {
+//         console.error("Error during file upload:", err);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Internal server error in file upload",
+//         });
+//       }
 
+//       console.log("Updating category...");
 
+//       const categoryId = req.params.categoryId;
+//       let { category, offer } = req.body;
+
+//       // Ensure category is a string
+//       if (typeof category !== 'string') {
+//         console.error("Invalid category type");
+//         return res
+//           .status(400)
+//           .json({ success: false, message: "Category must be a string" });
+//       }
+
+//       category = category.trim().toUpperCase();
+
+//       console.log("Received category name:", category);
+
+//       if (category.length < 3) {
+//         console.error("Category name is too short");
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "Category should be at least 3 characters long",
+//           });
+//       }
+
+//       const similarCategory = await categoryModel.findOne({
+//         category: { $regex: new RegExp(`^${category}$`, "i") },
+//         _id: { $ne: categoryId }
+//       });
+
+//       if (similarCategory) {
+//         console.error("A similar category already exists:", similarCategory);
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "A similar category already exists",
+//           });
+//       }
+
+//       let categoryToUpdate = await categoryModel.findById(categoryId);
+
+//       if (!categoryToUpdate) {
+//         console.error("Category not found");
+//         return res
+//           .status(404)
+//           .json({ success: false, message: "Category not found" });
+//       }
+
+//       categoryToUpdate.category = category;
+
+//       if (offer !== undefined) {
+//         offer = Number(offer);
+//         if (isNaN(offer) || offer < 0 || offer >= 90) {
+//           console.error("Invalid offer value:", offer);
+//           return res.status(400).json({
+//             success: false,
+//             message: "Offer should be a number between 0 and 89",
+//           });
+//         }
+
+//         categoryToUpdate.offerInPercentage = offer;
+
+//         const products = await productModel.find({ category: categoryId });
+
+//         for (const product of products) {
+//           if (!product.productWiseOffer) {
+//             await productModel.updateOne(
+//               { _id: product._id },
+//               {
+//                 $set: {
+//                   categoryWiseOffer: offer > 0,
+//                   offerInPercentage: offer,
+//                   discountPrice: offer > 0 ? Math.floor(
+//                     product.price - (product.price * offer) / 100
+//                   ) : product.price,
+//                 },
+//               }
+//             );
+//           }
+//         }
+//       }
+
+//       if (req.file) {
+//         categoryToUpdate.categoryImage = [req.file.filename];
+//       }
+
+//       const updatedCategory = await categoryToUpdate.save();
+
+//       console.log("Category updated successfully:", updatedCategory);
+
+//       res.status(200).json({
+//         success: true,
+//         data: updatedCategory,
+//         message: "Category updated successfully",
+//       });
+//     });
+//   } catch (error) {
+//     console.error("Internal server error:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
 
 // exports.updateProduct = async (req, res) => {
 //   try {
@@ -384,23 +813,61 @@ exports.deleteCategory = async (req, res) => {
   }
 };
 
+// exports.softDeleteCategory = async (req, res) => {
+//   const { categoryId } = req.params;
+
+//   try {
+//     const category = await categoryModel.findById(categoryId);
+
+//     if (!category) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Category not found" });
+//     }
+
+//     category.deleted = !category.deleted;
+
+//     await category.save();
+
+//     return res.status(200).json({ success: true, data: category });
+//   } catch (error) {
+//     console.error("Error soft deleting category:", error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
 exports.softDeleteCategory = async (req, res) => {
   const { categoryId } = req.params;
 
   try {
-    const category = await categoryModel.findById(categoryId);
+    const categoryData = await categoryModel.findById(categoryId);
 
-    if (!category) {
+    if (!categoryData) {
       return res
         .status(404)
         .json({ success: false, message: "Category not found" });
     }
 
-    category.deleted = !category.deleted;
+    categoryData.deleted = !categoryData.deleted;
 
-    await category.save();
+    const updateResult = await productModel.updateMany(
+      { category: categoryData.category },
+      { $set: { deleted: categoryData.deleted } }
+    );
 
-    return res.status(200).json({ success: true, data: category });
+    if (updateResult.modifiedCount > 0) {
+      await categoryData.save();
+      return res.status(200).json({ success: true, data: categoryData });
+    } else {
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Failed to soft delete products in the category",
+        });
+    }
   } catch (error) {
     console.error("Error soft deleting category:", error);
     return res

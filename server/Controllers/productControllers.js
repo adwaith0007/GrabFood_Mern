@@ -309,7 +309,7 @@ exports.listBestProduct = async (req, res) => {
     const productIds = topProducts.map(product => product._id);
 
     
-    const productDetails = await productModel.find({ _id: { $in: productIds } });
+    const productDetails = await productModel.find({ _id: { $in: productIds }, deleted: false });
 
     
     const combinedProducts = productDetails.map(product => {
@@ -339,8 +339,8 @@ exports.listLowToHighProduct = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Fetch products sorted by price from low to high
-    const products = await productModel.find().sort({ price: 1 }).skip(skip).limit(limit);
+    
+    const products = await productModel.find({ deleted: false }).sort({ price: 1 }).skip(skip).limit(limit);
 
     res.status(200).json({
       success: true,
@@ -362,7 +362,7 @@ exports.listHighToLowProduct = async (req, res) => {
     const skip = (page - 1) * limit;
 
     
-    const products = await productModel.find().sort({ price: -1 }).skip(skip).limit(limit);
+    const products = await productModel.find({ deleted: false }).sort({ price: -1 }).skip(skip).limit(limit);
 
     res.status(200).json({
       success: true,
@@ -384,7 +384,7 @@ exports.searchProduct = async (req, res) => {
     const query = req.query.q; 
     console.log(query);
     
-    const results = await productModel.find({ $text: { $search: query } });
+    const results = await productModel.find({ $text: { $search: query }, deleted: false  });
     if (results.length === 0) {
       
       const partialMatchResults = await productModel.find({ productName: { $regex: new RegExp(query, 'i') } });
@@ -574,6 +574,9 @@ exports.updateProduct = async (req, res) => {
       
 
       let { desc, price, category, name, offer } = req.body;
+
+      console.log("offer", offer )
+
       const newImages = req.files?.map((file) => file.filename) || [];
 
       name = name.trim();
@@ -642,8 +645,19 @@ exports.updateProduct = async (req, res) => {
 
         productToUpdate.productWiseOffer = true;
         productToUpdate.offerInPercentage = parsedOffer;
+
+        if(offer > 0){
+          
+          productToUpdate.discountPrice= Math.floor( price - (price * offer) / 100);
+          productToUpdate.productWiseOffer = true;
+        }else{
+
+          productToUpdate.discountPrice=0;
+
+          productToUpdate.productWiseOffer = false;
+
+        }
         
-          productToUpdate.discountPrice= Math.floor( price - (price * offer) / 100)
 
 
       }

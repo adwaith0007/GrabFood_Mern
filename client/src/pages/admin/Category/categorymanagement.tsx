@@ -1,9 +1,4 @@
-
-
-
-
-
-import {  FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -17,18 +12,21 @@ interface CategoryDetails {
   category: string;
   categoryImage: string[];
   deleted: boolean;
+  offerInPercentage?: number;
 }
 
 const CategoryManagement = () => {
   const { id } = useParams<{ id: string }>();
-  const [categoryDetails, setCategoryDetails] = useState<CategoryDetails | null>(null);
+  const [categoryDetails, setCategoryDetails] =
+    useState<CategoryDetails | null>(null);
   const [photoFile, setPhotoFile] = useState<File | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
   const [addOfferBox, setAddOfferBox] = useState<boolean>(false);
   const [offer, setOffer] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
-  const [isImageCropModalVisible, setImageCropModalVisible] = useState<boolean>(false);
+  const [isImageCropModalVisible, setImageCropModalVisible] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -51,13 +49,18 @@ const CategoryManagement = () => {
     fetchCategoryDetails();
   }, [id]);
 
-  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(/ /g, "%20")}`;
+  const image = `${server}/${categoryDetails?.categoryImage?.[0]?.replace(
+    / /g,
+    "%20"
+  )}`;
 
   const handleImageChange = (croppedImageFile: File) => {
     setPhotoFile(croppedImageFile);
   };
 
-  const submitHandler = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitHandler = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     if (!categoryDetails) return;
     setUpdating(true);
@@ -86,7 +89,10 @@ const CategoryManagement = () => {
         formData.append("photo", photoFile);
       }
 
-      const response = await api.put(`/category/update/${categoryDetails._id}`, formData);
+      const response = await api.put(
+        `/category/update/${categoryDetails._id}`,
+        formData
+      );
       const responseData = response.data;
 
       if (responseData.success) {
@@ -97,20 +103,56 @@ const CategoryManagement = () => {
         toast.error(responseData.message || "Failed to update category");
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Failed to update category. Please try again later.";
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to update category. Please try again later.";
       toast.error(errorMessage);
     } finally {
       setUpdating(false);
     }
   };
 
+
+  const handleCancelOffer = async (): Promise<void> => {
+    if (!categoryDetails) return;
+
+    console.log("categoryDetails.id", categoryDetails._id);
+
+    try {
+      const response = await api.put(
+        `/category/update/${categoryDetails._id}`,
+        { offer: 0, category: categoryDetails.category } 
+      );
+      if (response.data.success) {
+        setCategoryDetails((prevDetails) =>
+          prevDetails ? { ...prevDetails, offerInPercentage: 0 } : prevDetails
+        );
+        toast.success("Offer canceled successfully");
+      } else {
+        toast.error("Failed to cancel offer");
+      }
+    } catch (error) {
+      toast.error("Failed to cancel offer");
+    }
+  };
+
   const handleSoftDelete = async (): Promise<void> => {
     if (!categoryDetails) return;
     try {
-      const response = await api.put(`/category/softDelete/${categoryDetails._id}`);
+      const response = await api.put(
+        `/category/softDelete/${categoryDetails._id}`
+      );
       if (response.data.success) {
-        setCategoryDetails((prevDetails) => prevDetails ? { ...prevDetails, deleted: !prevDetails.deleted } : prevDetails);
-        toast.success(`Category ${categoryDetails.deleted ? "restored" : "soft deleted"} successfully`);
+        setCategoryDetails((prevDetails) =>
+          prevDetails
+            ? { ...prevDetails, deleted: !prevDetails.deleted }
+            : prevDetails
+        );
+        toast.success(
+          `Category ${
+            categoryDetails.deleted ? "restored" : "soft deleted"
+          } successfully`
+        );
       } else {
         toast.error("Failed to delete category");
       }
@@ -121,10 +163,14 @@ const CategoryManagement = () => {
 
   const deleteHandler = async (): Promise<void> => {
     if (!categoryDetails) return;
-    const confirmDeletion = window.confirm("Are you sure you want to delete this category?");
+    const confirmDeletion = window.confirm(
+      "Are you sure you want to delete this category?"
+    );
     if (confirmDeletion) {
       try {
-        const response = await api.delete(`/category/delete/${categoryDetails._id}`);
+        const response = await api.delete(
+          `/category/delete/${categoryDetails._id}`
+        );
         if (response.status === 200) {
           toast.success("Category deleted successfully");
           navigate("/admin/category");
@@ -156,7 +202,11 @@ const CategoryManagement = () => {
         <p>{categoryDetails?.category}</p>
       </section>
       <article>
-        <button className="product-delete-btn" onClick={deleteHandler} disabled={updating}>
+        <button
+          className="product-delete-btn"
+          onClick={deleteHandler}
+          disabled={updating}
+        >
           <FaTrash />
         </button>
         <form onSubmit={submitHandler}>
@@ -167,13 +217,17 @@ const CategoryManagement = () => {
               type="text"
               value={categoryDetails?.category || ""}
               onChange={(e) =>
-                setCategoryDetails((prevDetails) => prevDetails ? { ...prevDetails, category: e.target.value } : prevDetails)
+                setCategoryDetails((prevDetails) =>
+                  prevDetails
+                    ? { ...prevDetails, category: e.target.value }
+                    : prevDetails
+                )
               }
             />
           </div>
-          <div className="form-group flex gap-2">
+          <div className="form-group w-full flex gap-2">
             <label>Photo</label>
-            <div className="flex items-center">
+            <div className="flex items-center w-full ">
               <button
                 type="button"
                 className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
@@ -182,10 +236,14 @@ const CategoryManagement = () => {
                 Upload Images
               </button>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center w-full ">
               <button
                 type="button"
-                className={`px-2 py-1 cursor-pointer ${categoryDetails?.deleted ? "bg-red-500 text-white" : "bg-green-500 text-white"}`}
+                className={`px-4 py-2 cursor-pointer w-full rounded ${
+                  categoryDetails?.deleted
+                    ? "bg-red-500 text-white"
+                    : "bg-green-500 text-white"
+                }`}
                 onClick={handleSoftDelete}
                 disabled={updating}
               >
@@ -193,18 +251,30 @@ const CategoryManagement = () => {
               </button>
             </div>
           </div>
-          {photoFile && <img src={URL.createObjectURL(photoFile)} alt="New Image" />}
+          {photoFile && (
+            <img src={URL.createObjectURL(photoFile)} alt="New Image" />
+          )}
 
           <div className="flex w-full">
-            <div>
+            {categoryDetails?.offerInPercentage ? (
               <button
                 type="button"
-                onClick={() => setAddOfferBox(!addOfferBox)}
-                className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-300"
+                onClick={handleCancelOffer}
+                className="cursor-pointer w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-all duration-300"
               >
-                Add Offer
+                Cancel {categoryDetails?.offerInPercentage}% Offer
               </button>
-            </div>
+            ) : (
+              <div className="w-full" >
+                <button
+                  type="button"
+                  onClick={() => setAddOfferBox(!addOfferBox)}
+                  className="cursor-pointer w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all duration-300"
+                >
+                  Add Offer
+                </button>
+              </div>
+            )}
 
             {addOfferBox && (
               <div>
@@ -229,7 +299,7 @@ const CategoryManagement = () => {
           <ImageCropComponent
             onClose={() => setImageCropModalVisible(false)}
             handleImageChange={handleImageChange}
-            aspectRatio={1/1}
+            aspectRatio={1 / 1}
             maxImage={1}
           />
         </div>
