@@ -48,13 +48,13 @@ const Otp = () => {
       const { status } = await verifyOTP({ username, code: otpValue });
       if (status === 201) {
         toast.success("Verification Successful! ");
-        return navigate("/");
+        return navigate("/login");
       } else {
-        // Handle other status codes
+        
         toast.error("Invalid otp. Please try again.");
       }
     } catch (error) {
-      // Handle network errors or other errors
+      
       toast.error("Invalid otp. Please try again.");
     }
   }

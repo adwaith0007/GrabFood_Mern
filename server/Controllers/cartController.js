@@ -1,6 +1,8 @@
 const UserModel = require("../Models/userModels");
-const prodModel = require("../Models/product");
+// const prodModel = require("../Models/product");
+const productModel = require("../Models/product");
 const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose');
 
 
 
@@ -253,43 +255,50 @@ exports.addToCartFromWishlist = async (req, res) => {
   }
 };
 
+
+
+
+
 exports.decrease = async (req, res) => {
   const { userId } = req.params;
+  const { product: { productId, productName }, quantity } = req.body;
 
-  console.log(userId);
 
-  console.log(req.body);
 
-  const {
-    product: { _id: productId, productName, productImage },
-    quantity,
-  } = req.body;
+  try {
+    
+    const itemExists = await UserModel.findOne({
+      _id: userId,
+      "cart.productId": productId,
+      "cart.quantity": { $gt: 1 }
+    });
 
-  console.log(productName);
+   
+    
 
-  const itemExists = await UserModel.findOne({
-    cart: { $elemMatch: { productId: productId } },
-  });
-
-  console.log(itemExists);
-
-  if (itemExists !== null) {
-    console.log("Item exists in the cart.");
-
-    try {
-      await UserModel.updateOne(
+    if (itemExists) {
+      
+      const updateResult = await UserModel.updateOne(
         { _id: userId, "cart.productId": productId },
-        { $dec: { "cart.$.quantity": 1 } }
+        { $inc: { "cart.$.quantity": -1 } }
       );
-      return res.status(200).json({ success: true, message: "Added to cart" });
-    } catch (error) {
-      console.log("error while incrementing the quantity", error);
-      return res.json({ success: false, message: "Error while incrementing" });
+
+      
+      
+
+      return res.status(200).json({ success: true, message: "Decreased quantity in cart" });
+    } else {
+      
+      console.log("Item does not exist in the cart or quantity is 1.");
+      return res.status(404).json({ success: false, message: "Item does not exist in the cart or quantity is 1." });
     }
-  } else {
-    console.log("Item does not exist in the cart.");
+  } catch (error) {
+    
+    console.error("Error while decrementing the quantity:", error);
+    return res.status(500).json({ success: false, message: "Error while decrementing" });
   }
 };
+
 
 exports.remove = async (req, res) => {
   const { userId } = req.params;
@@ -327,27 +336,106 @@ exports.remove = async (req, res) => {
   }
 };
 
+// exports.getCartItems = async (req, res) => {
+//   const { userId } = req.params;
+
+//   console.log("getCartItems", userId )
+
+//   try {
+//     const user = await UserModel.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+
+//     const productDetails = await productModel.find({ _id: { $in: user.cart.productId } });
+
+    
+    
+
+//     return res.status(200).json({ cart: user.cart });
+//   } catch (error) {
+//     console.error("Error fetching cart items:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+
+// exports.getCartItems = async (req, res) => {
+//   const { userId } = req.params;
+
+//   console.log("getCartItems", userId);
+
+//   try {
+//     const user = await UserModel.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const productIds = user.cart.map(item => mongoose.Types.ObjectId(item.productId));
+//     const products = await productModel.find({ _id: { $in: productIds } });
+
+//     const cartItems = user.cart.map(cartItem => {
+//       const product = products.find(prod => prod._id.equals(cartItem.productId));
+//       return {
+//         productId: cartItem.productId,
+//         price: product ? product.price : null,
+//         image: product ? product.productImage : null,
+//         deleted: product ? product.deleted : null,
+//         discountPrice: product ? product.discountPrice : null
+//       };
+//     });
+
+//     return res.status(200).json({ cart: cartItems });
+//   } catch (error) {
+//     console.error("Error fetching cart items:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
 exports.getCartItems = async (req, res) => {
   const { userId } = req.params;
 
-  console.log("getCartItems", userId )
+  console.log("getCartItems - userId:", userId);
 
   try {
     const user = await UserModel.findById(userId);
     if (!user) {
+      console.log("User not found");
       return res.status(404).json({ message: "User not found" });
     }
 
-    
+    console.log("User found:", user);
 
-    return res.status(200).json({ cart: user.cart });
+    const productIds = user.cart.map(item => new mongoose.Types.ObjectId(item.productId));
+    console.log("Product IDs in cart:", productIds);
+
+    const products = await productModel.find({ _id: { $in: productIds } });
+    console.log("Fetched products:", products);
+
+    const cartItems = user.cart.map(cartItem => {
+      const product = products.find(prod => prod._id.equals(cartItem.productId));
+      const cartItemDetails = {
+        productId: cartItem.productId,
+        productName: cartItem.productName, // Add productName to cartItemDetails
+        quantity: cartItem.quantity, // Add quantity to cartItemDetails
+        price: product ? product.price : null,
+        productImage: product ? product.productImage : null,
+        deleted: product ? product.deleted : null,
+        discountPrice: product ? product.discountPrice : null
+      };
+      console.log("Cart item details:", cartItemDetails);
+      return cartItemDetails;
+    });
+
+    console.log("Final cart items:", cartItems);
+
+    return res.status(200).json({ cart: cartItems });
   } catch (error) {
     console.error("Error fetching cart items:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
 
 
 // exports.getCartItems = async (req, res) => {

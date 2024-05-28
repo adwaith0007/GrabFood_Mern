@@ -255,15 +255,47 @@ export async function verifyOTP({ username, code }) {
 }
 
 /* reset password */
-export async function resetPassword({username,password}) {
-    try {
-        // const {data,status} = await axios.put('http://localhost:5000/api/resetPassword',{username,password});
-        const {data,status} = await api.put('/resetPassword',{username,password});
-        return Promise.resolve({data,status})
-    } catch (error) {
-        return Promise.reject({error})
-    }
+// export async function resetPassword({username,password}) {
+//     try {
+//         // const {data,status} = await axios.put('http://localhost:5000/api/resetPassword',{username,password});
+//         const {data : ,status} = await api.put('/resetPassword',{username,password});
+//         const{ email }= data
+        
+//         if(status===200){
+//           console.log('user registered Status "200"');
+          
+          
+
+//           await api.post('/registerMail',{ username , userEmail: email ,text : msg })
+//       }
+
+//         return Promise.resolve({data,status})
+//     } catch (error) {
+//       toast.error(error.response.data.message)
+//         return Promise.reject({error})
+//     }
     
+// }
+
+export async function resetPassword({ username, password }) {
+  try {
+    // Call the backend API to reset the password
+    const { data: { msg, email }, status } = await api.put('/resetPassword', { username, password });
+
+    if (status === 200) {
+      console.log('User password reset successful with status "200"');
+      
+      // Send a confirmation email after successful password reset
+      await api.post('/registerMail', { username, userEmail: email, text: msg });
+    }
+
+    return Promise.resolve({ data: { msg, email }, status });
+  } catch (error) {
+   
+    const errorMessage = error.response?.data?.message || "An unexpected error occurred.";
+    toast.error(errorMessage);
+    return Promise.reject({ error });
+  }
 }
 
 

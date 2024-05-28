@@ -4,11 +4,13 @@ import "../../index.css";
 
 import foodimg from "../../assets/login_food.png";
 import {  useNavigate } from "react-router-dom";
-
-
+import { resetPasswordValidation } from "../../helper/validate";
+import { registerUserStore } from "../../redux/reducer/useReducer";
 import { useFormik } from "formik";
 import { resetPassword } from "../../helper/helper";
 import toast from "react-hot-toast";
+import { useDispatch } from 'react-redux';
+
 // import { GoogleAuthProvider } from "firebase/auth";
 // import { signInWithPopup } from "firebase/auth";
 // import { auth } from "../../firebase";
@@ -16,14 +18,13 @@ import toast from "react-hot-toast";
 
 // import { useSelector } from 'react-redux';
 // import { selectUser } from './../../redux/userSlice';
-// import { useDispatch } from 'react-redux';
 // import { setUser } from './../../redux/userSlice';
 // import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 // import { MessageResponse } from "../../types/api-types";
 
 const ResetPassword = () => {
  
-    
+  const dispatch = useDispatch();
   
   const navigate = useNavigate();
 
@@ -31,9 +32,11 @@ const ResetPassword = () => {
     initialValues: {
       username: "",
       password: "",
+
+      cpassword: "",
       
     },
-    // validate:,
+    validate:resetPasswordValidation,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
@@ -48,11 +51,12 @@ const ResetPassword = () => {
         error: <b>Password not changed!</b>,
       });
 
-      loginPromise.then((res) => {
-        const { token } = res.data;
-        localStorage.setItem("token", token);
+      loginPromise.then(() => {
+        // const { token } = res.data;
+        // localStorage.setItem("token", token);
         // dispatch(setUser(values.username));
-        navigate("/login");
+        dispatch(registerUserStore(values.username));
+        navigate("/otp");
       });
     },
   });
@@ -116,7 +120,7 @@ const ResetPassword = () => {
                   New Password
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   id="password"
                   name="password"
                   onChange={formik.handleChange}
@@ -125,6 +129,26 @@ const ResetPassword = () => {
                   placeholder="New Password"
                 />
               </div>
+
+
+              <div className="mb-3">
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    Confirm password
+                  </label>
+                  <input
+                    type="password"
+                    id="cpassword"
+                    name="cpassword"
+                    onChange={formik.handleChange}
+                    value={formik.values.cpassword}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    placeholder="Confirm Password"
+                    required
+                  />
+                </div>
 
               
 

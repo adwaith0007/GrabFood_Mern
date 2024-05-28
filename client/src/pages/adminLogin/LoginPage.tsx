@@ -172,7 +172,7 @@ const LoginPage = () => {
 
               
 
-              <div className="flex justify-center mt-3 ">
+              {/* <div className="flex justify-center mt-3 ">
                 <p
                   id="helper-text-explanation"
                   className="mt-2 text-sm text-gray-500 dark:text-gray-400"
@@ -186,7 +186,7 @@ const LoginPage = () => {
                   </Link>
                   .
                 </p>
-              </div>
+              </div> */}
             </form>
             </div>
           </div>

@@ -35,6 +35,13 @@ const SignUp = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
+
+      if (values.password !== values.cpassword) {
+        
+        toast.error("Passwords do not match");
+        return;
+      }
+
       log.debug("signUp:", values);
       const registerPromise = registerUser(values);
       toast.promise(registerPromise, {
@@ -50,20 +57,20 @@ const SignUp = () => {
   });
 
   return (
-    <div className="bg-[#e5d9ca] h-[100vh]    w-full ">
+    <div className="bg-[#e5d9ca] h-full    w-full ">
       
       <div className="container custom-height flex justify-center items-center mx-auto  ">
         <div className="flex flex-row w-full h-full flex-wrap  justify-center items-center   p-8   ">
           <div className="  hidden xl:flex w-1/2  ">
             <img
-              className=" h-[600px]  rounded-l-[10px]  2xl:h-[600px] object-cover w-full  "
+              className=" h-[600px]  rounded-l-[10px]  2xl:h-[700px] object-cover w-full  "
               src={foodimg}
               alt=""
             />
           </div>
 
           <div className=" flex justify-center w-full md:w-auto  ">
-            <div className=" w-full px-10  h-[690px] md:h-[600px] 2xl:h-[600px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
+            <div className=" w-full px-10  h-[690px] md:h-[690px] 2xl:h-[700px] lg:w-[470px] rounded-r-[10px] bg-[#f4eeee]">
               <div className="text-center text-lg font-bold text-[30px] mt-[20px]">
                 <h1>Register</h1>
               </div>
@@ -160,6 +167,24 @@ const SignUp = () => {
                     name="password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    Confirm password
+                  </label>
+                  <input
+                    type="password"
+                    id="cpassword"
+                    name="cpassword"
+                    onChange={formik.handleChange}
+                    value={formik.values.cpassword}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     required
                   />

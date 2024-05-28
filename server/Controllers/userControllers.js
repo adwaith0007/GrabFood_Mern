@@ -582,41 +582,68 @@ exports.createResetSession = async (req,res) =>{
 
 //update the password when we have valid session
 /* PUT:http://localhost:5000/api/resetPassword */
-exports.resetPassword= async (req, res) => {
-  try {
-    // if (!req.app.locals.resetSession) {
-    //   return res.status(440).send({ error: "Session expired!" });
-    // }
 
+
+// exports.resetPassword= async (req, res) => {
+//   try {
+//     // if (!req.app.locals.resetSession) {
+//     //   return res.status(440).send({ error: "Session expired!" });
+//     // }
+
+//     const { username, password } = req.body;
+
+//     try {
+//       const user = await UserModel.findOne({ username });
+
+//       if (!user) {
+//         return res.status(404).send({ message: "Username not found" });
+//       }
+
+//       const hashedPassword = await bcrypt.hash(password, 10);
+
+//       await UserModel.updateOne(
+//         { username: user.username },
+//         { password: hashedPassword },
+//         { otp: false }
+//       );
+
+//       req.app.locals.resetSession = false; // reset session
+
+//       return res.status(201).send({ message: "Record Updated...!" });
+//     } catch (error) {
+//       return res.status(500).send({ message: "Failed to update password" });
+//     }
+//   } catch (error) {
+//     return res.status(401).send({ message: "Unauthorized" });
+//   }
+// }
+
+
+exports.resetPassword = async (req, res) => {
+  try {
     const { username, password } = req.body;
 
-    try {
-      const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({ username });
 
-      if (!user) {
-        return res.status(404).send({ error: "Username not found" });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      await UserModel.updateOne(
-        { username: user.username },
-        { password: hashedPassword }
-      );
-
-      req.app.locals.resetSession = false; // reset session
-
-      return res.status(201).send({ msg: "Record Updated...!" });
-    } catch (error) {
-      return res.status(500).send({ error: "Failed to update password" });
+    if (!user) {
+      return res.status(404).send({ message: "Username not found" });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await UserModel.updateOne(
+      { username: user.username },
+      { password: hashedPassword, otp: false } // Ensure the update object is correct
+    );
+
+    req.app.locals.resetSession = false; // reset session
+
+    const msg = "Password has been successfully reset.";
+    return res.status(200).send({ message: "Record Updated...!", msg, email: user.email });
   } catch (error) {
-    return res.status(401).send({ error: "Unauthorized" });
+    return res.status(500).send({ message: "Failed to update password" });
   }
-}
-
-
-
+};
 
 
 

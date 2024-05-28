@@ -87,3 +87,62 @@ const CartSection = ({
 };
 
 export default CartSection;
+
+
+
+// const CartSection = ({
+//   products,
+//   onIncrease,
+//   onDecrease,
+//   onDeleteFromCart,
+// }) => {
+//   const server = import.meta.env.VITE_SERVER;
+
+//   return (
+//     <div className="w-full">
+//       {products.map((product) => (
+//         <div key={product._id}>
+//           <div className="flex justify-between items-center hover:bg-gray-100 md:-mx-8 md:px-6 py-5">
+//             <div className="flex w-2/5">
+//               <div className="w-24 hidden md:block">
+//                 {product.productImage && product.productImage[0] ? (
+//                   <img
+//                     className="h-24 w-24"
+//                     src={`${server}/${product.productImage[0]?.replace(/ /g, "%20")}`}
+//                     alt={product.productName}
+//                   />
+//                 ) : (
+//                   <div className="h-24 w-24 bg-gray-200"></div>
+//                 )}
+//               </div>
+//               <div className="flex flex-col justify-center ml-4 flex-grow">
+//                 <span className="font-bold text-[12px] md:text-sm mb-2 md:mb-5">
+//                   {product.productName}
+//                 </span>
+//                 <button
+//                   className="font-semibold hover:text-red-500 text-gray-500 text-xs w-fit "
+//                   onClick={() => onDeleteFromCart(product)}
+//                 >
+//                   Remove
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="flex justify-center w-1/5">
+//               {/* Quantity buttons */}
+//             </div>
+
+//             <span className="text-center hidden md:block w-1/5 font-semibold text-[12px] md:text-sm">
+//               ₹{product.price.toFixed(2)}
+//             </span>
+//             <span className="text-center w-1/5 font-semibold text-[12px] md:text-sm">
+//               ₹{product.quantity * product.price}
+//             </span>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default CartSection;

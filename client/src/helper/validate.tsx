@@ -40,7 +40,12 @@ export async function adminRegisterValidation(values) {
     return errors;
   }
 
-
+  export async function resetPasswordValidation(values) {
+    const errors = {} as FormError;
+    usernameVerify(errors, values);
+    passwordVerify(errors, values);
+    return errors;
+  }
 
 
 
@@ -49,6 +54,8 @@ function usernameVerify(error: FormError = {}, values: { username: string }) {
     error.username = toast.error("Username Required");
   } else if (values.username.includes(" ")) {
     error.username = toast.error("Invalid Username...!");
+  } else if (values.username.length < 3) {
+    error.username = toast.error("Invalid Username. Username should contain at least 3 letters.");
   }
 
   return error;
@@ -132,6 +139,9 @@ function phoneVerify(error: FormError = {}, values: { phone: string }) {
     error.phone = toast.error("Phone Number Required");
   } else if (!/^\d{10}$/g.test(values.phone)) {
     error.phone = toast.error("Invalid Phone Number. Please enter a 10-digit number without any spaces or special characters.");
+  } else if (/(\d)\1{9}/.test(values.phone)) {
+   
+    error.phone = toast.error("Invalid Phone Number. Phone number should not contain consecutive identical digits.");
   }
 
   return error;
