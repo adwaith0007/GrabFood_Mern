@@ -377,7 +377,24 @@ const UserProfile = () => {
 
   const validateEmail = useCallback((email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format. Please enter a valid email address.");
+      return false;
+    }
+
+    const [localPart, domain] = email.split("@");
+    if (/^\d+$/.test(localPart)) {
+      toast.error("Invalid email. Local part of the email cannot be numeric.");
+      return false;
+    }
+
+    const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!domainRegex.test(domain)) {
+      toast.error("Invalid email domain. Please enter a valid domain.");
+      return false;
+    }
+
+    return true;
   }, []);
 
   const validatePhoneNumber = useCallback((phoneNumber) => {
@@ -406,8 +423,9 @@ const UserProfile = () => {
   }, []);
 
   const handleSaveClick = useCallback(async () => {
+    
+
     if (!validateEmail(userData.email)) {
-      toast.error("Please enter a valid email address.");
       return;
     }
 
