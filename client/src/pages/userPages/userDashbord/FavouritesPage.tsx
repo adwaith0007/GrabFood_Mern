@@ -50,7 +50,7 @@ const FavouritesPage = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
-  const userId = user._id;
+  const userId = user?._id;
 
   const server = import.meta.env.VITE_SERVER;
 
@@ -92,11 +92,16 @@ const FavouritesPage = () => {
   };
 
   const handleRemove = (productId) => {
+
+    console.log("productId:", productId)
     setPopup(true);
     setSelectedProductId(productId);
   };
 
   const confirmHandleRemove = async () => {
+  
+    console.log("confirmHandleRemove:", selectedProductId)
+
     await api
       .put(`/wishlist/remove/${userId}`, { productId: selectedProductId, quantity: 1 })
       .then((response) => {

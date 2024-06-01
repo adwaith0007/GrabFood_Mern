@@ -32,6 +32,8 @@
 
 // export const {userExist, userNotExist, registerUserStore } = userReducer.actions
 
+
+
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import { User } from "../../types/types";
@@ -56,6 +58,10 @@ export const userReducer = createSlice({
     userNotExist: (state) => {
       state.loading = false;
       state.user = null;
+    },
+
+    startLoading: (state) => {
+      state.loading = true;
     },
 
     registerUserStore: (state, action: PayloadAction<User>) => {
@@ -100,6 +106,7 @@ export const userReducer = createSlice({
 export const {
   userExist,
   userNotExist,
+  startLoading,
   registerUserStore,
   updateUserPhoto,
   updateUserEmail,

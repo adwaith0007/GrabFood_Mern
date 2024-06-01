@@ -1,5 +1,3 @@
-
-
 import "./App.scss";
 import { jwtDecode } from "jwt-decode";
 
@@ -12,16 +10,20 @@ import { Toaster } from "react-hot-toast";
 import Loader from "./components/loader";
 import Navbar from "./components/Layout/Navbar";
 
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { auth } from "./firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { userExist, userNotExist } from "./redux/reducer/useReducer";
+import {
+  // startLoading,
+  userExist,
+  userNotExist,
+} from "./redux/reducer/useReducer";
 // import { getUser } from "./redux/api/userAPI";
 import { UserReducerInitialState } from "./types/reducer-types";
 import ProtectedRoute from "./Routes/protected-route";
 // import { Navigate } from 'react-router-dom';
 
-import { log } from '../logger';
+import { log } from "../logger";
 
 const ResetPasswordOtp = lazy(
   () => import("./pages/userPages/ResetPasswordOtp")
@@ -47,49 +49,80 @@ function App() {
     (state: { userReducer: UserReducerInitialState }) => state.userReducer
   );
 
- 
-
-  
   const dispatch = useDispatch();
-  
+
+  // useEffect(() => {
+
+  //   const token = Cookies.get("token");
+
+  //   if (token) {
+  //     const user = jwtDecode(token);
+
+  //     log.info("Info message: this is the user:", user);
+
+  //     // setRole(user.role)
+
+  //     dispatch(userExist(jwtDecode(token)));
+
+  //     // i have to fix this
+  //   } else {
+  //     onAuthStateChanged(auth, async (user) => {
+  //       if (user) {
+
+  //         // const data = await getUser(user.uid);
+
+  //         // console.log("user redux:", data.user);
+
+  //         // dispatch(userExist(data.user));
+  //       } else {
+  //         dispatch(userNotExist());
+  //         log.error(" Not Logged In");
+  //       }
+  //     });
+  //   }
+  // }, []);
+
   useEffect(() => {
-    const token = Cookies.get("token");
-    
-    if (token) {
-      const user = jwtDecode(token);
-      
-      log.info("Info message: this is the user:", user);
-     
-      // setRole(user.role)
+    const checkAuth = async () => {
+      const token = Cookies.get("token");
 
-     
-      dispatch(userExist(jwtDecode(token)));
+      console.log(token);
 
-      // i have to fix this
-    } else {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          
-          // const data = await getUser(user.uid);
+      if (token != undefined) {
+        // dispatch(startLoading());
 
-          // console.log("user redux:", data.user);
-          
-          // dispatch(userExist(data.user));
-        } else {
-          dispatch(userNotExist());
-          log.error(" Not Logged In");
-        }
-      });
-    }
-  }, []);
-  
+        const user = jwtDecode(token);
+        log.info("Info message: this is the user:", user);
+        dispatch(userExist(jwtDecode(token)));
+      } else {
+
+        dispatch(userNotExist());
+
+        // google
+
+
+        // onAuthStateChanged(auth, async (user) => {
+        //   if (user) {
+        //     // const data = await getUser(user.uid);
+        //     // dispatch(userExist(data.user));
+        //   } else {
+        //     dispatch(userNotExist());
+        //     log.error("Not Logged In");
+        //   }
+        // });
+      }
+    };
+
+    checkAuth();
+  }, [dispatch]);
+
   return (
     <>
       {loading && <Loader />}
       <Navbar user={user} />
       <Suspense fallback={<Loader />}>
         <Routes>
-        <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/otp" element={<Otp />} />

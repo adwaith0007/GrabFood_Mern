@@ -819,9 +819,9 @@ exports.getWishlist = async (req, res) => {
 exports.removeFromWishlist = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { selectedProductId } = req.body;
+    const { productId } = req.body;
 
-    const productId = selectedProductId
+    // const productId = selectedProductId
     
     console.log('Removing product from wishlist. UserId:', userId, 'ProductId:', productId);
 

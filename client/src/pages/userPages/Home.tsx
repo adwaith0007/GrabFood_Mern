@@ -35,13 +35,14 @@ const Home = () => {
   // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    
     const fetchCartItems = async () => {
       try {
         const response = await api.get(`/cart/${userId}`);
         setCartItems(response.data.cart);
       } catch (error) {
         console.error("Error fetching cart items:", error);
-        if(user.role=="user"){
+        if(user?.role=="user"){
 
           toast.error(error.response?.data?.message || "An error occurred");
         }
