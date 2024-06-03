@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const Mailgen =require('mailgen');
 const { param } = require('../Routes/userRoutes');
+require("dotenv").config();
 
 let nodeConfig = {
    
@@ -22,6 +23,21 @@ let nodeConfig = {
 
 }
 
+
+
+
+// const transporter = nodemailer.createTransport({
+
+//   service:'gmail',
+//   host:"smtp.gmail.com",
+//   port:587,
+//   secure: false,
+//   auth:{
+//     user:process.env.EMAIL,
+//     pass:process.env.PASSWORD,
+//   }
+// })
+
 /* POST:http://localhost:5000/api/registerMail
 @param:{
   "username" :"example123",
@@ -40,7 +56,12 @@ let MailGenerator = new Mailgen ({
     }
 })
 
+
+
+
 exports.registerMail = async (req, res) => {
+  console.log('pass', process.env.PASSWORD )
+  console.log("email", process.env.EMAIL)
     try {
       const { username, userEmail, text, subject } = req.body;
 
@@ -75,58 +96,82 @@ exports.registerMail = async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // const nodemailer = require('nodemailer');
 // const Mailgen = require('mailgen');
+// require('dotenv').config();
 
-// let nodeConfig = {
-//   // Gmail configuration
+// const transporter = nodemailer.createTransport({
 //   service: 'gmail',
 //   auth: {
-//     user: process.env.EMAIL,
-//     pass: process.env.PASSWORD,
-//   },
-// };
+//     // user: process.env.EMAIL,
+//     // pass: process.env.PASSWORD,
 
-// // Create a Nodemailer transporter with TLS options
-// let transporter = nodemailer.createTransport({
-//   ...nodeConfig,
+//     user: 'megacartecommerce@gmail.com',
+//     pass: 'anlhfzmfujcejpcj',
+//   },
 //   tls: {
-//     rejectUnauthorized: false // Allows nodemailer to use TLS even if unauthorized
-//   }
+//     rejectUnauthorized: false,
+//   },
 // });
 
-// let MailGenerator = new Mailgen({
-//   theme: "default",
+// const MailGenerator = new Mailgen({
+//   theme: 'default',
 //   product: {
-//     name: "Mailgen",
-//     link: 'https://mailgen.js/'
-//   }
+//     name: 'GrabFood',
+//     link: 'https://yourwebsite.com/',
+//   },
 // });
 
 // exports.registerMail = async (req, res) => {
 //   try {
 //     const { username, userEmail, text, subject } = req.body;
 
+//     console.log('Received registration request:');
+//     console.log('Username:', username);
+//     console.log('User Email:', userEmail);
+//     console.log('Text:', text);
+//     console.log('Subject:', subject);
+
 //     // Body of the email
 //     const email = {
 //       body: {
 //         name: username,
 //         intro: text || 'Welcome to GrabFood! We are very excited to have you on board.',
-//         outro: 'Need help, or have questions? Just reply to this email; we would love to help.'
-//       }
+//         outro: 'Need help, or have questions? Just reply to this email; we would love to help.',
+//       },
 //     };
+
+//     console.log('Generated email body:', email);
 
 //     const emailBody = MailGenerator.generate(email);
+//     console.log('Generated email HTML:', emailBody);
 
 //     const message = {
-//       from: process.env.EMAIL,
+//       from: 'grabfood@gmail.com',
 //       to: userEmail,
 //       subject: subject || 'Signup Successful',
-//       html: emailBody
+//       html: emailBody,
 //     };
+
+//     console.log('Prepared email message:', message);
 
 //     // Send mail
 //     await transporter.sendMail(message);
+//     console.log('Email sent successfully');
 
 //     return res.status(200).send({ msg: 'You should receive an email from us.' });
 //   } catch (error) {
@@ -134,39 +179,3 @@ exports.registerMail = async (req, res) => {
 //     return res.status(500).send({ error: 'Failed to send registration email.' });
 //   }
 // };
-
-
-
-
-// const nodemailer = require("nodemailer");
-
-// const transporter = nodemailer.createTransport({
-//   host: "smtp.gmail.com",
-//   port: 587,
-//   secure: false,
-//   auth: {
-//     user: 'runmate88@gmail.com',
-//     // pass: "ajtk gnyn mqfe avuz",
-//     pass: process.env.PASSWORD,
-//   },
-// });
-
-// exports.registerMail = async (req, res) => {
-  
-//     const { username, userEmail, text, subject } = req.body;
-//   const userDetails = {
-//     from: process.env.EMAIL, // sender address
-//     to: userEmail, // list of receivers
-//     subject: "Activate your account", // Subject line
-//     html: `<b>Your activation link :- </b>`, // html body
-//   };
-
-//   transporter.sendMail(userDetails, (err, data) => {
-//     if (err) {
-//       console.log("errorr", err);
-//     } else {
-//       console.log("email sent successfully");
-//     }
-//   });
-// };
-

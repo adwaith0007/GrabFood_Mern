@@ -1,5 +1,5 @@
-//  const server = "http://localhost:5000/api"
-const server = "https://www.grabfood.life/api"
+ const server = "http://localhost:5000/api"
+// const server = "https://www.grabfood.life/api"
 
 
 

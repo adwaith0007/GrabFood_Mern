@@ -633,8 +633,11 @@ exports.updateProduct = async (req, res) => {
         createdAt:new Date()
       };
 
+      if(offer==undefined){
 
-      if (offer !== undefined) {
+        productToUpdate.discountPrice=0
+
+      }else {
         const parsedOffer = parseFloat(offer);
         if (isNaN(parsedOffer) || parsedOffer < 0 || parsedOffer >= 90) {
           return res.status(400).json({
